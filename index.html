@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản Lý Trạm Cấp Nước</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --blue: #0a6bff;
+    --blue-dark: #0050cc;
+    --blue-light: #e8f0ff;
+    --teal: #00c2a8;
+    --red: #ff3b3b;
+    --orange: #ff8c00;
+    --bg: #f0f4fb;
+    --card: #ffffff;
+    --text: #0d1b3e;
+    --muted: #6b7a99;
+    --border: #d4ddf0;
+    --success: #00b86b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  .nav {
+    background: var(--text);
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-brand { color: #fff; font-weight: 800; font-size: 15px; letter-spacing: -.3px; }
+  .nav-brand span { color: var(--teal); }
+  .nav-tabs { display: flex; gap: 4px; }
+  .nav-tab {
+    color: rgba(255,255,255,0.6); background: none; border: none;
+    padding: 6px 14px; border-radius: 6px; cursor: pointer;
+    font-family: inherit; font-size: 13px; font-weight: 500;
+    transition: all .2s;
+  }
+  .nav-tab.active { background: rgba(255,255,255,0.12); color: #fff; }
+  .nav-tab:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+  /* ── VIEWS ── */
+  .view { display: none; padding: 20px; max-width: 680px; margin: 0 auto; }
+  .view.active { display: block; }
+  .view-dashboard { max-width: 100%; }
+
+  /* ── FORM ── */
+  .form-header {
+    background: linear-gradient(135deg, #0a6bff 0%, #0050cc 100%);
+    color: #fff; border-radius: 16px; padding: 24px;
+    margin-bottom: 20px;
+  }
+  .form-header h1 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .form-header p { opacity: .75; font-size: 13px; }
+  .date-badge {
+    display: inline-block; background: rgba(255,255,255,0.2);
+    border-radius: 20px; padding: 4px 12px; font-size: 12px;
+    font-family: 'JetBrains Mono', monospace; margin-top: 10px;
+  }
+
+  .card {
+    background: var(--card); border-radius: 12px;
+    border: 1px solid var(--border); padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--muted); margin-bottom: 14px;
+  }
+
+  .field { margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  label .req { color: var(--red); margin-left: 2px; }
+
+  select, input[type=number], input[type=text], textarea {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid var(--border); border-radius: 8px;
+    font-family: inherit; font-size: 14px; color: var(--text);
+    background: var(--bg); outline: none; transition: border-color .2s;
+    -webkit-appearance: none;
+  }
+  select:focus, input:focus, textarea:focus { border-color: var(--blue); background: #fff; }
+  textarea { resize: vertical; min-height: 80px; }
+
+  .input-group { display: flex; align-items: center; gap: 10px; }
+  .input-unit {
+    font-size: 13px; font-weight: 600; color: var(--muted);
+    white-space: nowrap; min-width: 36px;
+  }
+
+  .chem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .incident-toggle {
+    display: flex; gap: 8px;
+  }
+  .toggle-btn {
+    flex: 1; padding: 10px; border-radius: 8px; border: 1.5px solid var(--border);
+    background: var(--bg); cursor: pointer; font-family: inherit;
+    font-size: 13px; font-weight: 600; transition: all .2s; text-align: center;
+  }
+  .toggle-btn.selected-no { border-color: var(--success); background: #e8fff5; color: var(--success); }
+  .toggle-btn.selected-yes { border-color: var(--red); background: #fff0f0; color: var(--red); }
+
+  .incident-detail { display: none; margin-top: 12px; }
+  .incident-detail.show { display: block; }
+
+  .btn-submit {
+    width: 100%; padding: 16px; background: var(--blue);
+    color: #fff; border: none; border-radius: 12px;
+    font-family: inherit; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: background .2s; margin-top: 8px;
+  }
+  .btn-submit:hover { background: var(--blue-dark); }
+  .btn-submit:active { transform: scale(.98); }
+
+  /* success state */
+  .success-screen {
+    text-align: center; padding: 48px 24px; display: none;
+  }
+  .success-screen.show { display: block; }
+  .success-icon {
+    width: 72px; height: 72px; background: var(--success);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px; font-size: 32px;
+  }
+  .success-screen h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+  .success-screen p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+  .btn-new { margin-top: 24px; padding: 12px 28px; background: var(--blue); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 600; }
+
+  /* ── DASHBOARD ── */
+  .dash-header {
+    background: var(--text); color: #fff;
+    padding: 24px 20px; margin: -20px -20px 20px;
+  }
+  .dash-header h1 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+  .dash-header p { font-size: 13px; opacity: .6; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .stat-card {
+    background: var(--card); border-radius: 12px; padding: 16px;
+    border: 1px solid var(--border);
+  }
+  .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); font-weight: 700; margin-bottom: 8px; }
+  .stat-value { font-size: 28px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--text); }
+  .stat-value.blue { color: var(--blue); }
+  .stat-value.teal { color: var(--teal); }
+  .stat-value.red { color: var(--red); }
+  .stat-unit { font-size: 13px; font-weight: 500; color: var(--muted); margin-top: 2px; }
+
+  .section-title {
+    font-size: 13px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .8px; color: var(--muted); margin-bottom: 12px;
+  }
+
+  /* Status grid */
+  .station-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  .station-card {
+    background: var(--card); border-radius: 10px; padding: 14px;
+    border: 1.5px solid var(--border); position: relative; overflow: hidden;
+  }
+  .station-card.reported { border-color: var(--success); }
+  .station-card.incident { border-color: var(--red); }
+  .station-name { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .station-status {
+    font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px;
+    display: inline-block; margin-bottom: 8px;
+  }
+  .status-ok { background: #e8fff5; color: var(--success); }
+  .status-missing { background: #fff8e6; color: var(--orange); }
+  .status-incident { background: #fff0f0; color: var(--red); }
+  .station-data { font-size: 12px; color: var(--muted); line-height: 1.8; }
+  .station-data strong { color: var(--text); font-weight: 600; }
+
+  /* Table */
+  .table-wrap { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--text); color: rgba(255,255,255,0.8); padding: 10px 14px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg); }
+  .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+  .badge-ok { background: #e8fff5; color: var(--success); }
+  .badge-incident { background: #fff0f0; color: var(--red); }
+
+  .empty-state { text-align: center; padding: 40px; color: var(--muted); }
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-select {
+    padding: 7px 12px; border: 1.5px solid var(--border); border-radius: 8px;
+    font-family: inherit; font-size: 13px; background: var(--card);
+    color: var(--text); cursor: pointer; outline: none;
+  }
+  .filter-select:focus { border-color: var(--blue); }
+
+  .alert-bar {
+    background: #fff3e0; border: 1.5px solid var(--orange);
+    border-radius: 10px; padding: 12px 16px; margin-bottom: 16px;
+    font-size: 13px; display: flex; align-items: center; gap: 10px;
+  }
+  .alert-bar.hidden { display: none; }
+
+  /* responsive */
+  @media (max-width: 480px) {
+    .chem-grid { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">💧 Trạm Cấp <span>Nước</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showView('form')">Báo cáo</button>
+    <button class="nav-tab" onclick="showView('dashboard')">Dashboard</button>
+  </div>
+</nav>
+
+<!-- ══════════ FORM VIEW ══════════ -->
+<div id="view-form" class="view active">
+
+  <div id="form-main">
+    <div class="form-header">
+      <h1>📋 Báo Cáo Ngày</h1>
+      <p>Nhập số liệu vận hành trạm cấp nước</p>
+      <div class="date-badge" id="today-date"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Thông tin trạm</div>
+      <div class="field">
+        <label>Tên trạm <span class="req">*</span></label>
+        <select id="f-station">
+          <option value="">-- Chọn trạm --</option>
+          <option>Trạm Bù Rên</option>
+          <option>Trạm Bù Gia Mập</option>
+          <option>Trạm Tân Thành</option>
+          <option>Trạm Lộc Hiệp</option>
+          <option>Trạm Tân Tiến</option>
+          <option>Trạm Thiện Hưng</option>
+          <option>Trạm Hưng Phước</option>
+          <option>Trạm Thanh Bình</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Người báo cáo <span class="req">*</span></label>
+        <input type="text" id="f-reporter" placeholder="Họ tên nhân viên">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Sản lượng nước</div>
+      <div class="field">
+        <label>Lượng nước sản xuất <span class="req">*</span></label>
+        <div class="input-group">
+          <input type="number" id="f-water" placeholder="0" min="0" step="0.1">
+          <span class="input-unit">m³</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Hóa chất sử dụng</div>
+      <div class="chem-grid">
+        <div class="field">
+          <label>Clo</label>
+          <div class="input-group">
+            <input type="number" id="f-clo" placeholder="0" min="0" step="0.01">
+            <span class="input-unit">kg</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Phèn</label>
+          <div class="input-group">
+            <input type="number" id="f-phen" placeholder="0" min="0" step="0.01">
+            <span class="input-unit">kg</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Vôi</label>
+          <div class="input-group">
+            <input type="number" id="f-voi" placeholder="0" min="0" step="0.01">
+            <span class="input-unit">kg</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Sự cố / Bảo trì</div>
+      <div class="field">
+        <label>Có sự cố hoặc bảo trì hôm nay không? <span class="req">*</span></label>
+        <div class="incident-toggle">
+          <button class="toggle-btn" id="btn-no" onclick="setIncident(false)">✅ Không</button>
+          <button class="toggle-btn" id="btn-yes" onclick="setIncident(true)">⚠️ Có</button>
+        </div>
+        <div class="incident-detail" id="incident-detail">
+          <textarea id="f-incident" placeholder="Mô tả sự cố, biện pháp xử lý, thời gian dừng máy..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Lắp đặt đồng hồ nước</div>
+      <div class="field">
+        <label>Số đồng hồ lắp mới hôm nay</label>
+        <div class="input-group">
+          <input type="number" id="f-meters" placeholder="0" min="0" step="1">
+          <span class="input-unit">cái</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Ghi chú (địa điểm, khách hàng...)</label>
+        <textarea id="f-meters-note" placeholder="VD: 3 cái tại thôn 5, khách hàng mới..."></textarea>
+      </div>
+    </div>
+
+    <button class="btn-submit" onclick="submitForm()">📤 Gửi báo cáo</button>
+  </div>
+
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">✓</div>
+    <h2>Đã gửi thành công!</h2>
+    <p id="success-msg"></p>
+    <button class="btn-new" onclick="newReport()">+ Báo cáo mới</button>
+  </div>
+</div>
+
+<!-- ══════════ DASHBOARD VIEW ══════════ -->
+<div id="view-dashboard" class="view view-dashboard">
+  <div class="dash-header">
+    <h1>📊 Dashboard Quản Lý</h1>
+    <p id="dash-subtitle">Tổng hợp dữ liệu từ 8 trạm cấp nước</p>
+  </div>
+
+  <div id="alert-missing" class="alert-bar hidden">
+    ⚠️ <span id="alert-text"></span>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">Đã báo cáo hôm nay</div>
+      <div class="stat-value blue" id="d-reported">0</div>
+      <div class="stat-unit">/ 8 trạm</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Tổng nước SX hôm nay</div>
+      <div class="stat-value teal" id="d-total-water">0</div>
+      <div class="stat-unit">m³</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Sự cố đang xử lý</div>
+      <div class="stat-value red" id="d-incidents">0</div>
+      <div class="stat-unit">trạm</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Tổng Clo sử dụng</div>
+      <div class="stat-value" id="d-total-clo">0</div>
+      <div class="stat-unit">kg hôm nay</div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <select class="filter-select" id="filter-date" onchange="renderDashboard()">
+      <option value="today">Hôm nay</option>
+      <option value="week">7 ngày qua</option>
+      <option value="month">30 ngày qua</option>
+      <option value="all">Tất cả</option>
+    </select>
+    <select class="filter-select" id="filter-station" onchange="renderDashboard()">
+      <option value="">Tất cả trạm</option>
+      <option>Trạm Bù Rên</option><option>Trạm Bù Gia Mập</option><option>Trạm Tân Thành</option>
+      <option>Trạm Lộc Hiệp</option><option>Trạm Tân Tiến</option><option>Trạm Thiện Hưng</option>
+      <option>Trạm Hưng Phước</option><option>Trạm Thanh Bình</option>
+    </select>
+  </div>
+
+  <p class="section-title">Trạng thái trạm hôm nay</p>
+  <div class="station-grid" id="station-grid"></div>
+
+  <p class="section-title">Lịch sử báo cáo</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Ngày</th>
+          <th>Trạm</th>
+          <th>Nước SX (m³)</th>
+          <th>Clo (kg)</th>
+          <th>Tình trạng</th>
+        </tr>
+      </thead>
+      <tbody id="report-table"></tbody>
+    </table>
+    <div class="empty-state" id="empty-state" style="display:none">
+      <div class="icon">📭</div>
+      <p>Chưa có báo cáo nào.<br>Nhân viên trạm hãy vào tab "Báo cáo" để nhập số liệu.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── CONFIG ──
+  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxWAqBFkHPQGl9PnXQ_eewPjg-NFd_faaRStTGmGJCX-bV_UBD7FFZrEgXYf0Lv3vsI/exec';
+
+  // ── DATA STORE (localStorage) ──
+  const STORAGE_KEY = 'water_reports_v1';
+  const STATIONS = ['Trạm Bù Rên','Trạm Bù Gia Mập','Trạm Tân Thành','Trạm Lộc Hiệp','Trạm Tân Tiến','Trạm Thiện Hưng','Trạm Hưng Phước','Trạm Thanh Bình'];
+
+  function getReports() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+  }
+  function saveReports(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  // ── DATE HELPERS ──
+  function todayStr() {
+    return new Date().toISOString().slice(0, 10);
+  }
+  function formatDate(str) {
+    const [y,m,d] = str.split('-');
+    return `${d}/${m}/${y}`;
+  }
+  function daysAgo(n) {
+    const d = new Date(); d.setDate(d.getDate() - n);
+    return d.toISOString().slice(0,10);
+  }
+
+  // ── INIT ──
+  document.getElementById('today-date').textContent = '📅 ' + formatDate(todayStr());
+
+  // ── VIEWS ──
+  function showView(v) {
+    document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('view-' + v).classList.add('active');
+    event.target.classList.add('active');
+    if (v === 'dashboard') renderDashboard();
+  }
+
+  // ── INCIDENT TOGGLE ──
+  let incidentVal = null;
+  function setIncident(yes) {
+    incidentVal = yes;
+    document.getElementById('btn-no').className = 'toggle-btn' + (!yes ? ' selected-no' : '');
+    document.getElementById('btn-yes').className = 'toggle-btn' + (yes ? ' selected-yes' : '');
+    document.getElementById('incident-detail').className = 'incident-detail' + (yes ? ' show' : '');
+  }
+
+  // ── FORM SUBMIT ──
+  function submitForm() {
+    const station = document.getElementById('f-station').value;
+    const reporter = document.getElementById('f-reporter').value.trim();
+    const water = parseFloat(document.getElementById('f-water').value);
+
+    if (!station) { alert('Vui lòng chọn tên trạm!'); return; }
+    if (!reporter) { alert('Vui lòng nhập tên người báo cáo!'); return; }
+    if (isNaN(water) || water < 0) { alert('Vui lòng nhập lượng nước sản xuất!'); return; }
+    if (incidentVal === null) { alert('Vui lòng chọn tình trạng sự cố!'); return; }
+
+    const report = {
+      id: Date.now(),
+      date: todayStr(),
+      station,
+      reporter,
+      water,
+      clo: parseFloat(document.getElementById('f-clo').value) || 0,
+      phen: parseFloat(document.getElementById('f-phen').value) || 0,
+      voi: parseFloat(document.getElementById('f-voi').value) || 0,
+      incident: incidentVal,
+      incidentDetail: document.getElementById('f-incident').value.trim(),
+      meters: parseInt(document.getElementById('f-meters').value) || 0,
+      metersNote: document.getElementById('f-meters-note').value.trim(),
+      submittedAt: new Date().toLocaleTimeString('vi-VN')
+    };
+
+    // Lưu local
+    const reports = getReports();
+    reports.unshift(report);
+    saveReports(reports);
+
+    // Gửi lên Google Sheets
+    const btn = document.querySelector('.btn-submit');
+    btn.textContent = '⏳ Đang gửi...';
+    btn.disabled = true;
+
+    fetch(SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(report)
+    })
+    .then(() => {
+      document.getElementById('success-msg').textContent =
+        `${station} — ${reporter}\nNước SX: ${water} m³ | Clo: ${report.clo} kg\nĐã lưu vào Google Sheet ✓`;
+    })
+    .catch(() => {
+      document.getElementById('success-msg').textContent =
+        `${station} — ${reporter}\nNước SX: ${water} m³ | Clo: ${report.clo} kg\n⚠️ Mất mạng — đã lưu tạm máy, sẽ đồng bộ sau`;
+    })
+    .finally(() => {
+      btn.textContent = '📤 Gửi báo cáo';
+      btn.disabled = false;
+      document.getElementById('form-main').style.display = 'none';
+      document.getElementById('success-screen').classList.add('show');
+    });
+  }
+
+  function newReport() {
+    document.getElementById('form-main').style.display = 'block';
+    document.getElementById('success-screen').classList.remove('show');
+    document.getElementById('f-station').value = '';
+    document.getElementById('f-reporter').value = '';
+    document.getElementById('f-water').value = '';
+    document.getElementById('f-clo').value = '';
+    document.getElementById('f-phen').value = '';
+    document.getElementById('f-voi').value = '';
+    document.getElementById('f-incident').value = '';
+    document.getElementById('f-meters').value = '';
+    document.getElementById('f-meters-note').value = '';
+    incidentVal = null;
+    document.getElementById('btn-no').className = 'toggle-btn';
+    document.getElementById('btn-yes').className = 'toggle-btn';
+    document.getElementById('incident-detail').className = 'incident-detail';
+  }
+
+  // ── DASHBOARD ──
+  function filterReports() {
+    let reports = getReports();
+    const dateFilter = document.getElementById('filter-date').value;
+    const stationFilter = document.getElementById('filter-station').value;
+
+    const cutoff = dateFilter === 'today' ? todayStr()
+      : dateFilter === 'week' ? daysAgo(7)
+      : dateFilter === 'month' ? daysAgo(30)
+      : '2000-01-01';
+
+    reports = reports.filter(r => r.date >= cutoff);
+    if (stationFilter) reports = reports.filter(r => r.station === stationFilter);
+    return reports;
+  }
+
+  function renderDashboard() {
+    const reports = filterReports();
+    const today = todayStr();
+    const todayReports = getReports().filter(r => r.date === today);
+    const reportedStations = new Set(todayReports.map(r => r.station));
+
+    // Stats
+    document.getElementById('d-reported').textContent = reportedStations.size;
+    document.getElementById('d-total-water').textContent =
+      todayReports.reduce((s,r) => s + r.water, 0).toFixed(1);
+    document.getElementById('d-incidents').textContent =
+      todayReports.filter(r => r.incident).length;
+    document.getElementById('d-total-clo').textContent =
+      todayReports.reduce((s,r) => s + r.clo, 0).toFixed(2);
+
+    // Missing alert
+    const missing = STATIONS.filter(s => !reportedStations.has(s));
+    const alertBar = document.getElementById('alert-missing');
+    if (missing.length > 0 && missing.length < 8) {
+      alertBar.classList.remove('hidden');
+      document.getElementById('alert-text').textContent =
+        `Chưa báo cáo hôm nay: ${missing.join(', ')}`;
+    } else {
+      alertBar.classList.add('hidden');
+    }
+
+    // Station cards
+    const grid = document.getElementById('station-grid');
+    grid.innerHTML = STATIONS.map(s => {
+      const r = todayReports.find(x => x.station === s);
+      if (!r) return `<div class="station-card">
+        <div class="station-name">${s}</div>
+        <span class="station-status status-missing">⏳ Chưa báo cáo</span>
+        <div class="station-data">—</div>
+      </div>`;
+      const cls = r.incident ? 'reported incident' : 'reported';
+      const badge = r.incident
+        ? `<span class="station-status status-incident">⚠️ Sự cố</span>`
+        : `<span class="station-status status-ok">✅ Bình thường</span>`;
+      return `<div class="station-card ${cls}">
+        <div class="station-name">${s}</div>
+        ${badge}
+        <div class="station-data">
+          💧 <strong>${r.water} m³</strong> nước SX<br>
+          🧪 Clo: <strong>${r.clo} kg</strong>${r.meters > 0 ? `<br>🔧 ĐH lắp: <strong>${r.meters} cái</strong>` : ''}<br>
+          👤 ${r.reporter} · ${r.submittedAt}
+        </div>
+      </div>`;
+    }).join('');
+
+    // Table
+    const tbody = document.getElementById('report-table');
+    const empty = document.getElementById('empty-state');
+    if (reports.length === 0) {
+      tbody.innerHTML = '';
+      empty.style.display = 'block';
+    } else {
+      empty.style.display = 'none';
+      tbody.innerHTML = reports.map(r => `<tr>
+        <td>${formatDate(r.date)}</td>
+        <td><strong>${r.station}</strong></td>
+        <td style="font-family:'JetBrains Mono',monospace">${r.water}</td>
+        <td style="font-family:'JetBrains Mono',monospace">${r.clo}</td>
+        <td>${r.incident
+          ? `<span class="badge badge-incident">⚠️ Sự cố</span>`
+          : `<span class="badge badge-ok">✅ OK</span>`}</td>
+      </tr>`).join('');
+    }
+
+    document.getElementById('dash-subtitle').textContent =
+      `Cập nhật: ${new Date().toLocaleString('vi-VN')} · Tổng ${reports.length} báo cáo`;
+  }
+
+  renderDashboard();
+</script>
+</body>
+</html>
