@@ -85,6 +85,12 @@
   .btn-refresh{padding:7px 16px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
   .btn-refresh:hover{background:var(--blue-dark);}
 
+  /* Date picker cho dashboard */
+  .dash-date-picker{display:none;align-items:center;gap:6px;}
+  .dash-date-picker.show{display:flex;}
+  .dash-date-picker label{font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;}
+  .dash-date-picker input{padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;width:140px;}
+
   .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
   .stat-card{background:var(--card);border-radius:12px;padding:16px;border:1px solid var(--border);}
   .stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;margin-bottom:8px;}
@@ -93,6 +99,8 @@
   .stat-value.teal{color:var(--teal);}
   .stat-value.red{color:var(--red);}
   .stat-unit{font-size:13px;font-weight:500;color:var(--muted);margin-top:2px;}
+  /* label động theo filter */
+  #label-reported{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;margin-bottom:8px;}
 
   .section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:12px;}
 
@@ -275,12 +283,18 @@
   </div>
 
   <div class="dash-toolbar">
-    <select class="filter-select" id="filter-date" onchange="renderDashboard()">
+    <select class="filter-select" id="filter-date" onchange="onFilterDateChange()">
       <option value="today">Hôm nay</option>
+      <option value="specific">Chọn ngày cụ thể</option>
       <option value="week">7 ngày qua</option>
       <option value="month">30 ngày qua</option>
       <option value="all">Tất cả</option>
     </select>
+    <!-- Hiện khi chọn "ngày cụ thể" -->
+    <div class="dash-date-picker" id="dash-date-picker">
+      <label>Ngày:</label>
+      <input type="date" id="filter-specific-date" onchange="renderDashboard()">
+    </div>
     <select class="filter-select" id="filter-station" onchange="renderDashboard()">
       <option value="">Tất cả trạm</option>
       <option>Trạm Bù Rên</option><option>Trạm Bù Gia Mập</option>
@@ -293,28 +307,28 @@
 
   <div class="stat-grid">
     <div class="stat-card">
-      <div class="stat-label">Đã báo cáo hôm nay</div>
+      <div class="stat-label" id="label-reported">Đã báo cáo</div>
       <div class="stat-value blue" id="d-reported">0</div>
-      <div class="stat-unit">/ 8 trạm</div>
+      <div class="stat-unit" id="label-reported-sub">/ 8 trạm</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Tổng nước SX hôm nay</div>
+      <div class="stat-label" id="label-water">Tổng nước SX</div>
       <div class="stat-value teal" id="d-total-water">0</div>
       <div class="stat-unit">m³</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Sự cố đang xử lý</div>
+      <div class="stat-label">Sự cố</div>
       <div class="stat-value red" id="d-incidents">0</div>
       <div class="stat-unit">trạm</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Tổng Clo sử dụng</div>
+      <div class="stat-label" id="label-clo">Tổng Clo</div>
       <div class="stat-value" id="d-total-clo">0</div>
-      <div class="stat-unit">kg hôm nay</div>
+      <div class="stat-unit">kg</div>
     </div>
   </div>
 
-  <p class="section-title">Trạng thái trạm hôm nay</p>
+  <p class="section-title" id="station-section-title">Trạng thái trạm hôm nay</p>
   <div class="station-grid" id="station-grid"></div>
 
   <p class="section-title">Lịch sử báo cáo</p>
@@ -322,7 +336,7 @@
     <table>
       <thead>
         <tr>
-          <th>Ngày</th>
+          <th>Ngày BC</th>
           <th>Trạm</th>
           <th>ĐH hôm nay (m³)</th>
           <th>Nước SX (m³)</th>
@@ -354,14 +368,21 @@
   function todayStr(){return new Date().toISOString().slice(0,10);}
   function formatDate(str){
     if(!str)return'';
-    // handle both yyyy-mm-dd and dd/mm/yyyy
     if(str.includes('/')){return str;}
     const [y,m,d]=str.split('-');return `${d}/${m}/${y}`;
   }
   function toYMD(str){
     if(!str)return'';
+    // Nếu là string có dấu ' phía trước (do Apps Script ghi text) thì bỏ đi
+    str = String(str).replace(/^'/,'').trim();
     if(str.includes('-'))return str.slice(0,10);
-    const [d,m,y]=str.split('/');return `${y}-${m}-${d}`;
+    if(str.includes('/')){const [d,m,y]=str.split('/');return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
+    // Trường hợp Google Sheet trả về Date object đã serialize thành số (epoch)
+    if(!isNaN(str) && str.length > 4){
+      const d = new Date(parseInt(str));
+      return d.toISOString().slice(0,10);
+    }
+    return str.slice(0,10);
   }
   function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);}
 
@@ -380,12 +401,10 @@
     const date    = document.getElementById('f-date').value;
     if(!station || !date) return;
 
-    // Tính ngày hôm qua
     const d = new Date(date);
     d.setDate(d.getDate() - 1);
     const yesterday = d.toISOString().slice(0,10);
 
-    // Tìm trong dữ liệu local báo cáo của trạm này ngày hôm qua
     const reports = getReports();
     const prev = reports.find(r => r.station === station && r.date === yesterday);
 
@@ -486,7 +505,7 @@
     })
     .then(()=>{
       document.getElementById('success-msg').innerHTML =
-        `<b>${station}</b> — ${reporter}<br>ĐH hôm nay: ${meterToday} m³ | Nước SX: ${waterProduced} m³<br>Clo: ${report.clo} kg | Ngày: ${formatDate(date)}<br>✅ Đã lưu vào Google Sheet`;
+        `<b>${station}</b> — ${reporter}<br>ĐH hôm nay: ${meterToday} m³ | Nước SX: ${waterProduced} m³<br>Clo: ${report.clo} kg | Ngày BC: ${formatDate(date)}<br>✅ Đã lưu vào Google Sheet`;
     })
     .catch(()=>{
       document.getElementById('success-msg').innerHTML =
@@ -527,21 +546,21 @@
     fetch(SHEET_URL)
       .then(r=>r.json())
       .then(rows=>{
-        // Map sheet columns → report objects
         const reports = rows.map(r=>({
-          date:       toYMD(r['Ngày']||r['Ng\u00e0y']||''),
-          station:    r['Trạm']||r['Tr\u1ea1m']||'',
-          reporter:   r['Người báo cáo']||r['Ng\u01b0\u1eddi b\u00e1o c\u00e1o']||'',
-          meterToday: parseFloat(r['ĐH hôm nay (m³)']||r['\u0110H h\u00f4m nay (m\u00b3)'])||0,
-          water:      parseFloat(r['Nước SX (m³)']||r['N\u01b0\u1edbc SX (m\u00b3)'])||0,
+          // ── KEY FIX: dùng cột 'Ngày' là ngày báo cáo nhân viên chọn ──
+          date:       toYMD(r['Ngày']||''),
+          station:    r['Trạm']||'',
+          reporter:   r['Người báo cáo']||'',
+          meterToday: parseFloat(r['ĐH hôm nay (m³)'])||0,
+          water:      parseFloat(r['Nước SX (m³)'])||0,
           clo:        parseFloat(r['Clo (kg)'])||0,
-          phen:       parseFloat(r['Phèn (kg)']||r['Ph\u00e8n (kg)'])||0,
-          voi:        parseFloat(r['Vôi (kg)']||r['V\u00f4i (kg)'])||0,
-          incident:   (r['Sự cố']||r['S\u1ef1 c\u1ed1']||'')==='Có',
-          incidentDetail: r['Chi tiết sự cố']||r['Chi ti\u1ebft s\u1ef1 c\u1ed1']||'',
-          meters:     parseInt(r['ĐH lắp mới (cái)']||r['\u0110H l\u1eafp m\u1edbi (c\u00e1i)'])||0,
-          metersNote: r['Ghi chú ĐH']||r['Ghi ch\u00fa \u0110H']||'',
-          submittedAt:r['Giờ gửi']||r['Gi\u1edd g\u1eedi']||''
+          phen:       parseFloat(r['Phèn (kg)'])||0,
+          voi:        parseFloat(r['Vôi (kg)'])||0,
+          incident:   (r['Sự cố']||'')==='Có',
+          incidentDetail: r['Chi tiết sự cố']||'',
+          meters:     parseInt(r['ĐH lắp mới (cái)'])||0,
+          metersNote: r['Ghi chú ĐH']||'',
+          submittedAt:r['Giờ gửi']||''
         })).filter(r=>r.date && r.station);
 
         saveReports(reports);
@@ -550,73 +569,159 @@
       })
       .catch(()=>{
         loading.style.display='none';
-        // fallback to local
         renderDashboard();
       });
   }
 
-  // ── DASHBOARD ──
+  // ── XỬ LÝ THAY ĐỔI FILTER NGÀY ──
+  function onFilterDateChange(){
+    const df = document.getElementById('filter-date').value;
+    const picker = document.getElementById('dash-date-picker');
+    if(df === 'specific'){
+      picker.classList.add('show');
+      // Mặc định là hôm qua (trường hợp hay dùng nhất)
+      const yesterday = daysAgo(1);
+      document.getElementById('filter-specific-date').value = yesterday;
+    } else {
+      picker.classList.remove('show');
+    }
+    renderDashboard();
+  }
+
+  // ── LẤY NGÀY ĐANG FILTER ──
+  function getFilterDate(){
+    const df = document.getElementById('filter-date').value;
+    if(df === 'today') return todayStr();
+    if(df === 'specific'){
+      return document.getElementById('filter-specific-date').value || todayStr();
+    }
+    return null; // week/month/all không dùng ngày cụ thể
+  }
+
+  // ── FILTER REPORTS ──
   function filterReports(){
     let reports = getReports();
     const df = document.getElementById('filter-date').value;
     const sf = document.getElementById('filter-station').value;
-    const cutoff = df==='today'?todayStr():df==='week'?daysAgo(7):df==='month'?daysAgo(30):'2000-01-01';
-    reports = reports.filter(r=>r.date>=cutoff);
-    if(sf) reports=reports.filter(r=>r.station===sf);
+
+    if(df === 'today'){
+      reports = reports.filter(r => r.date === todayStr());
+    } else if(df === 'specific'){
+      const sd = document.getElementById('filter-specific-date').value;
+      if(sd) reports = reports.filter(r => r.date === sd);
+    } else if(df === 'week'){
+      const cutoff = daysAgo(7);
+      reports = reports.filter(r => r.date >= cutoff);
+    } else if(df === 'month'){
+      const cutoff = daysAgo(30);
+      reports = reports.filter(r => r.date >= cutoff);
+    }
+    // 'all' → không lọc ngày
+
+    if(sf) reports = reports.filter(r => r.station === sf);
     return reports;
   }
 
+  // ── DASHBOARD ──
   function renderDashboard(){
+    const df = document.getElementById('filter-date').value;
     const reports = filterReports();
-    const today   = todayStr();
-    const all     = getReports();
-    const todayRep= all.filter(r=>r.date===today);
-    const reported = new Set(todayRep.map(r=>r.station));
 
-    // Stats
-    document.getElementById('d-reported').textContent  = reported.size;
-    document.getElementById('d-total-water').textContent= todayRep.reduce((s,r)=>s+(r.water||0),0).toFixed(1);
-    document.getElementById('d-incidents').textContent  = todayRep.filter(r=>r.incident).length;
-    document.getElementById('d-total-clo').textContent  = todayRep.reduce((s,r)=>s+(r.clo||0),0).toFixed(2);
+    // Xác định "ngày xem" để hiện station cards và alert
+    let viewDate = null;
+    if(df === 'today') viewDate = todayStr();
+    else if(df === 'specific') viewDate = document.getElementById('filter-specific-date').value || todayStr();
 
-    // Alert missing
-    const missing = STATIONS.filter(s=>!reported.has(s));
-    const alertBar= document.getElementById('alert-missing');
-    if(missing.length>0 && missing.length<8){
-      alertBar.classList.remove('hidden');
-      document.getElementById('alert-text').textContent='Chưa báo cáo hôm nay: '+missing.join(', ');
-    } else { alertBar.classList.add('hidden'); }
+    // Báo cáo của ngày đang xem (dùng cho station cards & stats đầu trang)
+    const dayReports = viewDate ? reports.filter(r => r.date === viewDate) : reports;
+    const reported   = new Set(dayReports.map(r => r.station));
 
-    // Station cards
-    document.getElementById('station-grid').innerHTML = STATIONS.map(s=>{
-      const r = todayRep.find(x=>x.station===s);
-      if(!r) return `<div class="station-card">
-        <div class="station-name">${s}</div>
-        <span class="station-status status-missing">⏳ Chưa báo cáo</span>
-        <div class="station-data">—</div></div>`;
-      const cls = r.incident?'reported incident':'reported';
-      const badge = r.incident
-        ?`<span class="station-status status-incident">⚠️ Sự cố</span>`
-        :`<span class="station-status status-ok">✅ Bình thường</span>`;
-      return `<div class="station-card ${cls}">
-        <div class="station-name">${s}</div>${badge}
-        <div class="station-data">
-          🔢 ĐH: <strong>${r.meterToday||'—'} m³</strong><br>
-          💧 Nước SX: <strong>${r.water||0} m³</strong><br>
-          🧪 Clo: <strong>${r.clo||0} kg</strong>
-          ${r.meters>0?`<br>🔧 ĐH lắp: <strong>${r.meters} cái</strong>`:''}
-          <br>👤 ${r.reporter} · ${r.submittedAt||''}
-        </div></div>`;
-    }).join('');
+    // ── Stats ──
+    const isSingleDay = (df === 'today' || df === 'specific');
+    document.getElementById('d-reported').textContent   = reported.size;
+    document.getElementById('d-total-water').textContent = dayReports.reduce((s,r)=>s+(r.water||0),0).toFixed(1);
+    document.getElementById('d-incidents').textContent   = dayReports.filter(r=>r.incident).length;
+    document.getElementById('d-total-clo').textContent   = dayReports.reduce((s,r)=>s+(r.clo||0),0).toFixed(2);
 
-    // Table
+    // Cập nhật label động
+    if(df === 'today'){
+      document.getElementById('label-reported').textContent = 'Đã báo cáo hôm nay';
+      document.getElementById('label-reported-sub').textContent = '/ 8 trạm';
+      document.getElementById('label-water').textContent = 'Tổng nước SX hôm nay';
+      document.getElementById('label-clo').textContent = 'Tổng Clo hôm nay';
+    } else if(df === 'specific'){
+      const sd = document.getElementById('filter-specific-date').value;
+      document.getElementById('label-reported').textContent = `Đã BC ngày ${formatDate(sd)}`;
+      document.getElementById('label-reported-sub').textContent = '/ 8 trạm';
+      document.getElementById('label-water').textContent = `Nước SX ngày ${formatDate(sd)}`;
+      document.getElementById('label-clo').textContent = `Clo ngày ${formatDate(sd)}`;
+    } else {
+      const labelMap = {week:'7 ngày qua', month:'30 ngày qua', all:'Tất cả'};
+      document.getElementById('label-reported').textContent = `Trạm đã BC (${labelMap[df]})`;
+      document.getElementById('label-reported-sub').textContent = 'trạm';
+      document.getElementById('label-water').textContent = `Tổng nước SX (${labelMap[df]})`;
+      document.getElementById('label-clo').textContent = `Tổng Clo (${labelMap[df]})`;
+    }
+
+    // ── Alert thiếu báo cáo — chỉ hiện khi xem ngày cụ thể ──
+    const alertBar = document.getElementById('alert-missing');
+    if(isSingleDay){
+      const missing = STATIONS.filter(s => !reported.has(s));
+      if(missing.length > 0 && missing.length < 8){
+        alertBar.classList.remove('hidden');
+        const label = df === 'today' ? 'hôm nay' : `ngày ${formatDate(viewDate)}`;
+        document.getElementById('alert-text').textContent = `Chưa báo cáo ${label}: ` + missing.join(', ');
+      } else {
+        alertBar.classList.add('hidden');
+      }
+    } else {
+      alertBar.classList.add('hidden');
+    }
+
+    // ── Station cards — chỉ hiện khi xem ngày cụ thể ──
+    const stationSection = document.getElementById('station-section-title');
+    const stationGrid    = document.getElementById('station-grid');
+    if(isSingleDay){
+      stationSection.style.display = 'block';
+      stationGrid.style.display    = 'grid';
+      const label = df === 'today' ? 'hôm nay' : formatDate(viewDate);
+      stationSection.textContent = `Trạng thái trạm — ${label}`;
+
+      stationGrid.innerHTML = STATIONS.map(s => {
+        const r = dayReports.find(x => x.station === s);
+        if(!r) return `<div class="station-card">
+          <div class="station-name">${s}</div>
+          <span class="station-status status-missing">⏳ Chưa báo cáo</span>
+          <div class="station-data">—</div></div>`;
+        const cls   = r.incident ? 'reported incident' : 'reported';
+        const badge = r.incident
+          ? `<span class="station-status status-incident">⚠️ Sự cố</span>`
+          : `<span class="station-status status-ok">✅ Bình thường</span>`;
+        return `<div class="station-card ${cls}">
+          <div class="station-name">${s}</div>${badge}
+          <div class="station-data">
+            🔢 ĐH: <strong>${r.meterToday||'—'} m³</strong><br>
+            💧 Nước SX: <strong>${r.water||0} m³</strong><br>
+            🧪 Clo: <strong>${r.clo||0} kg</strong>
+            ${r.meters>0?`<br>🔧 ĐH lắp: <strong>${r.meters} cái</strong>`:''}
+            <br>👤 ${r.reporter} · ${r.submittedAt||''}
+          </div></div>`;
+      }).join('');
+    } else {
+      stationSection.style.display = 'none';
+      stationGrid.style.display    = 'none';
+    }
+
+    // ── Table ──
     const tbody = document.getElementById('report-table');
     const empty  = document.getElementById('empty-state');
-    if(reports.length===0){
-      tbody.innerHTML=''; empty.style.display='block';
+    if(reports.length === 0){
+      tbody.innerHTML = ''; empty.style.display = 'block';
     } else {
-      empty.style.display='none';
-      tbody.innerHTML = reports.map(r=>`<tr>
+      empty.style.display = 'none';
+      // Sắp xếp mới nhất lên trên (theo ngày báo cáo)
+      const sorted = [...reports].sort((a,b) => b.date.localeCompare(a.date));
+      tbody.innerHTML = sorted.map(r=>`<tr>
         <td>${formatDate(r.date)}</td>
         <td><strong>${r.station}</strong></td>
         <td style="font-family:'JetBrains Mono',monospace">${r.meterToday||'—'}</td>
@@ -629,10 +734,12 @@
       </tr>`).join('');
     }
 
-    document.getElementById('dash-subtitle').textContent=
+    document.getElementById('dash-subtitle').textContent =
       `Cập nhật: ${new Date().toLocaleString('vi-VN')} · Tổng ${reports.length} báo cáo`;
   }
 
+  // Khởi tạo date picker với ngày hôm nay
+  document.getElementById('filter-specific-date').value = todayStr();
   renderDashboard();
 </script>
 </body>
