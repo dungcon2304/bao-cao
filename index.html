@@ -457,6 +457,26 @@
     document.getElementById('incident-detail').className='incident-detail'+(yes?' show':'');
   }
 
+  // ── KHOÁ NGÀY ──────────────────────────────────────────────
+  const LOCK_DAYS = 3; // ← Chỉnh số ngày tại đây
+  // ────────────────────────────────────────────────────────────
+  function checkDateLock(dateValue){
+    const reportDate = new Date(dateValue);
+    reportDate.setHours(0,0,0,0);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const diffDays = Math.floor((today - reportDate) / 86400000);
+    if(diffDays < 0){
+      alert('⛔ Ngày báo cáo không được là ngày trong tương lai!');
+      return false;
+    }
+    if(diffDays > LOCK_DAYS){
+      alert(`⛔ Không thể gửi!\n\nNgày "${reportDate.toLocaleDateString('vi-VN')}" đã quá ${LOCK_DAYS} ngày.\n\nVui lòng liên hệ quản lý nếu cần điều chỉnh.`);
+      return false;
+    }
+    return true;
+  }
+
   // ── SUBMIT ──
   function submitForm(){
     const date   = document.getElementById('f-date').value;
@@ -470,6 +490,7 @@
     if(!reporter){alert('Vui lòng nhập tên người báo cáo!');return;}
     if(isNaN(meterToday)||meterToday<0){alert('Vui lòng nhập chỉ số đồng hồ hôm nay!');return;}
     if(incidentVal===null){alert('Vui lòng chọn tình trạng sự cố!');return;}
+    if(!checkDateLock(date)){return;} // ← Kiểm tra khóa ngày
 
     const waterProduced = (!isNaN(meterYest) && meterToday >= meterYest)
       ? parseFloat((meterToday - meterYest).toFixed(1)) : 0;
@@ -486,7 +507,10 @@
       incidentDetail: document.getElementById('f-incident').value.trim(),
       meters: parseInt(document.getElementById('f-meters').value)||0,
       metersNote: document.getElementById('f-meters-note').value.trim(),
-      submittedAt: new Date().toLocaleTimeString('vi-VN')
+      submittedAt: new Date().toLocaleString('vi-VN', {
+        day:'2-digit', month:'2-digit', year:'numeric',
+        hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false
+      })
     };
 
     // Lưu local
