@@ -624,35 +624,49 @@ function newReport(){
 // === LOAD FROM SHEET ===
 // doGet da tra ve object voi key camelCase (date, station, reporter, meterToday, water, clo, phen, voi, incident, meters, lanGui...)
 function loadSheet(){
-  const ld=document.getElementById('tbl-loading');
-  const em=document.getElementById('tbl-empty');
-  ld.style.display='block';em.style.display='none';
+  const ld = document.getElementById('tbl-loading');
+  const em = document.getElementById('tbl-empty');
+  ld.style.display = 'block';
+  em.style.display = 'none';
+
   fetch(SHEET_URL)
-  .then(r=>r.json())
-  .then(rows=>{
-    // doGet tra ve camelCase truc tiep, chi can chuan hoa date
-    const rs=rows.map(r=>({
-      date:       toYMD(r.date||''),
-      station:    r.station||'',
-      reporter:   r.reporter||'',
-      meterToday: parseFloat(r.meterToday)||0,
-      meterYesterday: r.meterYesterday||'',
-      water:      parseFloat(r.water)||0,
-      clo:        parseFloat(r.clo)||0,
-      phen:       parseFloat(r.phen)||0,
-      voi:        parseFloat(r.voi)||0,
-      incident:   r.incident===true||r.incident==='true',
-      incidentDetail: r.incidentDetail||'',
-      meters:     parseInt(r.meters)||0,
-      metersNote: r.metersNote||'',
-      submittedAt:r.submittedAt||'',
-      lanGui:     r.lanGui||''
-    })).filter(r=>r.date&&r.station);
-    setR(rs);
-    ld.style.display='none';
-    renderDash();
-  })
-  .catch(()=>{ld.style.display='none';renderDash();});
+    .then(r => r.json())
+    .then(rows => {
+      console.log("📥 Dữ liệu nhận được từ server:", rows);
+
+      const rs = rows.map(r => ({
+        date: toYMD(r.date || r.Ngay || ''),
+        station: r.station || r['Trạm'] || '',
+        reporter: r.reporter || r['Người báo cáo'] || '',
+        meterToday: parseFloat(r.meterToday || r['ĐH hôm nay (m³)']) || 0,
+        meterYesterday: r.meterYesterday || r['ĐH hôm qua (m³)'] || '',
+        water: parseFloat(r.water || r['Nước SX (m³)']) || 0,
+        clo: parseFloat(r.clo || r['Clo (kg)']) || 0,
+        phen: parseFloat(r.phen || r['Phèn (kg)']) || 0,
+        voi: parseFloat(r.voi || r['Vôi (kg)']) || 0,
+        incident: r.incident === true || String(r.incident || r['Sự cố']).trim() === 'Có',
+        incidentDetail: r.incidentDetail || r['Chi tiết sự cố'] || '',
+        meters: parseInt(r.meters || r['ĐH lắp mới (cái)']) || 0,
+        metersNote: r.metersNote || r['Ghi chú ĐH'] || '',
+        submittedAt: r.submittedAt || r['Gi�� g�� i'] || '',
+        lanGui: r.lanGui || r['Lần gửi'] || ''
+      })).filter(r => r.date && r.station);
+
+      console.log("Sau khi xử lý còn " + rs.length + " dòng");
+
+      setR(rs);
+      ld.style.display = 'none';
+      renderDash();
+
+      if (rs.length === 0) {
+        em.style.display = 'block';
+      }
+    })
+    .catch(err => {
+      console.error("Lỗi tải dữ liệu:", err);
+      ld.style.display = 'none';
+      renderDash();
+    });
 }
 
 // === DASHBOARD ===
