@@ -146,7 +146,7 @@
 <body>
 
 <nav class="nav">
-  <div class="nav-brand">&#128167; Tram Cap <span>Nuoc</span></div>
+  <div class="nav-brand">💧 Trạm Cấp <span>Nước</span></div>
   <div class="nav-tabs">
     <button type="button" class="nav-tab active" onclick="showView('form',this)">Bao cao</button>
     <button type="button" class="nav-tab" onclick="showView('dashboard',this)">Dashboard</button>
@@ -162,75 +162,74 @@
     </div>
 
     <div class="mode-toggle">
-      <button type="button" class="mode-btn active-new" id="mode-btn-new" onclick="setMode('new')">&#128228; Gui bao cao moi</button>
-      <button type="button" class="mode-btn" id="mode-btn-edit" onclick="setMode('edit')">&#9999;&#65039; Chinh sua da gui</button>
+      <button type="button" class="mode-btn active-new" id="mode-btn-new" onclick="setMode('new')">📤 Gửi báo cáo mới</button>
+      <button type="button" class="mode-btn" id="mode-btn-edit" onclick="setMode('edit')">✏️ Chỉnh sửa đã gửi</button>
     </div>
 
     <div class="edit-banner" id="edit-banner">
-      &#9999;&#65039; <strong>Che do chinh sua:</strong> Du lieu cu se bi <strong>ghi de hoan toan</strong>.
-      Nhan vien chi sua duoc trong ngay; quan ly dung PIN quan ly de sua bat ky luc nao.
+      ✏️ <strong>Chế độ chỉnh sửa:</strong> Dữ liệu cũ sẽ bị <strong>ghi đè hoàn toàn</strong>. Nhân viên chỉ sửa được trong ngày; quản lý dùng PIN quản lý để sửa bất kỳ lúc nào.
     </div>
 
     <div class="err-msg type-error" id="form-error"></div>
 
     <div class="card">
-      <div class="card-title">Thong tin bao cao</div>
+      <div class="card-title">Thông tin báo cáo</div>
       <div class="field">
-        <label>Ngay bao cao <span class="req">*</span></label>
+        <label>Ngày báo cáo <span class="req">*</span></label>
         <input type="date" id="f-date">
       </div>
       <div class="field">
-        <label>Ten tram <span class="req">*</span></label>
+        <label>Tên trạm <span class="req">*</span></label>
         <select id="f-station" onchange="onStationChange()">
-          <option value="">-- Chon tram --</option>
-          <option>Tram Bu Ren</option>
-          <option>Tram Bu Gia Map</option>
-          <option>Tram Tan Thanh</option>
-          <option>Tram Loc Hiep</option>
-          <option>Tram Tan Tien</option>
-          <option>Tram Thien Hung</option>
-          <option>Tram Hung Phuoc</option>
-          <option>Tram Thanh Binh</option>
+          <option value="">-- Chọn trạm --</option>
+          <option>Trạm Bù Rên</option>
+          <option>Trạm Bù Gia Mập</option>
+          <option>Trạm Tân Thành</option>
+          <option>Trạm Lộc Hiệp</option>
+          <option>Trạm Tân Tiến</option>
+          <option>Trạm Thiện Hưng</option>
+          <option>Trạm Hưng Phước</option>
+          <option>Trạm Thanh Bình</option>
         </select>
       </div>
       <div class="field">
-        <label>Nguoi bao cao <span class="req">*</span></label>
-        <input type="text" id="f-reporter" placeholder="Ho ten nhan vien">
+        <label>Người báo cáo <span class="req">*</span></label>
+        <input type="text" id="f-reporter" placeholder="Họ tên nhân viên">
       </div>
     </div>
 
     <div class="pin-box" id="pin-card">
-      <div class="pin-label">&#128272; Xac thuc PIN</div>
+      <div class="pin-label">&#128272; Xác thực PIN</div>
       <div class="field" style="margin:0;">
-        <label style="font-size:12px;color:var(--muted);font-weight:500;">PIN tram (do quan ly cap)</label>
+        <label style="font-size:12px;color:var(--muted);font-weight:500;">PIN trạm (do quản lý cấp)</label>
         <div class="pin-row">
           <input type="password" id="f-pin" maxlength="6" placeholder="......" autocomplete="off" oninput="onPinInput()">
         </div>
         <div class="pin-status" id="pin-status"></div>
         <div class="admin-pin-section" id="admin-pin-section">
-          <label>&#128737;&#65039; Hoac nhap PIN quan ly (sua bat ky ngay nao, bypass khoa ngay)</label>
+          <label>&#128737;&#65039; Hoặc nhập PIN quản lý (sửa bất kỳ ngày nào)</label>
           <div class="pin-row" style="margin-top:6px;">
             <input type="password" id="f-admin-pin" maxlength="12" placeholder="........" autocomplete="off" oninput="onAdminPinInput()">
           </div>
-          <div class="pin-hint">Dung khi nhan vien bao cao sai ngay cu, hoac can sua du lieu da khoa.</div>
+          <div class="pin-hint">Dùng khi nhân viên báo cáo sai ngày cũ, hoặc cần sửa dữ liệu đã khóa.</div>
           <div class="pin-status" id="admin-pin-status"></div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">Dong ho &amp; San luong nuoc</div>
+      <div class="card-title">Đồng hồ &amp; Sản lượng nước</div>
       <div class="field">
-        <label>Chi so dong ho tong hom nay <span class="req">*</span></label>
+        <label>Chỉ số đồng hồ tổng hôm nay <span class="req">*</span></label>
         <div class="input-group">
           <input type="number" id="f-meter-today" placeholder="0" min="0" step="0.1" oninput="calcWater()">
           <span class="input-unit">m3</span>
         </div>
       </div>
       <div class="field">
-        <label>Chi so dong ho tong hom qua <span id="auto-fill-hint" style="color:var(--success);font-weight:500;font-size:11px;"></span></label>
+        <label>Chỉ số đồng hồ tổng hôm qua <span id="auto-fill-hint" style="color:var(--success);font-weight:500;font-size:11px;"></span></label>
         <div class="input-group">
-          <input type="number" id="f-meter-yesterday" placeholder="Tu dong dien neu co du lieu" min="0" step="0.1" oninput="calcWater()">
+          <input type="number" id="f-meter-yesterday" placeholder="Tự động điền nếu có dữ liệu" min="0" step="0.1" oninput="calcWater()">
           <span class="input-unit">m3</span>
         </div>
       </div>
@@ -238,7 +237,7 @@
     </div>
 
     <div class="card">
-      <div class="card-title">Hoa chat su dung</div>
+      <div class="card-title">Hóa chất sử dụng</div>
       <div class="chem-grid">
         <div class="field">
           <label>Clo</label>
@@ -256,110 +255,110 @@
     </div>
 
     <div class="card">
-      <div class="card-title">Su co / Bao tri</div>
+      <div class="card-title">Sự cố / Bảo trì</div>
       <div class="field">
-        <label>Co su co hoac bao tri hom nay khong? <span class="req">*</span></label>
+        <label>Có sự cố hoặc bảo trì hôm nay không? <span class="req">*</span></label>
         <div class="incident-toggle">
           <button type="button" class="toggle-btn" id="btn-no" onclick="setIncident(false)">&#9989; Khong</button>
           <button type="button" class="toggle-btn" id="btn-yes" onclick="setIncident(true)">&#9888;&#65039; Co</button>
         </div>
         <div class="incident-detail" id="incident-detail">
-          <textarea id="f-incident" placeholder="Mo ta su co, bien phap xu ly, thoi gian dung may..."></textarea>
+          <textarea id="f-incident" placeholder="Mô tả sự cố, biện pháp xử lý, thời gian dừng máy..."></textarea>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">Lap dat dong ho nuoc</div>
+      <div class="card-title">Lắp đặt đồng hồ nước</div>
       <div class="field">
-        <label>So dong ho lap moi hom nay</label>
+        <label>Số đồng hồ lắp mới hôm nay</label>
         <div class="input-group"><input type="number" id="f-meters" placeholder="0" min="0" step="1"><span class="input-unit">cai</span></div>
       </div>
       <div class="field">
-        <label>Ghi chu (dia diem, khach hang...)</label>
-        <textarea id="f-meters-note" placeholder="VD: 3 cai tai thon 5, khach hang moi..."></textarea>
+        <label>Ghi chú (địa điểm, khách hàng...)</label>
+        <textarea id="f-meters-note" placeholder="VD: 3 cái tại thôn 5, khách hàng mới..."></textarea>
       </div>
     </div>
 
-    <button class="btn-submit" id="btn-submit" onclick="submitForm()">&#128228; Gui bao cao</button>
+    <button class="btn-submit" id="btn-submit" onclick="submitForm()">📤 Gửi báo cáo</button>
   </div>
 
   <div class="success-screen" id="success-screen">
     <div class="success-icon" id="success-icon">&#10003;</div>
-    <h2 id="success-title">Da gui thanh cong!</h2>
+    <h2 id="success-title">Đã gửi thành công!</h2>
     <p id="success-msg"></p>
-    <button type="button" class="btn-new" onclick="newReport()">+ Bao cao moi</button>
+    <button type="button" class="btn-new" onclick="newReport()">+ Báo cáo mới</button>
   </div>
 </div>
 
 <div id="view-dashboard" class="view view-dashboard">
   <div class="dash-header">
-    <h1>&#128202; Dashboard Quan Ly</h1>
-    <p id="dash-subtitle">Tong hop du lieu tu 8 tram cap nuoc</p>
+    <h1>📊 Dashboard Quản Lý</h1>
+    <p id="dash-subtitle">Tổng hợp dữ liệu từ 8 trạm cấp nước</p>
   </div>
   <div id="alert-missing" class="alert-bar hidden">&#9888;&#65039; <span id="alert-text"></span></div>
   <div class="dash-toolbar">
     <select class="filter-select" id="filter-date" onchange="onFilterDateChange()">
-      <option value="today">Hom nay</option>
-      <option value="specific">Chon ngay cu the</option>
-      <option value="week">7 ngay qua</option>
-      <option value="month">30 ngay qua</option>
-      <option value="all">Tat ca</option>
+      <option value="today">Hôm nay</option>
+      <option value="specific">Chọn ngày cụ thể</option>
+      <option value="week">7 ngày qua</option>
+      <option value="month">30 ngày qua</option>
+      <option value="all">Tất cả</option>
     </select>
     <div class="dash-date-picker" id="dash-date-picker">
-      <label>Ngay:</label>
+      <label>Ngày:</label>
       <input type="date" id="filter-specific-date" onchange="renderDashboard()">
     </div>
     <select class="filter-select" id="filter-station" onchange="renderDashboard()">
-      <option value="">Tat ca tram</option>
-      <option>Tram Bu Ren</option><option>Tram Bu Gia Map</option>
-      <option>Tram Tan Thanh</option><option>Tram Loc Hiep</option>
-      <option>Tram Tan Tien</option><option>Tram Thien Hung</option>
-      <option>Tram Hung Phuoc</option><option>Tram Thanh Binh</option>
+      <option value="">Tất cả trạm</option>
+      <option>Trạm Bù Rên</option><option>Trạm Bù Gia Mập</option>
+      <option>Trạm Tân Thành</option><option>Trạm Lộc Hiệp</option>
+      <option>Trạm Tân Tiến</option><option>Trạm Thiện Hưng</option>
+      <option>Trạm Hưng Phước</option><option>Trạm Thanh Bình</option>
     </select>
-    <button type="button" class="btn-refresh" onclick="loadFromSheet()">&#128260; Tai du lieu</button>
+    <button type="button" class="btn-refresh" onclick="loadFromSheet()">🔄 Tải dữ liệu</button>
   </div>
   <div class="stat-grid">
     <div class="stat-card">
-      <div class="stat-label" id="label-reported">Da bao cao</div>
+      <div class="stat-label" id="label-reported">Đã báo cáo</div>
       <div class="stat-value blue" id="d-reported">0</div>
-      <div class="stat-unit" id="label-reported-sub">/ 8 tram</div>
+      <div class="stat-unit" id="label-reported-sub">/ 8 trạm</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label" id="label-water">Tong nuoc SX</div>
+      <div class="stat-label" id="label-water">Tổng nước SX</div>
       <div class="stat-value teal" id="d-total-water">0</div>
       <div class="stat-unit">m3</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Su co</div>
+      <div class="stat-label">Sự cố</div>
       <div class="stat-value red" id="d-incidents">0</div>
       <div class="stat-unit">tram</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label" id="label-clo">Tong Clo</div>
+      <div class="stat-label" id="label-clo">Tổng Clo</div>
       <div class="stat-value" id="d-total-clo">0</div>
       <div class="stat-unit">kg</div>
     </div>
   </div>
-  <p class="section-title" id="station-section-title">Trang thai tram hom nay</p>
+  <p class="section-title" id="station-section-title">Trạng thái trạm hôm nay</p>
   <div class="station-grid" id="station-grid"></div>
-  <p class="section-title">Lich su bao cao</p>
+  <p class="section-title">Lịch sử báo cáo</p>
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th>Ngay BC</th><th>Tram</th><th>DH hom nay (m3)</th>
-          <th>Nuoc SX (m3)</th><th>Clo (kg)</th><th>DH lap</th>
-          <th>Tinh trang</th><th>Lan gui</th>
+          <th>Ngày BC</th><th>Trạm</th><th>ĐH hôm nay (m³)</th>
+          <th>Nước SX (m³)</th><th>Clo (kg)</th><th>ĐH lắp</th>
+          <th>Tình trạng</th><th>Lần gửi</th>
         </tr>
       </thead>
       <tbody id="report-table"></tbody>
     </table>
     <div class="empty-state" id="empty-state" style="display:none">
       <div class="icon">&#128205;</div>
-      <p>Chua co bao cao nao. Bam "Tai du lieu" de lam moi.</p>
+      <p>Chưa có báo cáo nào. Bấm "Tải dữ liệu" để làm mới.</p>
     </div>
-    <div class="loading" id="loading" style="display:none">&#9203; Dang tai du lieu tu Google Sheet...</div>
+    <div class="loading" id="loading" style="display:none">⏳ Đang tải dữ liệu từ Google Sheet...</div>
   </div>
 </div>
 
@@ -371,8 +370,8 @@ const LOCK_DAYS = 3;
 // PIN được xác thực hoàn toàn phía server (Code.gs) — không lưu ở đây nữa
 const STORAGE_KEY = 'water_reports_v4';
 const STATIONS = [
-  'Tram Bu Ren','Tram Bu Gia Map','Tram Tan Thanh','Tram Loc Hiep',
-  'Tram Tan Tien','Tram Thien Hung','Tram Hung Phuoc','Tram Thanh Binh'
+  'Trạm Bù Rên','Trạm Bù Gia Mập','Trạm Tân Thành','Trạm Lộc Hiệp',
+  'Trạm Tân Tiến','Trạm Thiện Hưng','Trạm Hưng Phước','Trạm Thanh Bình'
 ];
 let currentMode = 'new';
 let incidentVal = null;
@@ -400,9 +399,9 @@ function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOSt
 // INIT
 const todayVal=todayStr();
 document.getElementById('f-date').value=todayVal;
-document.getElementById('today-display').textContent='Ngay: '+formatDate(todayVal);
+document.getElementById('today-display').textContent='Ngày: '+formatDate(todayVal);
 document.getElementById('f-date').addEventListener('change',function(){
-  document.getElementById('today-display').textContent='Ngay: '+formatDate(this.value);
+  document.getElementById('today-display').textContent='Ngày: '+formatDate(this.value);
   autoFillYesterday();
   if(currentMode==='edit')checkExistingReport();
 });
@@ -414,15 +413,15 @@ function setMode(mode){
   document.getElementById('mode-btn-new').className='mode-btn'+(isEdit?'':' active-new');
   document.getElementById('mode-btn-edit').className='mode-btn'+(isEdit?' active-edit':'');
   document.getElementById('form-header').className='form-header'+(isEdit?' edit-mode':'');
-  document.getElementById('form-title').textContent=isEdit?'Chinh Sua Bao Cao':'Bao Cao Ngay';
+  document.getElementById('form-title').textContent=isEdit?'Chỉnh Sửa Báo Cáo':'Báo Cáo Ngày';
   document.getElementById('form-subtitle').textContent=isEdit
-    ?'Ghi de du lieu da gui — can PIN xac thuc'
-    :'Nhap so lieu van hanh tram cap nuoc';
+    ?'Ghi đè dữ liệu đã gửi — cần PIN xác thực'
+    :'Nhập số liệu vận hành trạm cấp nước';
   document.getElementById('edit-banner').className='edit-banner'+(isEdit?' show':'');
   document.getElementById('admin-pin-section').className='admin-pin-section'+(isEdit?' show':'');
   const btn=document.getElementById('btn-submit');
   btn.className='btn-submit'+(isEdit?' edit':'');
-  btn.textContent=isEdit?'Xac nhan chinh sua':'Gui bao cao';
+  btn.textContent=isEdit?'Xác nhận chỉnh sửa':'Gửi báo cáo';
   document.getElementById('f-admin-pin').value='';
   document.getElementById('admin-pin-status').textContent='';
   hideMsg();
@@ -447,9 +446,9 @@ function checkExistingReport(){
     document.getElementById('f-incident').value=ex.incidentDetail||'';
     setIncident(ex.incident||false);
     calcWater();
-    showMsg('info','Da tai du lieu cu cua "'+station+'" ngay '+formatDate(date)+'. Sua va xac nhan.');
+    showMsg('info','Đã tải dữ liệu cũ của "'+station+'" ngày '+formatDate(date)+'. Sửa và xác nhận.');
   } else {
-    showMsg('info','Khong tim thay ban ghi cuc bo cua "'+station+'" ngay '+formatDate(date)+'. Nhap moi va gui se ghi de tren server.');
+    showMsg('info','Không tìm thấy bản ghi cục bộ của "'+station+'" ngày '+formatDate(date)+'. Nhập mới và gửi sẽ ghi đè trên server.');
   }
 }
 
@@ -484,8 +483,8 @@ function autoFillYesterday(){
   const prev=getReports().find(r=>r.station===station&&r.date===yest);
   const fy=document.getElementById('f-meter-yesterday');
   const hint=document.getElementById('auto-fill-hint');
-  if(prev&&prev.meterToday){fy.value=prev.meterToday;fy.style.background='#e8fff5';hint.textContent='Tu dong lay tu '+formatDate(yest);calcWater();}
-  else{fy.style.background='';hint.textContent='(nhap tay neu chua co)';}
+  if(prev&&prev.meterToday){fy.value=prev.meterToday;fy.style.background='#e8fff5';hint.textContent='Tự động lấy từ '+formatDate(yest);calcWater();}
+  else{fy.style.background='';hint.textContent='(nhập tay nếu chưa có)';}
 }
 
 // VIEWS
@@ -501,7 +500,7 @@ function calcWater(){
   const t=parseFloat(document.getElementById('f-meter-today').value);
   const y=parseFloat(document.getElementById('f-meter-yesterday').value);
   const el=document.getElementById('water-calc-result');
-  if(!isNaN(t)&&!isNaN(y)&&t>=y){el.textContent='Luong nuoc san xuat: '+(t-y).toFixed(1)+' m3';el.classList.add('show');}
+  if(!isNaN(t)&&!isNaN(y)&&t>=y){el.textContent='💧 Lượng nước sản xuất: '+(t-y).toFixed(1)+' m³';el.classList.add('show');}
   else el.classList.remove('show');
 }
 
@@ -524,8 +523,8 @@ function checkDateLock(dateValue){
   const rd=new Date(dateValue); rd.setHours(0,0,0,0);
   const td=new Date(); td.setHours(0,0,0,0);
   const diff=Math.floor((td-rd)/86400000);
-  if(diff<0)return 'Ngay bao cao khong duoc la ngay tuong lai!';
-  if(diff>LOCK_DAYS)return 'Ngay nay da qua '+LOCK_DAYS+' ngay. Dung PIN quan ly de sua.';
+  if(diff<0)return 'Ngày báo cáo khong duoc la ngay tuong lai!';
+  if(diff>LOCK_DAYS)return 'Ngày này đã quá '+LOCK_DAYS+' ngày. Dùng PIN quản lý để sửa.';
   return null;
 }
 
@@ -539,17 +538,17 @@ function submitForm(){
   const meterYest=parseFloat(document.getElementById('f-meter-yesterday').value);
   const isEdit=currentMode==='edit';
 
-  if(!date){showMsg('error','Vui long chon ngay bao cao!');return;}
-  if(!station){showMsg('error','Vui long chon ten tram!');return;}
-  if(!reporter){showMsg('error','Vui long nhap ten nguoi bao cao!');return;}
-  if(isNaN(meterToday)||meterToday<0){showMsg('error','Vui long nhap chi so dong ho hom nay!');return;}
-  if(incidentVal===null){showMsg('error','Vui long chon tinh trang su co!');return;}
+  if(!date){showMsg('error','Vui lòng chọn ngày báo cáo!');return;}
+  if(!station){showMsg('error','Vui lòng chọn tên trạm!');return;}
+  if(!reporter){showMsg('error','Vui lòng nhập tên người báo cáo!');return;}
+  if(isNaN(meterToday)||meterToday<0){showMsg('error','Vui lòng nhập chỉ số đồng hồ hôm nay!');return;}
+  if(incidentVal===null){showMsg('error','Vui lòng chọn tình trạng sự cố!');return;}
 
   // Kiem tra co nhap PIN chua (khong so sanh — server se xac thuc)
   const pinVal=document.getElementById('f-pin').value.trim();
   const adminPinVal=document.getElementById('f-admin-pin').value.trim();
   if(!pinVal&&!adminPinVal){
-    showMsg('error','Vui long nhap PIN tram hoac PIN quan ly!');
+    showMsg('error','Vui lòng nhập PIN trạm hoặc PIN quản lý!');
     document.getElementById('f-pin').focus(); return;
   }
 
@@ -558,13 +557,13 @@ function submitForm(){
     const lockErr=checkDateLock(date);
     if(lockErr){showMsg('error',lockErr);return;}
     if(isEdit&&date!==todayStr()){
-      showMsg('error','Nhan vien chi sua duoc bao cao cua hom nay. Dung PIN quan ly de sua ngay khac.');return;
+      showMsg('error','Nhân viên chỉ sửa được báo cáo của hôm nay. Dùng PIN quản lý để sửa ngày khác.');return;
     }
   }
 
   // Che do gui moi: canh bao trung lap cuc bo (server van la trong tai chinh)
   if(!isEdit&&getReports().some(r=>r.station===station&&r.date===date)){
-    showMsg('error','"'+station+'" da co bao cao ngay '+formatDate(date)+'. Chuyen sang che do Chinh sua de cap nhat.');
+    showMsg('error','"'+station+'" da co bao cao ngay '+formatDate(date)+'. Chuyển sang chế độ Chỉnh sửa để cập nhật.');
     return;
   }
 
@@ -586,24 +585,24 @@ function submitForm(){
   };
 
   const btn=document.getElementById('btn-submit');
-  btn.innerHTML='<span class="spinner"></span>'+(isEdit?'Dang cap nhat...':'Dang gui...');
+  btn.innerHTML='<span class="spinner"></span>'+(isEdit?'Đang cập nhật...':'Đang gửi...');
   btn.disabled=true;
 
   fetch(SHEET_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(report)})
   .then(r=>r.json())
   .then(res=>{
-    btn.innerHTML=isEdit?'Xac nhan chinh sua':'Gui bao cao'; btn.disabled=false;
+    btn.innerHTML=isEdit?'Xác nhận chỉnh sửa':'Gửi báo cáo'; btn.disabled=false;
     if(res.status==='auth_failed'){
       // Hien thi loi dung o PIN nao sai
       const isAdminAttempt=!!document.getElementById('f-admin-pin').value.trim();
       if(isAdminAttempt){
         const ast=document.getElementById('admin-pin-status');
-        ast.textContent='PIN quan ly khong dung'; ast.className='pin-status err';
+        ast.textContent='PIN quản lý không đúng'; ast.className='pin-status err';
       } else {
         const pst=document.getElementById('pin-status');
-        pst.textContent='PIN khong dung'; pst.className='pin-status err';
+        pst.textContent='PIN không đúng'; pst.className='pin-status err';
       }
-      showMsg('error','PIN khong dung. Vui long kiem tra lai.');
+      showMsg('error','PIN không đúng. Vui lòng kiểm tra lại.');
       return;
     }
     if(res.status==='locked'){showMsg('error',res.message);return;}
@@ -611,18 +610,18 @@ function submitForm(){
     const isAdminOK=!!document.getElementById('f-admin-pin').value.trim();
     if(isAdminOK){
       const ast=document.getElementById('admin-pin-status');
-      ast.textContent='PIN quan ly hop le'; ast.className='pin-status ok';
+      ast.textContent='PIN quản lý hợp lệ'; ast.className='pin-status ok';
     } else {
       const pst=document.getElementById('pin-status');
-      pst.textContent='PIN hop le'; pst.className='pin-status ok';
+      pst.textContent='PIN hợp lệ'; pst.className='pin-status ok';
     }
     report.submittedAt=res.submittedAt||new Date().toLocaleString('vi-VN');
-    _finalize(report, waterProduced, btn, 'Da cap nhat Google Sheet');
+    _finalize(report, waterProduced, btn, 'Đã cập nhật Google Sheet');
   })
   .catch(()=>{
-    btn.innerHTML=isEdit?'Xac nhan chinh sua':'Gui bao cao'; btn.disabled=false;
+    btn.innerHTML=isEdit?'Xác nhận chỉnh sửa':'Gửi báo cáo'; btn.disabled=false;
     report.submittedAt=new Date().toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
-    _finalize(report, waterProduced, btn, 'Mat ket noi - da luu tam cuc bo. Lien he quan ly de dong bo.');
+    _finalize(report, waterProduced, btn, 'Mất kết nối — đã lưu tạm cục bộ. Liên hệ quản lý để đồng bộ.');
   });
 }
 
@@ -635,11 +634,11 @@ function _finalize(report, waterProduced, btn, note){
 
   const isEdit=currentMode==='edit';
   document.getElementById('success-icon').className='success-icon'+(isEdit?' edit-icon':'');
-  document.getElementById('success-title').textContent=isEdit?'Da cap nhat!':'Da gui thanh cong!';
+  document.getElementById('success-title').textContent=isEdit?'Đã cập nhật!':'Đã gửi thành công!';
   document.getElementById('success-msg').innerHTML=
     '<b>'+report.station+'</b> - '+report.reporter+'<br>'+
-    'DH hom nay: '+report.meterToday+' m3 | Nuoc SX: '+waterProduced+' m3<br>'+
-    'Ngay BC: '+formatDate(report.date)+
+    'ĐH hôm nay: '+report.meterToday+' m³ | Nước SX: '+waterProduced+' m3<br>'+
+    'Ngày BC: '+formatDate(report.date)+
     (isEdit?'<br>Chinh sua boi: '+report.editBy:'')+
     '<br>'+note;
   document.getElementById('form-main').style.display='none';
@@ -673,19 +672,19 @@ function loadFromSheet(){
   fetch(SHEET_URL).then(r=>r.json()).then(rows=>{
     const rpts=rows.map(r=>({
       date:toYMD(r['Ngay']||r['\u0110\u1ecbnh']||''),
-      station:r['Tram']||'',
-      reporter:r['Nguoi bao cao']||'',
+      station:r['Trạm']||'',
+      reporter:r['Người báo cáo']||'',
       meterToday:parseFloat(r['\u0110H hom nay (m\u00b3)'])||0,
       water:parseFloat(r['Nuoc SX (m\u00b3)'])||0,
       clo:parseFloat(r['Clo (kg)'])||0,
       phen:parseFloat(r['Phen (kg)'])||0,
       voi:parseFloat(r['Voi (kg)'])||0,
-      incident:(r['Su co']||'')==='Co',
+      incident:(r['Sự cố']||'')==='Co',
       incidentDetail:r['Chi tiet su co']||'',
       meters:parseInt(r['\u0110H lap moi (cai)'])||0,
       metersNote:r['Ghi chu \u0110H']||'',
       submittedAt:r['Gio gui']||'',
-      lanGui:r['Lan gui']||''
+      lanGui:r['Lần gửi']||''
     })).filter(r=>r.date&&r.station);
     saveReports(rpts);
     loading.style.display='none';
@@ -719,20 +718,20 @@ function renderDashboard(){
   document.getElementById('d-incidents').textContent=dr.filter(r=>r.incident).length;
   document.getElementById('d-total-clo').textContent=dr.reduce((s,r)=>s+(r.clo||0),0).toFixed(2);
   const isSingle=df==='today'||df==='specific';
-  if(df==='today'){document.getElementById('label-reported').textContent='Da bao cao hom nay';document.getElementById('label-reported-sub').textContent='/ 8 tram';document.getElementById('label-water').textContent='Tong nuoc SX hom nay';document.getElementById('label-clo').textContent='Tong Clo hom nay';}
-  else if(df==='specific'){const sd=document.getElementById('filter-specific-date').value;document.getElementById('label-reported').textContent='Da BC ngay '+formatDate(sd);document.getElementById('label-reported-sub').textContent='/ 8 tram';document.getElementById('label-water').textContent='Nuoc SX ngay '+formatDate(sd);document.getElementById('label-clo').textContent='Clo ngay '+formatDate(sd);}
-  else{const m={week:'7 ngay qua',month:'30 ngay qua',all:'Tat ca'};document.getElementById('label-reported').textContent='Tram da BC ('+m[df]+')';document.getElementById('label-reported-sub').textContent='tram';document.getElementById('label-water').textContent='Tong nuoc SX ('+m[df]+')';document.getElementById('label-clo').textContent='Tong Clo ('+m[df]+')';}
+  if(df==='today'){document.getElementById('label-reported').textContent='Đã báo cáo hom nay';document.getElementById('label-reported-sub').textContent='/ 8 trạm';document.getElementById('label-water').textContent='Tổng nước SX hom nay';document.getElementById('label-clo').textContent='Tổng Clo hom nay';}
+  else if(df==='specific'){const sd=document.getElementById('filter-specific-date').value;document.getElementById('label-reported').textContent='Đã BC ngày '+formatDate(sd);document.getElementById('label-reported-sub').textContent='/ 8 trạm';document.getElementById('label-water').textContent='Nước SX ngày '+formatDate(sd);document.getElementById('label-clo').textContent='Clo ngày '+formatDate(sd);}
+  else{const m={week:'7 ngày qua',month:'30 ngày qua',all:'Tất cả'};document.getElementById('label-reported').textContent='Trạm da BC ('+m[df]+')';document.getElementById('label-reported-sub').textContent='trạm';document.getElementById('label-water').textContent='Tổng nước SX ('+m[df]+')';document.getElementById('label-clo').textContent='Tổng Clo ('+m[df]+')';}
   const ab=document.getElementById('alert-missing');
-  if(isSingle){const miss=STATIONS.filter(s=>!reported.has(s));if(miss.length>0&&miss.length<8){ab.classList.remove('hidden');document.getElementById('alert-text').textContent='Chua bao cao '+(df==='today'?'hom nay':'ngay '+formatDate(viewDate))+': '+miss.join(', ');}else ab.classList.add('hidden');}else ab.classList.add('hidden');
+  if(isSingle){const miss=STATIONS.filter(s=>!reported.has(s));if(miss.length>0&&miss.length<8){ab.classList.remove('hidden');document.getElementById('alert-text').textContent='Chưa báo cáo '+(df==='today'?'hôm nay':'ngày '+formatDate(viewDate))+': '+miss.join(', ');}else ab.classList.add('hidden');}else ab.classList.add('hidden');
   const ss=document.getElementById('station-section-title');
   const sg=document.getElementById('station-grid');
   if(isSingle){
     ss.style.display='block';sg.style.display='grid';
-    ss.textContent='Trang thai tram - '+(df==='today'?'hom nay':formatDate(viewDate));
+    ss.textContent='Trạng thái trạm — '+(df==='today'?'hôm nay':formatDate(viewDate));
     sg.innerHTML=STATIONS.map(s=>{
       const r=dr.find(x=>x.station===s);
       if(!r)return '<div class="station-card"><div class="station-name">'+s+'</div><span class="station-status status-missing">Chua bao cao</span><div class="station-data">-</div></div>';
-      return '<div class="station-card '+(r.incident?'reported incident':'reported')+'"><div class="station-name">'+s+'</div>'+(r.incident?'<span class="station-status status-incident">Su co</span>':'<span class="station-status status-ok">Binh thuong</span>')+'<div class="station-data">DH: <strong>'+r.meterToday+' m3</strong><br>Nuoc SX: <strong>'+r.water+' m3</strong><br>Clo: <strong>'+r.clo+' kg</strong>'+(r.meters>0?'<br>DH lap: <strong>'+r.meters+' cai</strong>':'')+'<br>'+r.reporter+' - '+r.submittedAt+'</div></div>';
+      return '<div class="station-card '+(r.incident?'reported incident':'reported')+'"><div class="station-name">'+s+'</div>'+(r.incident?'<span class="station-status status-incident">Sự cố</span>':'<span class="station-status status-ok">Binh thuong</span>')+'<div class="station-data">DH: <strong>'+r.meterToday+' m3</strong><br>Nuoc SX: <strong>'+r.water+' m3</strong><br>Clo: <strong>'+r.clo+' kg</strong>'+(r.meters>0?'<br>ĐH lắp: <strong>'+r.meters+' cai</strong>':'')+'<br>'+r.reporter+' - '+r.submittedAt+'</div></div>';
     }).join('');
   }else{ss.style.display='none';sg.style.display='none';}
   const tbody=document.getElementById('report-table');
@@ -745,11 +744,11 @@ function renderDashboard(){
       '<td style="font-family:monospace">'+r.water+'</td>'+
       '<td style="font-family:monospace">'+r.clo+'</td>'+
       '<td>'+r.meters+'</td>'+
-      '<td>'+(r.incident?'<span class="badge badge-incident">Su co</span>':'<span class="badge badge-ok">OK</span>')+'</td>'+
+      '<td>'+(r.incident?'<span class="badge badge-incident">Sự cố</span>':'<span class="badge badge-ok">OK</span>')+'</td>'+
       '<td>'+(r.lanGui?'<span class="badge badge-edit">'+r.lanGui+'</span>':'<span style="color:var(--muted);font-size:11px">Lan 1</span>')+'</td></tr>'
     ).join('');
   }
-  document.getElementById('dash-subtitle').textContent='Cap nhat: '+new Date().toLocaleString('vi-VN')+' - Tong '+reports.length+' bao cao';
+  document.getElementById('dash-subtitle').textContent='Cập nhật: '+new Date().toLocaleString('vi-VN')+' — Tổng '+reports.length+' báo cáo';
 }
 
 function onFilterDateChange(){
