@@ -365,7 +365,7 @@
 
 <script>
 // CONFIG
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycby9Ict0CtIH-IU7IXNKgx0NIFA1HCKGLy9pif2gzJw/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwtysj0-mnQ-GHwVmfncAz8WhCyTtosoO_a1wQUT-43P8j-pNAg_fYOdqlSyHkSUFEE/exec';
 const LOCK_DAYS = 3;
 
 // PIN được xác thực hoàn toàn phía server (Code.gs) — không lưu ở đây nữa
@@ -532,7 +532,6 @@ function submitForm(){
   const meterToday=parseFloat(document.getElementById('f-meter-today').value);
   const meterYest=parseFloat(document.getElementById('f-meter-yesterday').value);
   const isEdit=currentMode==='edit';
-  const adminPinVal=document.getElementById('f-admin-pin').value.trim();
 
   if(!date){showMsg('error','Vui long chon ngay bao cao!');return;}
   if(!station){showMsg('error','Vui long chon ten tram!');return;}
