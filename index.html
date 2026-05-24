@@ -631,8 +631,20 @@ function loadSheet(){
 
   fetch(SHEET_URL)
     .then(r => r.json())
-    .then(rows => {
-      console.log("📥 Dữ liệu nhận được từ server:", rows);
+    .then(data => {
+      console.log("📥 Dữ liệu nhận được từ server:", data);
+
+      // Xử lý cả 2 trường hợp: array hoặc object {error: ...}
+      let rows = [];
+      if (Array.isArray(data)) {
+        rows = data;
+      } else if (data && typeof data === 'object') {
+        if (data.error) {
+          console.error("Server trả về lỗi:", data.error);
+        } else {
+          rows = [data];        // nếu chỉ 1 object
+        }
+      }
 
       const rs = rows.map(r => ({
         date: toYMD(r.date || r.Ngay || ''),
@@ -665,7 +677,7 @@ function loadSheet(){
     .catch(err => {
       console.error("Lỗi tải dữ liệu:", err);
       ld.style.display = 'none';
-      renderDash();
+      em.style.display = 'block';
     });
 }
 
