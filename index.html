@@ -148,8 +148,8 @@
 <nav class="nav">
   <div class="nav-brand">&#128167; Tram Cap <span>Nuoc</span></div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showView('form',this)">Bao cao</button>
-    <button class="nav-tab" onclick="showView('dashboard',this)">Dashboard</button>
+    <button type="button" class="nav-tab active" onclick="showView('form',this)">Bao cao</button>
+    <button type="button" class="nav-tab" onclick="showView('dashboard',this)">Dashboard</button>
   </div>
 </nav>
 
@@ -162,8 +162,8 @@
     </div>
 
     <div class="mode-toggle">
-      <button class="mode-btn active-new" id="mode-btn-new" onclick="setMode('new')">&#128228; Gui bao cao moi</button>
-      <button class="mode-btn" id="mode-btn-edit" onclick="setMode('edit')">&#9999;&#65039; Chinh sua da gui</button>
+      <button type="button" class="mode-btn active-new" id="mode-btn-new" onclick="setMode('new')">&#128228; Gui bao cao moi</button>
+      <button type="button" class="mode-btn" id="mode-btn-edit" onclick="setMode('edit')">&#9999;&#65039; Chinh sua da gui</button>
     </div>
 
     <div class="edit-banner" id="edit-banner">
@@ -260,8 +260,8 @@
       <div class="field">
         <label>Co su co hoac bao tri hom nay khong? <span class="req">*</span></label>
         <div class="incident-toggle">
-          <button class="toggle-btn" id="btn-no" onclick="setIncident(false)">&#9989; Khong</button>
-          <button class="toggle-btn" id="btn-yes" onclick="setIncident(true)">&#9888;&#65039; Co</button>
+          <button type="button" class="toggle-btn" id="btn-no" onclick="setIncident(false)">&#9989; Khong</button>
+          <button type="button" class="toggle-btn" id="btn-yes" onclick="setIncident(true)">&#9888;&#65039; Co</button>
         </div>
         <div class="incident-detail" id="incident-detail">
           <textarea id="f-incident" placeholder="Mo ta su co, bien phap xu ly, thoi gian dung may..."></textarea>
@@ -288,7 +288,7 @@
     <div class="success-icon" id="success-icon">&#10003;</div>
     <h2 id="success-title">Da gui thanh cong!</h2>
     <p id="success-msg"></p>
-    <button class="btn-new" onclick="newReport()">+ Bao cao moi</button>
+    <button type="button" class="btn-new" onclick="newReport()">+ Bao cao moi</button>
   </div>
 </div>
 
@@ -317,7 +317,7 @@
       <option>Tram Tan Tien</option><option>Tram Thien Hung</option>
       <option>Tram Hung Phuoc</option><option>Tram Thanh Binh</option>
     </select>
-    <button class="btn-refresh" onclick="loadFromSheet()">&#128260; Tai du lieu</button>
+    <button type="button" class="btn-refresh" onclick="loadFromSheet()">&#128260; Tai du lieu</button>
   </div>
   <div class="stat-grid">
     <div class="stat-card">
@@ -379,7 +379,13 @@ let incidentVal = null;
 
 function getReports(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}catch{return[];}}
 function saveReports(d){localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}
-function todayStr(){return new Date().toISOString().slice(0,10);}
+function todayStr(){
+  const d=new Date();
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const dd=String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+dd;
+}
 function formatDate(str){if(!str)return'';if(str.includes('/'))return str;const [y,m,d]=str.split('-');return d+'/'+m+'/'+y;}
 function toYMD(str){
   if(!str)return'';
@@ -394,9 +400,9 @@ function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOSt
 // INIT
 const todayVal=todayStr();
 document.getElementById('f-date').value=todayVal;
-document.getElementById('today-display').textContent='Hom nay: '+formatDate(todayVal);
+document.getElementById('today-display').textContent='Ngay: '+formatDate(todayVal);
 document.getElementById('f-date').addEventListener('change',function(){
-  document.getElementById('today-display').textContent=formatDate(this.value);
+  document.getElementById('today-display').textContent='Ngay: '+formatDate(this.value);
   autoFillYesterday();
   if(currentMode==='edit')checkExistingReport();
 });
