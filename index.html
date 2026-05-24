@@ -3,144 +3,143 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quản Lý Trạm Cấp Nước</title>
+<title>Quan Ly Tram Cap Nuoc</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
-  :root {
-    --blue:#0a6bff; --blue-dark:#0050cc; --teal:#00c2a8;
-    --red:#ff3b3b; --orange:#ff8c00; --bg:#f0f4fb;
-    --card:#ffffff; --text:#0d1b3e; --muted:#6b7a99;
-    --border:#d4ddf0; --success:#00b86b; --amber:#f59e0b;
-  }
+  :root{--blue:#0a6bff;--blue-dark:#0050cc;--teal:#00c2a8;--red:#ff3b3b;--orange:#ff8c00;--bg:#f0f4fb;--card:#fff;--text:#0d1b3e;--muted:#6b7a99;--border:#d4ddf0;--success:#00b86b;--amber:#f59e0b;}
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  body{font-family:"Be Vietnam Pro",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  /* NAV */
   .nav{background:var(--text);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;}
   .nav-brand{color:#fff;font-weight:800;font-size:15px;}
   .nav-brand span{color:var(--teal);}
   .nav-tabs{display:flex;gap:4px;}
-  .nav-tab{color:rgba(255,255,255,0.6);background:none;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;transition:all .2s;}
-  .nav-tab.active{background:rgba(255,255,255,0.12);color:#fff;}
-  .nav-tab:hover{background:rgba(255,255,255,0.08);color:#fff;}
+  .nav-tab{color:rgba(255,255,255,.6);background:none;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;transition:all .2s;}
+  .nav-tab.active{background:rgba(255,255,255,.12);color:#fff;}
+  .nav-tab:hover{background:rgba(255,255,255,.08);color:#fff;}
+  /* VIEWS */
   .view{display:none;padding:20px;max-width:680px;margin:0 auto;}
   .view.active{display:block;}
-  .view-dashboard{max-width:100%;}
-  .form-header{background:linear-gradient(135deg,#0a6bff 0%,#0050cc 100%);color:#fff;border-radius:16px;padding:24px;margin-bottom:20px;transition:background .3s;}
-  .form-header.edit-mode{background:linear-gradient(135deg,#d97706 0%,#b45309 100%);}
+  .view-dash{max-width:100%;}
+  /* FORM HEADER */
+  .form-header{background:linear-gradient(135deg,#0a6bff,#0050cc);color:#fff;border-radius:16px;padding:24px;margin-bottom:20px;transition:.3s;}
+  .form-header.edit-mode{background:linear-gradient(135deg,#d97706,#b45309);}
   .form-header h1{font-size:22px;font-weight:800;margin-bottom:4px;}
   .form-header p{opacity:.75;font-size:13px;}
-  .date-badge{display:inline-block;background:rgba(255,255,255,0.2);border-radius:20px;padding:4px 12px;font-size:12px;font-family:'JetBrains Mono',monospace;margin-top:10px;}
+  .date-badge{display:inline-block;background:rgba(255,255,255,.2);border-radius:20px;padding:4px 14px;font-size:13px;font-family:"JetBrains Mono",monospace;margin-top:10px;font-weight:600;}
+  /* CARDS */
   .card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:20px;margin-bottom:16px;}
-  .card-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:14px;}
+  .card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:14px;}
   .field{margin-bottom:16px;}
   .field:last-child{margin-bottom:0;}
-  label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text);}
-  label .req{color:var(--red);margin-left:2px;}
+  label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;}
+  .req{color:var(--red);margin-left:2px;}
   select,input[type=number],input[type=text],input[type=date],input[type=password],textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none;transition:border-color .2s;-webkit-appearance:none;}
   select:focus,input:focus,textarea:focus{border-color:var(--blue);background:#fff;}
   textarea{resize:vertical;min-height:80px;}
   .input-group{display:flex;align-items:center;gap:10px;}
-  .input-unit{font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap;min-width:36px;}
-  .chem-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  .incident-toggle{display:flex;gap:8px;}
-  .toggle-btn{flex:1;padding:10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:all .2s;text-align:center;}
-  .toggle-btn.selected-no{border-color:var(--success);background:#e8fff5;color:var(--success);}
-  .toggle-btn.selected-yes{border-color:var(--red);background:#fff0f0;color:var(--red);}
-  .incident-detail{display:none;margin-top:12px;}
-  .incident-detail.show{display:block;}
-  .water-calc{background:#e8f0ff;border-radius:8px;padding:12px 14px;margin-top:10px;font-size:13px;color:var(--blue);font-weight:600;display:none;}
-  .water-calc.show{display:block;}
+  .input-unit{font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   /* MODE TOGGLE */
-  .mode-toggle{display:flex;gap:0;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;}
-  .mode-btn{flex:1;padding:10px 8px;background:var(--bg);border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--muted);transition:all .2s;text-align:center;}
-  .mode-btn.active-new{background:var(--blue);color:#fff;}
-  .mode-btn.active-edit{background:var(--amber);color:#fff;}
+  .mode-toggle{display:flex;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;}
+  .mode-btn{flex:1;padding:10px;background:var(--bg);border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--muted);transition:.2s;text-align:center;}
+  .mode-btn.m-new{background:var(--blue);color:#fff;}
+  .mode-btn.m-edit{background:var(--amber);color:#fff;}
   /* EDIT BANNER */
   .edit-banner{background:#fff8e6;border:1.5px solid var(--amber);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;display:none;}
   .edit-banner.show{display:block;}
   .edit-banner strong{color:#b45309;}
+  /* INCIDENT */
+  .inc-toggle{display:flex;gap:8px;}
+  .tog-btn{flex:1;padding:10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:.2s;text-align:center;}
+  .tog-btn.sel-no{border-color:var(--success);background:#e8fff5;color:var(--success);}
+  .tog-btn.sel-yes{border-color:var(--red);background:#fff0f0;color:var(--red);}
+  .inc-detail{display:none;margin-top:12px;}
+  .inc-detail.show{display:block;}
+  /* WATER CALC */
+  .water-calc{background:#e8f0ff;border-radius:8px;padding:12px 14px;margin-top:10px;font-size:13px;color:var(--blue);font-weight:600;display:none;}
+  .water-calc.show{display:block;}
   /* PIN */
   .pin-box{background:#fff8e6;border:1.5px solid var(--orange);border-radius:10px;padding:14px 16px;margin-bottom:16px;display:none;}
   .pin-box.show{display:block;}
   .pin-label{font-weight:700;color:var(--orange);margin-bottom:8px;font-size:13px;}
-  .pin-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-  .pin-row input{max-width:160px;letter-spacing:4px;font-family:'JetBrains Mono',monospace;font-size:16px;}
+  .pin-row input{max-width:160px;letter-spacing:4px;font-family:"JetBrains Mono",monospace;font-size:16px;}
   .pin-hint{font-size:11px;color:var(--muted);margin-top:4px;}
-  .pin-status{font-size:12px;margin-top:6px;min-height:16px;}
-  .pin-status.ok{color:var(--success);}
-  .pin-status.err{color:var(--red);}
-  .admin-pin-section{background:#f0f0ff;border:1.5px solid #8b8bff;border-radius:8px;padding:10px 14px;margin-top:12px;display:none;}
-  .admin-pin-section.show{display:block;}
-  .admin-pin-section > label{color:#4444cc;font-size:12px;}
-  /* ERRORS */
-  .err-msg{border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:12px;display:none;}
-  .err-msg.show{display:block;}
-  .err-msg.type-error{background:#fff0f0;border:1.5px solid var(--red);color:var(--red);}
-  .err-msg.type-info{background:#fff8e6;border:1.5px solid var(--amber);color:#b45309;}
-  /* BUTTONS */
-  .btn-submit{width:100%;padding:16px;background:var(--blue);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s;margin-top:8px;}
+  .pin-st{font-size:12px;margin-top:6px;min-height:16px;}
+  .pin-st.ok{color:var(--success);}
+  .pin-st.err{color:var(--red);}
+  .admin-box{background:#f0f0ff;border:1.5px solid #8b8bff;border-radius:8px;padding:10px 14px;margin-top:12px;display:none;}
+  .admin-box.show{display:block;}
+  .admin-box label{color:#4444cc;font-size:12px;}
+  /* MESSAGES */
+  .msg{border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:12px;display:none;}
+  .msg.show{display:block;}
+  .msg.err{background:#fff0f0;border:1.5px solid var(--red);color:var(--red);}
+  .msg.info{background:#fff8e6;border:1.5px solid var(--amber);color:#b45309;}
+  /* SUBMIT */
+  .btn-submit{width:100%;padding:16px;background:var(--blue);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;margin-top:8px;}
   .btn-submit:hover{background:var(--blue-dark);}
   .btn-submit.edit{background:var(--amber);}
   .btn-submit.edit:hover{background:#b45309;}
   .btn-submit:disabled{background:#aaa;cursor:not-allowed;}
   /* SUCCESS */
-  .success-screen{text-align:center;padding:48px 24px;display:none;}
-  .success-screen.show{display:block;}
-  .success-icon{width:72px;height:72px;background:var(--success);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;}
-  .success-icon.edit-icon{background:var(--amber);}
-  .success-screen h2{font-size:22px;font-weight:800;margin-bottom:8px;}
-  .success-screen p{color:var(--muted);font-size:14px;line-height:1.6;}
+  .success{text-align:center;padding:48px 24px;display:none;}
+  .success.show{display:block;}
+  .suc-icon{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;background:var(--success);}
+  .suc-icon.edit{background:var(--amber);}
+  .success h2{font-size:22px;font-weight:800;margin-bottom:8px;}
+  .success p{color:var(--muted);font-size:14px;line-height:1.6;}
   .btn-new{margin-top:24px;padding:12px 28px;background:var(--blue);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;}
   /* DASHBOARD */
   .dash-header{background:var(--text);color:#fff;padding:24px 20px;margin:-20px -20px 20px;}
   .dash-header h1{font-size:20px;font-weight:800;margin-bottom:4px;}
   .dash-header p{font-size:13px;opacity:.6;}
-  .dash-toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
-  .filter-select{padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;background:var(--card);color:var(--text);cursor:pointer;outline:none;}
-  .filter-select:focus{border-color:var(--blue);}
-  .btn-refresh{padding:7px 16px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
-  .btn-refresh:hover{background:var(--blue-dark);}
-  .dash-date-picker{display:none;align-items:center;gap:6px;}
-  .dash-date-picker.show{display:flex;}
-  .dash-date-picker label{font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;}
-  .dash-date-picker input{padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;width:140px;}
+  .toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+  .fsel{padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;background:var(--card);color:var(--text);cursor:pointer;outline:none;}
+  .fsel:focus{border-color:var(--blue);}
+  .btn-reload{padding:7px 16px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
+  .btn-reload:hover{background:var(--blue-dark);}
+  .date-picker{display:none;align-items:center;gap:6px;}
+  .date-picker.show{display:flex;}
+  .date-picker label{font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;}
+  .date-picker input{padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;width:140px;}
   .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
   .stat-card{background:var(--card);border-radius:12px;padding:16px;border:1px solid var(--border);}
-  .stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;margin-bottom:8px;}
-  .stat-value{font-size:28px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--text);}
-  .stat-value.blue{color:var(--blue);}
-  .stat-value.teal{color:var(--teal);}
-  .stat-value.red{color:var(--red);}
-  .stat-unit{font-size:13px;font-weight:500;color:var(--muted);margin-top:2px;}
-  .section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:12px;}
-  .station-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:20px;}
-  .station-card{background:var(--card);border-radius:10px;padding:14px;border:1.5px solid var(--border);}
-  .station-card.reported{border-color:var(--success);}
-  .station-card.incident{border-color:var(--red);}
-  .station-name{font-size:13px;font-weight:700;margin-bottom:8px;}
-  .station-status{font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;display:inline-block;margin-bottom:8px;}
-  .status-ok{background:#e8fff5;color:var(--success);}
-  .status-missing{background:#fff8e6;color:var(--orange);}
-  .status-incident{background:#fff0f0;color:var(--red);}
-  .station-data{font-size:12px;color:var(--muted);line-height:1.9;}
-  .station-data strong{color:var(--text);font-weight:600;}
-  .table-wrap{background:var(--card);border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:20px;overflow-x:auto;}
+  .stat-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;margin-bottom:8px;}
+  .stat-val{font-size:28px;font-weight:800;font-family:"JetBrains Mono",monospace;}
+  .stat-val.blue{color:var(--blue);}
+  .stat-val.teal{color:var(--teal);}
+  .stat-val.red{color:var(--red);}
+  .stat-unit{font-size:13px;color:var(--muted);margin-top:2px;}
+  .sec-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:12px;}
+  .st-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:20px;}
+  .st-card{background:var(--card);border-radius:10px;padding:14px;border:1.5px solid var(--border);}
+  .st-card.ok{border-color:var(--success);}
+  .st-card.inc{border-color:var(--red);}
+  .st-name{font-size:13px;font-weight:700;margin-bottom:8px;}
+  .badge-st{font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;display:inline-block;margin-bottom:8px;}
+  .b-ok{background:#e8fff5;color:var(--success);}
+  .b-miss{background:#fff8e6;color:var(--orange);}
+  .b-inc{background:#fff0f0;color:var(--red);}
+  .st-data{font-size:12px;color:var(--muted);line-height:1.9;}
+  .st-data strong{color:var(--text);font-weight:600;}
+  .tbl-wrap{background:var(--card);border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:20px;overflow-x:auto;}
   table{width:100%;border-collapse:collapse;font-size:13px;}
-  th{background:var(--text);color:rgba(255,255,255,0.8);padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+  th{background:var(--text);color:rgba(255,255,255,.8);padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
   td{padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap;}
   tr:last-child td{border-bottom:none;}
   tr:hover td{background:var(--bg);}
-  .badge{padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;}
-  .badge-ok{background:#e8fff5;color:var(--success);}
-  .badge-incident{background:#fff0f0;color:var(--red);}
-  .badge-edit{background:#fff8e6;color:#b45309;}
-  .empty-state{text-align:center;padding:40px;color:var(--muted);}
-  .empty-state .icon{font-size:40px;margin-bottom:12px;}
+  .bdg{padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;}
+  .bdg-ok{background:#e8fff5;color:var(--success);}
+  .bdg-inc{background:#fff0f0;color:var(--red);}
+  .bdg-edit{background:#fff8e6;color:#b45309;}
+  .empty{text-align:center;padding:40px;color:var(--muted);}
   .alert-bar{background:#fff3e0;border:1.5px solid var(--orange);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;display:flex;align-items:center;gap:10px;}
   .alert-bar.hidden{display:none;}
   .loading{text-align:center;padding:30px;color:var(--muted);font-size:14px;}
-  .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
   @keyframes spin{to{transform:rotate(360deg)}}
-  @media(max-width:480px){.chem-grid{grid-template-columns:1fr;}.stat-grid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:480px){.grid2{grid-template-columns:1fr;}.stat-grid{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
@@ -148,29 +147,31 @@
 <nav class="nav">
   <div class="nav-brand">💧 Trạm Cấp <span>Nước</span></div>
   <div class="nav-tabs">
-    <button type="button" class="nav-tab active" onclick="showView('form',this)">Bao cao</button>
-    <button type="button" class="nav-tab" onclick="showView('dashboard',this)">Dashboard</button>
+    <button type="button" class="nav-tab active" onclick="showView('form',this)">Báo cáo</button>
+    <button type="button" class="nav-tab" onclick="showView('dash',this)">Dashboard</button>
   </div>
 </nav>
 
+<!-- FORM VIEW -->
 <div id="view-form" class="view active">
   <div id="form-main">
     <div class="form-header" id="form-header">
-      <h1 id="form-title">&#128203; Bao Cao Ngay</h1>
-      <p id="form-subtitle">Nhap so lieu van hanh tram cap nuoc</p>
+      <h1 id="form-title">📋 Báo Cáo Ngày</h1>
+      <p id="form-sub">Nhập số liệu vận hành trạm cấp nước</p>
       <div class="date-badge" id="today-display"></div>
     </div>
 
     <div class="mode-toggle">
-      <button type="button" class="mode-btn active-new" id="mode-btn-new" onclick="setMode('new')">📤 Gửi báo cáo mới</button>
-      <button type="button" class="mode-btn" id="mode-btn-edit" onclick="setMode('edit')">✏️ Chỉnh sửa đã gửi</button>
+      <button type="button" class="mode-btn m-new" id="btn-mode-new" onclick="setMode('new')">📤 Gửi báo cáo mới</button>
+      <button type="button" class="mode-btn" id="btn-mode-edit" onclick="setMode('edit')">✏️ Chỉnh sửa đã gửi</button>
     </div>
 
     <div class="edit-banner" id="edit-banner">
-      ✏️ <strong>Chế độ chỉnh sửa:</strong> Dữ liệu cũ sẽ bị <strong>ghi đè hoàn toàn</strong>. Nhân viên chỉ sửa được trong ngày; quản lý dùng PIN quản lý để sửa bất kỳ lúc nào.
+      ✏️ <strong>Chế độ chỉnh sửa:</strong> Dữ liệu cũ sẽ bị <strong>ghi đè hoàn toàn</strong>.
+      Nhân viên chỉ sửa được trong ngày; quản lý dùng PIN quản lý để sửa bất kỳ lúc nào.
     </div>
 
-    <div class="err-msg type-error" id="form-error"></div>
+    <div class="msg err" id="form-msg"></div>
 
     <div class="card">
       <div class="card-title">Thông tin báo cáo</div>
@@ -199,20 +200,20 @@
     </div>
 
     <div class="pin-box" id="pin-card">
-      <div class="pin-label">&#128272; Xác thực PIN</div>
-      <div class="field" style="margin:0;">
-        <label style="font-size:12px;color:var(--muted);font-weight:500;">PIN trạm (do quản lý cấp)</label>
-        <div class="pin-row">
-          <input type="password" id="f-pin" maxlength="6" placeholder="......" autocomplete="off" oninput="onPinInput()">
+      <div class="pin-label">🔐 Xác thực PIN</div>
+      <div class="field" style="margin:0">
+        <label style="font-size:12px;color:var(--muted);font-weight:500">PIN trạm (do quản lý cấp)</label>
+        <div class="pin-row" style="display:flex;gap:8px;margin-top:6px">
+          <input type="password" id="f-pin" maxlength="8" placeholder="••••" autocomplete="off">
         </div>
-        <div class="pin-status" id="pin-status"></div>
-        <div class="admin-pin-section" id="admin-pin-section">
-          <label>&#128737;&#65039; Hoặc nhập PIN quản lý (sửa bất kỳ ngày nào)</label>
-          <div class="pin-row" style="margin-top:6px;">
-            <input type="password" id="f-admin-pin" maxlength="12" placeholder="........" autocomplete="off" oninput="onAdminPinInput()">
+        <div class="pin-st" id="pin-st"></div>
+        <div class="admin-box" id="admin-box">
+          <label>🛡️ Hoặc nhập PIN quản lý (sửa bất kỳ ngày nào)</label>
+          <div class="pin-row" style="display:flex;gap:8px;margin-top:6px">
+            <input type="password" id="f-admin-pin" maxlength="12" placeholder="••••••" autocomplete="off">
           </div>
-          <div class="pin-hint">Dùng khi nhân viên báo cáo sai ngày cũ, hoặc cần sửa dữ liệu đã khóa.</div>
-          <div class="pin-status" id="admin-pin-status"></div>
+          <div class="pin-hint">Dùng khi cần sửa dữ liệu ngày cũ hoặc đã khóa.</div>
+          <div class="pin-st" id="admin-pin-st"></div>
         </div>
       </div>
     </div>
@@ -223,32 +224,32 @@
         <label>Chỉ số đồng hồ tổng hôm nay <span class="req">*</span></label>
         <div class="input-group">
           <input type="number" id="f-meter-today" placeholder="0" min="0" step="0.1" oninput="calcWater()">
-          <span class="input-unit">m3</span>
+          <span class="input-unit">m³</span>
         </div>
       </div>
       <div class="field">
-        <label>Chỉ số đồng hồ tổng hôm qua <span id="auto-fill-hint" style="color:var(--success);font-weight:500;font-size:11px;"></span></label>
+        <label>Chỉ số đồng hồ tổng hôm qua <span id="fill-hint" style="color:var(--success);font-weight:500;font-size:11px"></span></label>
         <div class="input-group">
-          <input type="number" id="f-meter-yesterday" placeholder="Tự động điền nếu có dữ liệu" min="0" step="0.1" oninput="calcWater()">
-          <span class="input-unit">m3</span>
+          <input type="number" id="f-meter-yest" placeholder="Tự động điền nếu có dữ liệu" min="0" step="0.1" oninput="calcWater()">
+          <span class="input-unit">m³</span>
         </div>
       </div>
-      <div class="water-calc" id="water-calc-result"></div>
+      <div class="water-calc" id="water-calc"></div>
     </div>
 
     <div class="card">
       <div class="card-title">Hóa chất sử dụng</div>
-      <div class="chem-grid">
+      <div class="grid2">
         <div class="field">
           <label>Clo</label>
           <div class="input-group"><input type="number" id="f-clo" placeholder="0" min="0" step="0.01"><span class="input-unit">kg</span></div>
         </div>
         <div class="field">
-          <label>Phen</label>
+          <label>Phèn</label>
           <div class="input-group"><input type="number" id="f-phen" placeholder="0" min="0" step="0.01"><span class="input-unit">kg</span></div>
         </div>
         <div class="field">
-          <label>Voi</label>
+          <label>Vôi</label>
           <div class="input-group"><input type="number" id="f-voi" placeholder="0" min="0" step="0.01"><span class="input-unit">kg</span></div>
         </div>
       </div>
@@ -258,11 +259,11 @@
       <div class="card-title">Sự cố / Bảo trì</div>
       <div class="field">
         <label>Có sự cố hoặc bảo trì hôm nay không? <span class="req">*</span></label>
-        <div class="incident-toggle">
-          <button type="button" class="toggle-btn" id="btn-no" onclick="setIncident(false)">&#9989; Khong</button>
-          <button type="button" class="toggle-btn" id="btn-yes" onclick="setIncident(true)">&#9888;&#65039; Co</button>
+        <div class="inc-toggle">
+          <button type="button" class="tog-btn" id="btn-no" onclick="setInc(false)">✅ Không</button>
+          <button type="button" class="tog-btn" id="btn-yes" onclick="setInc(true)">⚠️ Có</button>
         </div>
-        <div class="incident-detail" id="incident-detail">
+        <div class="inc-detail" id="inc-detail">
           <textarea id="f-incident" placeholder="Mô tả sự cố, biện pháp xử lý, thời gian dừng máy..."></textarea>
         </div>
       </div>
@@ -272,7 +273,7 @@
       <div class="card-title">Lắp đặt đồng hồ nước</div>
       <div class="field">
         <label>Số đồng hồ lắp mới hôm nay</label>
-        <div class="input-group"><input type="number" id="f-meters" placeholder="0" min="0" step="1"><span class="input-unit">cai</span></div>
+        <div class="input-group"><input type="number" id="f-meters" placeholder="0" min="0" step="1"><span class="input-unit">cái</span></div>
       </div>
       <div class="field">
         <label>Ghi chú (địa điểm, khách hàng...)</label>
@@ -283,364 +284,317 @@
     <button class="btn-submit" id="btn-submit" onclick="submitForm()">📤 Gửi báo cáo</button>
   </div>
 
-  <div class="success-screen" id="success-screen">
-    <div class="success-icon" id="success-icon">&#10003;</div>
-    <h2 id="success-title">Đã gửi thành công!</h2>
-    <p id="success-msg"></p>
+  <div class="success" id="success-screen">
+    <div class="suc-icon" id="suc-icon">✓</div>
+    <h2 id="suc-title">Đã gửi thành công!</h2>
+    <p id="suc-msg"></p>
     <button type="button" class="btn-new" onclick="newReport()">+ Báo cáo mới</button>
   </div>
 </div>
 
-<div id="view-dashboard" class="view view-dashboard">
+<!-- DASHBOARD VIEW -->
+<div id="view-dash" class="view view-dash">
   <div class="dash-header">
     <h1>📊 Dashboard Quản Lý</h1>
-    <p id="dash-subtitle">Tổng hợp dữ liệu từ 8 trạm cấp nước</p>
+    <p id="dash-sub">Tổng hợp dữ liệu từ 8 trạm cấp nước</p>
   </div>
-  <div id="alert-missing" class="alert-bar hidden">&#9888;&#65039; <span id="alert-text"></span></div>
-  <div class="dash-toolbar">
-    <select class="filter-select" id="filter-date" onchange="onFilterDateChange()">
+
+  <div id="alert-bar" class="alert-bar hidden">⚠️ <span id="alert-txt"></span></div>
+
+  <div class="toolbar">
+    <select class="fsel" id="flt-date" onchange="onDateFilter()">
       <option value="today">Hôm nay</option>
       <option value="specific">Chọn ngày cụ thể</option>
       <option value="week">7 ngày qua</option>
       <option value="month">30 ngày qua</option>
       <option value="all">Tất cả</option>
     </select>
-    <div class="dash-date-picker" id="dash-date-picker">
+    <div class="date-picker" id="date-picker">
       <label>Ngày:</label>
-      <input type="date" id="filter-specific-date" onchange="renderDashboard()">
+      <input type="date" id="flt-specific" onchange="renderDash()">
     </div>
-    <select class="filter-select" id="filter-station" onchange="renderDashboard()">
+    <select class="fsel" id="flt-station" onchange="renderDash()">
       <option value="">Tất cả trạm</option>
       <option>Trạm Bù Rên</option><option>Trạm Bù Gia Mập</option>
       <option>Trạm Tân Thành</option><option>Trạm Lộc Hiệp</option>
       <option>Trạm Tân Tiến</option><option>Trạm Thiện Hưng</option>
       <option>Trạm Hưng Phước</option><option>Trạm Thanh Bình</option>
     </select>
-    <button type="button" class="btn-refresh" onclick="loadFromSheet()">🔄 Tải dữ liệu</button>
+    <button type="button" class="btn-reload" onclick="loadSheet()">🔄 Tải dữ liệu</button>
   </div>
+
   <div class="stat-grid">
-    <div class="stat-card">
-      <div class="stat-label" id="label-reported">Đã báo cáo</div>
-      <div class="stat-value blue" id="d-reported">0</div>
-      <div class="stat-unit" id="label-reported-sub">/ 8 trạm</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label" id="label-water">Tổng nước SX</div>
-      <div class="stat-value teal" id="d-total-water">0</div>
-      <div class="stat-unit">m3</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Sự cố</div>
-      <div class="stat-value red" id="d-incidents">0</div>
-      <div class="stat-unit">tram</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label" id="label-clo">Tổng Clo</div>
-      <div class="stat-value" id="d-total-clo">0</div>
-      <div class="stat-unit">kg</div>
-    </div>
+    <div class="stat-card"><div class="stat-lbl" id="lbl-rep">Đã báo cáo</div><div class="stat-val blue" id="d-rep">0</div><div class="stat-unit" id="lbl-rep-sub">/ 8 trạm</div></div>
+    <div class="stat-card"><div class="stat-lbl" id="lbl-water">Tổng nước SX</div><div class="stat-val teal" id="d-water">0</div><div class="stat-unit">m³</div></div>
+    <div class="stat-card"><div class="stat-lbl">Sự cố</div><div class="stat-val red" id="d-inc">0</div><div class="stat-unit">trạm</div></div>
+    <div class="stat-card"><div class="stat-lbl" id="lbl-clo">Tổng Clo</div><div class="stat-val" id="d-clo">0</div><div class="stat-unit">kg</div></div>
   </div>
-  <p class="section-title" id="station-section-title">Trạng thái trạm hôm nay</p>
-  <div class="station-grid" id="station-grid"></div>
-  <p class="section-title">Lịch sử báo cáo</p>
-  <div class="table-wrap">
+
+  <p class="sec-title" id="st-title">Trạng thái trạm hôm nay</p>
+  <div class="st-grid" id="st-grid"></div>
+
+  <p class="sec-title">Lịch sử báo cáo</p>
+  <div class="tbl-wrap">
     <table>
-      <thead>
-        <tr>
-          <th>Ngày BC</th><th>Trạm</th><th>ĐH hôm nay (m³)</th>
-          <th>Nước SX (m³)</th><th>Clo (kg)</th><th>ĐH lắp</th>
-          <th>Tình trạng</th><th>Lần gửi</th>
-        </tr>
-      </thead>
-      <tbody id="report-table"></tbody>
+      <thead><tr>
+        <th>Ngày BC</th><th>Trạm</th><th>ĐH hôm nay (m³)</th>
+        <th>Nước SX (m³)</th><th>Clo (kg)</th><th>ĐH lắp</th>
+        <th>Tình trạng</th><th>Lần gửi</th>
+      </tr></thead>
+      <tbody id="tbl-body"></tbody>
     </table>
-    <div class="empty-state" id="empty-state" style="display:none">
-      <div class="icon">&#128205;</div>
-      <p>Chưa có báo cáo nào. Bấm "Tải dữ liệu" để làm mới.</p>
+    <div class="empty" id="tbl-empty" style="display:none">
+      <p>📭 Chưa có báo cáo nào. Bấm "Tải dữ liệu" để làm mới.</p>
     </div>
-    <div class="loading" id="loading" style="display:none">⏳ Đang tải dữ liệu từ Google Sheet...</div>
+    <div class="loading" id="tbl-loading" style="display:none">⏳ Đang tải dữ liệu...</div>
   </div>
 </div>
 
 <script>
-// CONFIG
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzFK0bGXk64PnruPocYBCNIF-SrmfoqFQdgpZVLciB2SfelLHwCFje8uTXbmRsa3mhE/exec';
+// === CONFIG ===
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwCPeb1alnsNGLrl7lJEVDZljtU_F1mQzS-87T6_IvEJCZTo4NTkDOmbsItV1UZ_dS9/exec';
 const LOCK_DAYS = 3;
-
-// PIN được xác thực hoàn toàn phía server (Code.gs) — không lưu ở đây nữa
-const STORAGE_KEY = 'water_reports_v4';
+const STORE_KEY = 'wtr_v5';
 const STATIONS = [
-  'Trạm Bù Rên','Trạm Bù Gia Mập','Trạm Tân Thành','Trạm Lộc Hiệp',
-  'Trạm Tân Tiến','Trạm Thiện Hưng','Trạm Hưng Phước','Trạm Thanh Bình'
+  'Tr\u1ea1m B\u00f9 R\u00ean','Tr\u1ea1m B\u00f9 Gia M\u1eadp','Tr\u1ea1m T\u00e2n Th\u00e0nh','Tr\u1ea1m L\u1ed9c Hi\u1ec7p',
+  'Tr\u1ea1m T\u00e2n Ti\u1ebfn','Tr\u1ea1m Thi\u1ec7n H\u01b0ng','Tr\u1ea1m H\u01b0ng Ph\u01b0\u1edbc','Tr\u1ea1m Thanh B\u00ecnh'
 ];
-let currentMode = 'new';
-let incidentVal = null;
 
-function getReports(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}catch{return[];}}
-function saveReports(d){localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}
-function todayStr(){
-  const d=new Date();
-  const y=d.getFullYear();
-  const m=String(d.getMonth()+1).padStart(2,'0');
-  const dd=String(d.getDate()).padStart(2,'0');
-  return y+'-'+m+'-'+dd;
+// === STATE ===
+let mode = 'new';
+let incVal = null;
+
+// === STORAGE ===
+function getR(){try{return JSON.parse(localStorage.getItem(STORE_KEY)||'[]');}catch{return[];}}
+function setR(d){localStorage.setItem(STORE_KEY,JSON.stringify(d));}
+
+// === DATE UTILS ===
+function today(){const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function pad(n){return String(n).padStart(2,'0');}
+function fmtDate(s){if(!s)return'';if(s.includes('/'))return s;const[y,m,d]=s.split('-');return d+'/'+m+'/'+y;}
+function toYMD(s){
+  if(!s)return'';
+  s=String(s).replace(/^'/,'').trim();
+  if(/^\d{4}-/.test(s))return s.slice(0,10);
+  if(s.includes('/')){const p=s.split('/');if(p.length===3)return p[2]+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0');}
+  if(!isNaN(s)&&s.length>5)return new Date(+s).toISOString().slice(0,10);
+  return s.slice(0,10);
 }
-function formatDate(str){if(!str)return'';if(str.includes('/'))return str;const [y,m,d]=str.split('-');return d+'/'+m+'/'+y;}
-function toYMD(str){
-  if(!str)return'';
-  str=String(str).replace(/^'/,'').trim();
-  if(str.includes('-'))return str.slice(0,10);
-  if(str.includes('/')){const p=str.split('/');return p[2]+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0');}
-  if(!isNaN(str)&&str.length>4)return new Date(parseInt(str)).toISOString().slice(0,10);
-  return str.slice(0,10);
-}
-function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);}
+function dAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);}
 
-// INIT
-const todayVal=todayStr();
-document.getElementById('f-date').value=todayVal;
-document.getElementById('today-display').textContent='Ngày: '+formatDate(todayVal);
-document.getElementById('f-date').addEventListener('change',function(){
-  document.getElementById('today-display').textContent='Ngày: '+formatDate(this.value);
-  autoFillYesterday();
-  if(currentMode==='edit')checkExistingReport();
-});
+// === INIT ===
+;(function(){
+  const t=today();
+  document.getElementById('f-date').value=t;
+  document.getElementById('today-display').textContent=fmtDate(t);
+  document.getElementById('f-date').addEventListener('change',function(){
+    document.getElementById('today-display').textContent=fmtDate(this.value);
+    autoFill();
+    if(mode==='edit')loadOld();
+  });
+  document.getElementById('flt-specific').value=t;
+  renderDash();
+})();
 
-// MODE
-function setMode(mode){
-  currentMode=mode;
-  const isEdit=mode==='edit';
-  document.getElementById('mode-btn-new').className='mode-btn'+(isEdit?'':' active-new');
-  document.getElementById('mode-btn-edit').className='mode-btn'+(isEdit?' active-edit':'');
-  document.getElementById('form-header').className='form-header'+(isEdit?' edit-mode':'');
-  document.getElementById('form-title').textContent=isEdit?'Chỉnh Sửa Báo Cáo':'Báo Cáo Ngày';
-  document.getElementById('form-subtitle').textContent=isEdit
-    ?'Ghi đè dữ liệu đã gửi — cần PIN xác thực'
-    :'Nhập số liệu vận hành trạm cấp nước';
-  document.getElementById('edit-banner').className='edit-banner'+(isEdit?' show':'');
-  document.getElementById('admin-pin-section').className='admin-pin-section'+(isEdit?' show':'');
+// === MODE ===
+function setMode(m){
+  mode=m;
+  const e=m==='edit';
+  document.getElementById('btn-mode-new').className='mode-btn'+(e?'':' m-new');
+  document.getElementById('btn-mode-edit').className='mode-btn'+(e?' m-edit':'');
+  document.getElementById('form-header').className='form-header'+(e?' edit-mode':'');
+  document.getElementById('form-title').textContent=e?'Ch\u1ec9nh S\u1eeda B\u00e1o C\u00e1o':'B\u00e1o C\u00e1o Ng\u00e0y';
+  document.getElementById('form-sub').textContent=e?'Ghi \u0111\u00e8 d\u1eef li\u1ec7u \u0111\u00e3 g\u1eedi \u2014 c\u1ea7n PIN x\u00e1c th\u1ef1c':'Nh\u1eadp s\u1ed1 li\u1ec7u v\u1eadn h\u00e0nh tr\u1ea1m c\u1ea5p n\u01b0\u1edbc';
+  document.getElementById('edit-banner').className='edit-banner'+(e?' show':'');
+  document.getElementById('admin-box').className='admin-box'+(e?' show':'');
   const btn=document.getElementById('btn-submit');
-  btn.className='btn-submit'+(isEdit?' edit':'');
-  btn.textContent=isEdit?'Xác nhận chỉnh sửa':'Gửi báo cáo';
+  btn.className='btn-submit'+(e?' edit':'');
+  btn.textContent=e?'X\u00e1c nh\u1eadn ch\u1ec9nh s\u1eeda':'G\u1eedi b\u00e1o c\u00e1o';
   document.getElementById('f-admin-pin').value='';
-  document.getElementById('admin-pin-status').textContent='';
+  document.getElementById('admin-pin-st').textContent='';
   hideMsg();
-  if(isEdit)checkExistingReport();
+  if(e)loadOld();
 }
 
-// Load du lieu cu vao form khi o che do sua
-function checkExistingReport(){
-  const station=document.getElementById('f-station').value;
-  const date=document.getElementById('f-date').value;
-  if(!station||!date)return;
-  const ex=getReports().find(r=>r.station===station&&r.date===date);
+function loadOld(){
+  const st=document.getElementById('f-station').value;
+  const dt=document.getElementById('f-date').value;
+  if(!st||!dt)return;
+  const ex=getR().find(r=>r.station===st&&r.date===dt);
   if(ex){
     document.getElementById('f-reporter').value=ex.reporter||'';
     document.getElementById('f-meter-today').value=ex.meterToday||'';
-    document.getElementById('f-meter-yesterday').value=ex.meterYesterday||'';
+    document.getElementById('f-meter-yest').value=ex.meterYesterday||'';
     document.getElementById('f-clo').value=ex.clo||'';
     document.getElementById('f-phen').value=ex.phen||'';
     document.getElementById('f-voi').value=ex.voi||'';
     document.getElementById('f-meters').value=ex.meters||'';
     document.getElementById('f-meters-note').value=ex.metersNote||'';
     document.getElementById('f-incident').value=ex.incidentDetail||'';
-    setIncident(ex.incident||false);
+    setInc(!!ex.incident);
     calcWater();
-    showMsg('info','Đã tải dữ liệu cũ của "'+station+'" ngày '+formatDate(date)+'. Sửa và xác nhận.');
-  } else {
-    showMsg('info','Không tìm thấy bản ghi cục bộ của "'+station+'" ngày '+formatDate(date)+'. Nhập mới và gửi sẽ ghi đè trên server.');
+    showMsg('info','\u0110\u00e3 t\u1ea3i d\u1eef li\u1ec7u c\u0169 c\u1ee7a "'+st+'" ng\u00e0y '+fmtDate(dt)+'. H\u00e3y s\u1eeda v\u00e0 x\u00e1c nh\u1eadn.');
+  }else{
+    showMsg('info','Kh\u00f4ng t\u00ecm th\u1ea5y b\u1ea3n ghi c\u1ee5c b\u1ed9. Nh\u1eadp m\u1edbi v\u00e0 g\u1eedi s\u1ebd ghi \u0111\u00e8 tr\u00ean server n\u1ebfu t\u1ed3n t\u1ea1i.');
   }
 }
 
-// PIN
+// === STATION CHANGE ===
 function onStationChange(){
-  const station=document.getElementById('f-station').value;
+  const st=document.getElementById('f-station').value;
   const pc=document.getElementById('pin-card');
-  if(station){pc.classList.add('show'); document.getElementById('f-pin').value=''; document.getElementById('pin-status').textContent='';}
+  if(st){pc.classList.add('show');document.getElementById('f-pin').value='';document.getElementById('pin-st').textContent='';}
   else pc.classList.remove('show');
-  autoFillYesterday();
-  if(currentMode==='edit')checkExistingReport();
-}
-// PIN feedback — chi xoa trang thai cu khi nguoi dung go lai
-// Xac thuc that su chi thuc hien phia server (Code.gs)
-function onPinInput(){
-  const st=document.getElementById('pin-status');
-  st.textContent=''; st.className='pin-status';
-}
-function onAdminPinInput(){
-  const st=document.getElementById('admin-pin-status');
-  st.textContent=''; st.className='pin-status';
+  autoFill();
+  if(mode==='edit')loadOld();
 }
 
-// AUTO FILL
-function autoFillYesterday(){
-  if(currentMode==='edit')return;
-  const station=document.getElementById('f-station').value;
-  const date=document.getElementById('f-date').value;
-  if(!station||!date)return;
-  const d=new Date(date); d.setDate(d.getDate()-1);
-  const yest=d.toISOString().slice(0,10);
-  const prev=getReports().find(r=>r.station===station&&r.date===yest);
-  const fy=document.getElementById('f-meter-yesterday');
-  const hint=document.getElementById('auto-fill-hint');
-  if(prev&&prev.meterToday){fy.value=prev.meterToday;fy.style.background='#e8fff5';hint.textContent='Tự động lấy từ '+formatDate(yest);calcWater();}
-  else{fy.style.background='';hint.textContent='(nhập tay nếu chưa có)';}
+// === AUTO FILL ===
+function autoFill(){
+  if(mode==='edit')return;
+  const st=document.getElementById('f-station').value;
+  const dt=document.getElementById('f-date').value;
+  if(!st||!dt)return;
+  const d=new Date(dt);d.setDate(d.getDate()-1);
+  const yest=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  const prev=getR().find(r=>r.station===st&&r.date===yest);
+  const fy=document.getElementById('f-meter-yest');
+  const hint=document.getElementById('fill-hint');
+  if(prev&&prev.meterToday){
+    fy.value=prev.meterToday;fy.style.background='#e8fff5';
+    hint.textContent='\u2705 T\u1ef1 \u0111\u1ed9ng l\u1ea5y t\u1eeb '+fmtDate(yest);
+    calcWater();
+  }else{fy.style.background='';hint.textContent='';}
 }
 
-// VIEWS
+// === VIEWS ===
 function showView(v,btn){
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
   btn.classList.add('active');
-  if(v==='dashboard')loadFromSheet();
+  if(v==='dash')loadSheet();
 }
 
+// === WATER CALC ===
 function calcWater(){
   const t=parseFloat(document.getElementById('f-meter-today').value);
-  const y=parseFloat(document.getElementById('f-meter-yesterday').value);
-  const el=document.getElementById('water-calc-result');
-  if(!isNaN(t)&&!isNaN(y)&&t>=y){el.textContent='💧 Lượng nước sản xuất: '+(t-y).toFixed(1)+' m³';el.classList.add('show');}
-  else el.classList.remove('show');
+  const y=parseFloat(document.getElementById('f-meter-yest').value);
+  const el=document.getElementById('water-calc');
+  if(!isNaN(t)&&!isNaN(y)&&t>=y){
+    el.textContent='\U0001f4a7 L\u01b0\u1ee3ng n\u01b0\u1edbc s\u1ea3n xu\u1ea5t: '+(t-y).toFixed(1)+' m\u00b3';
+    el.classList.add('show');
+  }else el.classList.remove('show');
 }
 
-function setIncident(yes){
-  incidentVal=yes;
-  document.getElementById('btn-no').className='toggle-btn'+((!yes)?' selected-no':'');
-  document.getElementById('btn-yes').className='toggle-btn'+((yes)?' selected-yes':'');
-  document.getElementById('incident-detail').className='incident-detail'+(yes?' show':'');
+// === INCIDENT ===
+function setInc(yes){
+  incVal=yes;
+  document.getElementById('btn-no').className='tog-btn'+(yes?'':' sel-no');
+  document.getElementById('btn-yes').className='tog-btn'+(yes?' sel-yes':'');
+  document.getElementById('inc-detail').className='inc-detail'+(yes?' show':'');
 }
 
-function showMsg(type, msg){
-  const el=document.getElementById('form-error');
-  el.className='err-msg show type-'+(type==='info'?'info':'error');
-  el.textContent=(type==='info'?'[i] ':'[!] ')+msg;
-  if(type==='error')el.scrollIntoView({behavior:'smooth',block:'center'});
+// === MESSAGES ===
+function showMsg(type,msg){
+  const el=document.getElementById('form-msg');
+  el.className='msg show '+(type==='info'?'info':'err');
+  el.textContent=msg;
+  if(type==='err')el.scrollIntoView({behavior:'smooth',block:'center'});
 }
-function hideMsg(){const el=document.getElementById('form-error');el.className='err-msg type-error';}
+function hideMsg(){const el=document.getElementById('form-msg');el.className='msg err';}
 
-function checkDateLock(dateValue){
-  const rd=new Date(dateValue); rd.setHours(0,0,0,0);
-  const td=new Date(); td.setHours(0,0,0,0);
+// === DATE LOCK (client-side pre-check) ===
+function dateLockErr(dt){
+  const rd=new Date(dt);rd.setHours(0,0,0,0);
+  const td=new Date();td.setHours(0,0,0,0);
   const diff=Math.floor((td-rd)/86400000);
-  if(diff<0)return 'Ngày báo cáo khong duoc la ngay tuong lai!';
-  if(diff>LOCK_DAYS)return 'Ngày này đã quá '+LOCK_DAYS+' ngày. Dùng PIN quản lý để sửa.';
+  if(diff<0)return 'Ng\u00e0y b\u00e1o c\u00e1o kh\u00f4ng \u0111\u01b0\u1ee3c l\u00e0 ng\u00e0y t\u01b0\u01a1ng lai!';
+  if(diff>LOCK_DAYS)return 'Ng\u00e0y n\u00e0y \u0111\u00e3 qu\u00e1 '+LOCK_DAYS+' ng\u00e0y. D\u00f9ng PIN qu\u1ea3n l\u00fd \u0111\u1ec3 s\u1eeda.';
   return null;
 }
 
-// SUBMIT
+// === SUBMIT ===
 function submitForm(){
   hideMsg();
-  const date=document.getElementById('f-date').value;
-  const station=document.getElementById('f-station').value;
+  const date   = document.getElementById('f-date').value;
+  const station= document.getElementById('f-station').value;
   const reporter=document.getElementById('f-reporter').value.trim();
-  const meterToday=parseFloat(document.getElementById('f-meter-today').value);
-  const meterYest=parseFloat(document.getElementById('f-meter-yesterday').value);
-  const isEdit=currentMode==='edit';
+  const mT     = parseFloat(document.getElementById('f-meter-today').value);
+  const mY     = parseFloat(document.getElementById('f-meter-yest').value);
+  const isEdit = mode==='edit';
+  const pinVal = document.getElementById('f-pin').value.trim();
+  const adminPin=document.getElementById('f-admin-pin').value.trim();
 
-  if(!date){showMsg('error','Vui lòng chọn ngày báo cáo!');return;}
-  if(!station){showMsg('error','Vui lòng chọn tên trạm!');return;}
-  if(!reporter){showMsg('error','Vui lòng nhập tên người báo cáo!');return;}
-  if(isNaN(meterToday)||meterToday<0){showMsg('error','Vui lòng nhập chỉ số đồng hồ hôm nay!');return;}
-  if(incidentVal===null){showMsg('error','Vui lòng chọn tình trạng sự cố!');return;}
+  if(!date)   {showMsg('err','Vui l\u00f2ng ch\u1ecdn ng\u00e0y b\u00e1o c\u00e1o!');return;}
+  if(!station){showMsg('err','Vui l\u00f2ng ch\u1ecdn t\u00ean tr\u1ea1m!');return;}
+  if(!reporter){showMsg('err','Vui l\u00f2ng nh\u1eadp t\u00ean ng\u01b0\u1eddi b\u00e1o c\u00e1o!');return;}
+  if(isNaN(mT)||mT<0){showMsg('err','Vui l\u00f2ng nh\u1eadp ch\u1ec9 s\u1ed1 \u0111\u1ed3ng h\u1ed3 h\u00f4m nay!');return;}
+  if(incVal===null){showMsg('err','Vui l\u00f2ng ch\u1ecdn t\u00ecnh tr\u1ea1ng s\u1ef1 c\u1ed1!');return;}
+  if(!pinVal&&!adminPin){showMsg('err','Vui l\u00f2ng nh\u1eadp PIN tr\u1ea1m ho\u1eb7c PIN qu\u1ea3n l\u00fd!');return;}
 
-  // Kiem tra co nhap PIN chua (khong so sanh — server se xac thuc)
-  const pinVal=document.getElementById('f-pin').value.trim();
-  const adminPinVal=document.getElementById('f-admin-pin').value.trim();
-  if(!pinVal&&!adminPinVal){
-    showMsg('error','Vui lòng nhập PIN trạm hoặc PIN quản lý!');
-    document.getElementById('f-pin').focus(); return;
+  // Client pre-check (server se kiem tra lai)
+  if(!adminPin){
+    const err=dateLockErr(date);
+    if(err){showMsg('err',err);return;}
+    if(isEdit&&date!==today()){showMsg('err','Nh\u00e2n vi\u00ean ch\u1ec9 s\u1eeda \u0111\u01b0\u1ee3c b\u00e1o c\u00e1o c\u1ee7a h\u00f4m nay. D\u00f9ng PIN qu\u1ea3n l\u00fd \u0111\u1ec3 s\u1eeda ng\u00e0y kh\u00e1c.');return;}
+  }
+  if(!isEdit&&getR().some(r=>r.station===station&&r.date===date)){
+    showMsg('err','"'+station+'" \u0111\u00e3 c\u00f3 b\u00e1o c\u00e1o ng\u00e0y '+fmtDate(date)+'. Chuy\u1ec3n sang ch\u1ebf \u0111\u1ed9 Ch\u1ec9nh s\u1eeda \u0111\u1ec3 c\u1eadp nh\u1eadt.');return;
   }
 
-  // Kiem tra ngay phia client (nhanh, tranh gui thua) — server se kiem tra lai
-  if(!adminPinVal){
-    const lockErr=checkDateLock(date);
-    if(lockErr){showMsg('error',lockErr);return;}
-    if(isEdit&&date!==todayStr()){
-      showMsg('error','Nhân viên chỉ sửa được báo cáo của hôm nay. Dùng PIN quản lý để sửa ngày khác.');return;
-    }
-  }
-
-  // Che do gui moi: canh bao trung lap cuc bo (server van la trong tai chinh)
-  if(!isEdit&&getReports().some(r=>r.station===station&&r.date===date)){
-    showMsg('error','"'+station+'" da co bao cao ngay '+formatDate(date)+'. Chuyển sang chế độ Chỉnh sửa để cập nhật.');
-    return;
-  }
-
-  const waterProduced=(!isNaN(meterYest)&&meterToday>=meterYest)?parseFloat((meterToday-meterYest).toFixed(1)):0;
-  const report={
-    id:Date.now(), date, station, reporter,
-    meterToday, meterYesterday:isNaN(meterYest)?'':meterYest,
-    water:waterProduced,
+  const water=(!isNaN(mY)&&mT>=mY)?parseFloat((mT-mY).toFixed(1)):0;
+  const payload={
+    date,station,reporter,
+    meterToday:mT, meterYesterday:isNaN(mY)?'':mY, water,
     clo:parseFloat(document.getElementById('f-clo').value)||0,
     phen:parseFloat(document.getElementById('f-phen').value)||0,
     voi:parseFloat(document.getElementById('f-voi').value)||0,
-    incident:incidentVal,
+    incident:incVal,
     incidentDetail:document.getElementById('f-incident').value.trim(),
     meters:parseInt(document.getElementById('f-meters').value)||0,
     metersNote:document.getElementById('f-meters-note').value.trim(),
-    isEdit,
-    stationPin: document.getElementById('f-pin').value.trim(),
-    adminPin:   document.getElementById('f-admin-pin').value.trim()
+    isEdit, stationPin:pinVal, adminPin
   };
 
   const btn=document.getElementById('btn-submit');
-  btn.innerHTML='<span class="spinner"></span>'+(isEdit?'Đang cập nhật...':'Đang gửi...');
+  btn.innerHTML='<span class="spinner"></span>'+(isEdit?'\u0110ang c\u1eadp nh\u1eadt...':'\u0110ang g\u1eedi...');
   btn.disabled=true;
 
-  fetch(SHEET_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(report)})
+  fetch(SHEET_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
   .then(r=>r.json())
   .then(res=>{
-    btn.innerHTML=isEdit?'Xác nhận chỉnh sửa':'Gửi báo cáo'; btn.disabled=false;
+    btn.textContent=isEdit?'X\u00e1c nh\u1eadn ch\u1ec9nh s\u1eeda':'G\u1eedi b\u00e1o c\u00e1o';btn.disabled=false;
     if(res.status==='auth_failed'){
-      // Hien thi loi dung o PIN nao sai
-      const isAdminAttempt=!!document.getElementById('f-admin-pin').value.trim();
-      if(isAdminAttempt){
-        const ast=document.getElementById('admin-pin-status');
-        ast.textContent='PIN quản lý không đúng'; ast.className='pin-status err';
-      } else {
-        const pst=document.getElementById('pin-status');
-        pst.textContent='PIN không đúng'; pst.className='pin-status err';
-      }
-      showMsg('error','PIN không đúng. Vui lòng kiểm tra lại.');
-      return;
+      document.getElementById(adminPin?'admin-pin-st':'pin-st').textContent='PIN kh\u00f4ng \u0111\u00fang';
+      document.getElementById(adminPin?'admin-pin-st':'pin-st').className='pin-st err';
+      showMsg('err','PIN kh\u00f4ng \u0111\u00fang. Vui l\u00f2ng ki\u1ec3m tra l\u1ea1i.');return;
     }
-    if(res.status==='locked'){showMsg('error',res.message);return;}
-    // PIN dung — hien thi feedback thanh cong
-    const isAdminOK=!!document.getElementById('f-admin-pin').value.trim();
-    if(isAdminOK){
-      const ast=document.getElementById('admin-pin-status');
-      ast.textContent='PIN quản lý hợp lệ'; ast.className='pin-status ok';
-    } else {
-      const pst=document.getElementById('pin-status');
-      pst.textContent='PIN hợp lệ'; pst.className='pin-status ok';
-    }
-    report.submittedAt=res.submittedAt||new Date().toLocaleString('vi-VN');
-    _finalize(report, waterProduced, btn, 'Đã cập nhật Google Sheet');
+    if(res.status==='locked'){showMsg('err',res.message);return;}
+    document.getElementById(adminPin?'admin-pin-st':'pin-st').textContent='PIN h\u1ee3p l\u1ec7';
+    document.getElementById(adminPin?'admin-pin-st':'pin-st').className='pin-st ok';
+    const rec={...payload,id:Date.now(),submittedAt:res.submittedAt||new Date().toLocaleString('vi-VN'),lanGui:''};
+    saveAndShow(rec,water,'\u0110\u00e3 l\u01b0u v\u00e0o Google Sheet');
   })
   .catch(()=>{
-    btn.innerHTML=isEdit?'Xác nhận chỉnh sửa':'Gửi báo cáo'; btn.disabled=false;
-    report.submittedAt=new Date().toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
-    _finalize(report, waterProduced, btn, 'Mất kết nối — đã lưu tạm cục bộ. Liên hệ quản lý để đồng bộ.');
+    btn.textContent=isEdit?'X\u00e1c nh\u1eadn ch\u1ec9nh s\u1eeda':'G\u1eedi b\u00e1o c\u00e1o';btn.disabled=false;
+    const rec={...payload,id:Date.now(),submittedAt:new Date().toLocaleString('vi-VN'),lanGui:''};
+    saveAndShow(rec,water,'\u26a0\ufe0f M\u1ea5t k\u1ebft n\u1ed1i \u2014 \u0111\u00e3 l\u01b0u t\u1ea1m c\u1ee5c b\u1ed9. Li\u00ean h\u1ec7 qu\u1ea3n l\u00fd \u0111\u1ec3 \u0111\u1ed3ng b\u1ed9.');
   });
 }
 
-function _finalize(report, waterProduced, btn, note){
-  // Ghi de local neu da ton tai
-  let rpts=getReports();
-  const idx=rpts.findIndex(r=>r.station===report.station&&r.date===report.date);
-  if(idx>=0)rpts[idx]=report; else rpts.unshift(report);
-  saveReports(rpts);
-
-  const isEdit=currentMode==='edit';
-  document.getElementById('success-icon').className='success-icon'+(isEdit?' edit-icon':'');
-  document.getElementById('success-title').textContent=isEdit?'Đã cập nhật!':'Đã gửi thành công!';
-  document.getElementById('success-msg').innerHTML=
-    '<b>'+report.station+'</b> - '+report.reporter+'<br>'+
-    'ĐH hôm nay: '+report.meterToday+' m³ | Nước SX: '+waterProduced+' m3<br>'+
-    'Ngày BC: '+formatDate(report.date)+
-    (isEdit?'<br>Chinh sua boi: '+report.editBy:'')+
-    '<br>'+note;
+function saveAndShow(rec,water,note){
+  let rs=getR();
+  const i=rs.findIndex(r=>r.station===rec.station&&r.date===rec.date);
+  if(i>=0)rs[i]=rec;else rs.unshift(rec);
+  setR(rs);
+  const e=mode==='edit';
+  document.getElementById('suc-icon').className='suc-icon'+(e?' edit':'');
+  document.getElementById('suc-title').textContent=e?'\u0110\u00e3 c\u1eadp nh\u1eadt!':'\u0110\u00e3 g\u1eedi th\u00e0nh c\u00f4ng!';
+  document.getElementById('suc-msg').innerHTML=
+    '<b>'+rec.station+'</b> \u2014 '+rec.reporter+'<br>'+
+    '\u0110H h\u00f4m nay: '+rec.meterToday+' m\u00b3 | N\u01b0\u1edbc SX: '+water+' m\u00b3<br>'+
+    'Ng\u00e0y BC: '+fmtDate(rec.date)+'<br>'+note;
   document.getElementById('form-main').style.display='none';
   document.getElementById('success-screen').classList.add('show');
 }
@@ -648,119 +602,161 @@ function _finalize(report, waterProduced, btn, note){
 function newReport(){
   document.getElementById('form-main').style.display='block';
   document.getElementById('success-screen').classList.remove('show');
-  hideMsg(); setMode('new');
-  ['f-meter-today','f-meter-yesterday','f-clo','f-phen','f-voi','f-incident','f-meters','f-meters-note','f-pin','f-admin-pin'].forEach(id=>{ document.getElementById(id).value=''; });
-  document.getElementById('f-date').value=todayStr();
+  hideMsg();setMode('new');
+  ['f-meter-today','f-meter-yest','f-clo','f-phen','f-voi','f-incident','f-meters','f-meters-note','f-pin','f-admin-pin']
+    .forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('f-date').value=today();
+  document.getElementById('today-display').textContent=fmtDate(today());
   document.getElementById('f-station').value='';
   document.getElementById('f-reporter').value='';
-  document.getElementById('water-calc-result').classList.remove('show');
-  document.getElementById('auto-fill-hint').textContent='';
-  document.getElementById('f-meter-yesterday').style.background='';
+  document.getElementById('water-calc').classList.remove('show');
+  document.getElementById('fill-hint').textContent='';
+  document.getElementById('f-meter-yest').style.background='';
   document.getElementById('pin-card').classList.remove('show');
-  document.getElementById('pin-status').textContent='';
-  document.getElementById('admin-pin-status').textContent='';
-  incidentVal=null;
-  document.getElementById('btn-no').className='toggle-btn';
-  document.getElementById('btn-yes').className='toggle-btn';
-  document.getElementById('incident-detail').className='incident-detail';
+  document.getElementById('pin-st').textContent='';document.getElementById('pin-st').className='pin-st';
+  document.getElementById('admin-pin-st').textContent='';document.getElementById('admin-pin-st').className='pin-st';
+  incVal=null;
+  document.getElementById('btn-no').className='tog-btn';
+  document.getElementById('btn-yes').className='tog-btn';
+  document.getElementById('inc-detail').className='inc-detail';
 }
 
-// LOAD SHEET
-function loadFromSheet(){
-  const loading=document.getElementById('loading'); loading.style.display='block';
-  document.getElementById('empty-state').style.display='none';
-  fetch(SHEET_URL).then(r=>r.json()).then(rows=>{
-    const rpts=rows.map(r=>({
-      date:toYMD(r['Ngay']||r['\u0110\u1ecbnh']||''),
-      station:r['Trạm']||'',
-      reporter:r['Người báo cáo']||'',
-      meterToday:parseFloat(r['\u0110H hom nay (m\u00b3)'])||0,
-      water:parseFloat(r['Nuoc SX (m\u00b3)'])||0,
-      clo:parseFloat(r['Clo (kg)'])||0,
-      phen:parseFloat(r['Phen (kg)'])||0,
-      voi:parseFloat(r['Voi (kg)'])||0,
-      incident:(r['Sự cố']||'')==='Co',
-      incidentDetail:r['Chi tiet su co']||'',
-      meters:parseInt(r['\u0110H lap moi (cai)'])||0,
-      metersNote:r['Ghi chu \u0110H']||'',
-      submittedAt:r['Gio gui']||'',
-      lanGui:r['Lần gửi']||''
+// === LOAD FROM SHEET ===
+// doGet da tra ve object voi key camelCase (date, station, reporter, meterToday, water, clo, phen, voi, incident, meters, lanGui...)
+function loadSheet(){
+  const ld=document.getElementById('tbl-loading');
+  const em=document.getElementById('tbl-empty');
+  ld.style.display='block';em.style.display='none';
+  fetch(SHEET_URL)
+  .then(r=>r.json())
+  .then(rows=>{
+    // doGet tra ve camelCase truc tiep, chi can chuan hoa date
+    const rs=rows.map(r=>({
+      date:       toYMD(r.date||''),
+      station:    r.station||'',
+      reporter:   r.reporter||'',
+      meterToday: parseFloat(r.meterToday)||0,
+      meterYesterday: r.meterYesterday||'',
+      water:      parseFloat(r.water)||0,
+      clo:        parseFloat(r.clo)||0,
+      phen:       parseFloat(r.phen)||0,
+      voi:        parseFloat(r.voi)||0,
+      incident:   r.incident===true||r.incident==='true',
+      incidentDetail: r.incidentDetail||'',
+      meters:     parseInt(r.meters)||0,
+      metersNote: r.metersNote||'',
+      submittedAt:r.submittedAt||'',
+      lanGui:     r.lanGui||''
     })).filter(r=>r.date&&r.station);
-    saveReports(rpts);
-    loading.style.display='none';
-    renderDashboard();
-  }).catch(()=>{loading.style.display='none';renderDashboard();});
+    setR(rs);
+    ld.style.display='none';
+    renderDash();
+  })
+  .catch(()=>{ld.style.display='none';renderDash();});
 }
 
-// DASHBOARD
-function filterReports(){
-  let r=getReports();
-  const df=document.getElementById('filter-date').value;
-  const sf=document.getElementById('filter-station').value;
-  if(df==='today')r=r.filter(x=>x.date===todayStr());
-  else if(df==='specific'){const sd=document.getElementById('filter-specific-date').value;if(sd)r=r.filter(x=>x.date===sd);}
-  else if(df==='week'){const c=daysAgo(7);r=r.filter(x=>x.date>=c);}
-  else if(df==='month'){const c=daysAgo(30);r=r.filter(x=>x.date>=c);}
-  if(sf)r=r.filter(x=>x.station===sf);
-  return r;
+// === DASHBOARD ===
+function getFiltered(){
+  let rs=getR();
+  const df=document.getElementById('flt-date').value;
+  const sf=document.getElementById('flt-station').value;
+  if(df==='today')rs=rs.filter(r=>r.date===today());
+  else if(df==='specific'){const sd=document.getElementById('flt-specific').value;if(sd)rs=rs.filter(r=>r.date===sd);}
+  else if(df==='week'){const c=dAgo(7);rs=rs.filter(r=>r.date>=c);}
+  else if(df==='month'){const c=dAgo(30);rs=rs.filter(r=>r.date>=c);}
+  if(sf)rs=rs.filter(r=>r.station===sf);
+  return rs;
 }
 
-function renderDashboard(){
-  const df=document.getElementById('filter-date').value;
-  const reports=filterReports();
-  let viewDate=null;
-  if(df==='today')viewDate=todayStr();
-  else if(df==='specific')viewDate=document.getElementById('filter-specific-date').value||todayStr();
-  const dr=viewDate?reports.filter(r=>r.date===viewDate):reports;
-  const reported=new Set(dr.map(r=>r.station));
-  document.getElementById('d-reported').textContent=reported.size;
-  document.getElementById('d-total-water').textContent=dr.reduce((s,r)=>s+(r.water||0),0).toFixed(1);
-  document.getElementById('d-incidents').textContent=dr.filter(r=>r.incident).length;
-  document.getElementById('d-total-clo').textContent=dr.reduce((s,r)=>s+(r.clo||0),0).toFixed(2);
+function renderDash(){
+  const df=document.getElementById('flt-date').value;
+  const rs=getFiltered();
   const isSingle=df==='today'||df==='specific';
-  if(df==='today'){document.getElementById('label-reported').textContent='Đã báo cáo hom nay';document.getElementById('label-reported-sub').textContent='/ 8 trạm';document.getElementById('label-water').textContent='Tổng nước SX hom nay';document.getElementById('label-clo').textContent='Tổng Clo hom nay';}
-  else if(df==='specific'){const sd=document.getElementById('filter-specific-date').value;document.getElementById('label-reported').textContent='Đã BC ngày '+formatDate(sd);document.getElementById('label-reported-sub').textContent='/ 8 trạm';document.getElementById('label-water').textContent='Nước SX ngày '+formatDate(sd);document.getElementById('label-clo').textContent='Clo ngày '+formatDate(sd);}
-  else{const m={week:'7 ngày qua',month:'30 ngày qua',all:'Tất cả'};document.getElementById('label-reported').textContent='Trạm da BC ('+m[df]+')';document.getElementById('label-reported-sub').textContent='trạm';document.getElementById('label-water').textContent='Tổng nước SX ('+m[df]+')';document.getElementById('label-clo').textContent='Tổng Clo ('+m[df]+')';}
-  const ab=document.getElementById('alert-missing');
-  if(isSingle){const miss=STATIONS.filter(s=>!reported.has(s));if(miss.length>0&&miss.length<8){ab.classList.remove('hidden');document.getElementById('alert-text').textContent='Chưa báo cáo '+(df==='today'?'hôm nay':'ngày '+formatDate(viewDate))+': '+miss.join(', ');}else ab.classList.add('hidden');}else ab.classList.add('hidden');
-  const ss=document.getElementById('station-section-title');
-  const sg=document.getElementById('station-grid');
+  let viewDate=null;
+  if(df==='today')viewDate=today();
+  else if(df==='specific')viewDate=document.getElementById('flt-specific').value;
+  const dr=viewDate?rs.filter(r=>r.date===viewDate):rs;
+  const repSet=new Set(dr.map(r=>r.station));
+
+  document.getElementById('d-rep').textContent=repSet.size;
+  document.getElementById('d-water').textContent=dr.reduce((s,r)=>s+(r.water||0),0).toFixed(1);
+  document.getElementById('d-inc').textContent=dr.filter(r=>r.incident).length;
+  document.getElementById('d-clo').textContent=dr.reduce((s,r)=>s+(r.clo||0),0).toFixed(2);
+
+  // Labels
+  if(df==='today'){
+    document.getElementById('lbl-rep').textContent='\u0110\u00e3 b\u00e1o c\u00e1o h\u00f4m nay';
+    document.getElementById('lbl-rep-sub').textContent='/ 8 tr\u1ea1m';
+    document.getElementById('lbl-water').textContent='T\u1ed5ng n\u01b0\u1edbc SX h\u00f4m nay';
+    document.getElementById('lbl-clo').textContent='T\u1ed5ng Clo h\u00f4m nay';
+  }else if(df==='specific'){
+    const sd=document.getElementById('flt-specific').value;
+    document.getElementById('lbl-rep').textContent='\u0110\u00e3 BC ng\u00e0y '+fmtDate(sd);
+    document.getElementById('lbl-rep-sub').textContent='/ 8 tr\u1ea1m';
+    document.getElementById('lbl-water').textContent='N\u01b0\u1edbc SX ng\u00e0y '+fmtDate(sd);
+    document.getElementById('lbl-clo').textContent='Clo ng\u00e0y '+fmtDate(sd);
+  }else{
+    const m={week:'7 ng\u00e0y qua',month:'30 ng\u00e0y qua',all:'T\u1ea5t c\u1ea3'};
+    document.getElementById('lbl-rep').textContent='Tr\u1ea1m \u0111\u00e3 BC ('+m[df]+')';
+    document.getElementById('lbl-rep-sub').textContent='tr\u1ea1m';
+    document.getElementById('lbl-water').textContent='T\u1ed5ng n\u01b0\u1edbc SX ('+m[df]+')';
+    document.getElementById('lbl-clo').textContent='T\u1ed5ng Clo ('+m[df]+')';
+  }
+
+  // Alert missing
+  const ab=document.getElementById('alert-bar');
   if(isSingle){
-    ss.style.display='block';sg.style.display='grid';
-    ss.textContent='Trạng thái trạm — '+(df==='today'?'hôm nay':formatDate(viewDate));
-    sg.innerHTML=STATIONS.map(s=>{
+    const miss=STATIONS.filter(s=>!repSet.has(s));
+    if(miss.length>0&&miss.length<8){
+      ab.classList.remove('hidden');
+      document.getElementById('alert-txt').textContent=
+        'Ch\u01b0a b\u00e1o c\u00e1o '+(df==='today'?'h\u00f4m nay':'ng\u00e0y '+fmtDate(viewDate))+': '+miss.join(', ');
+    }else ab.classList.add('hidden');
+  }else ab.classList.add('hidden');
+
+  // Station cards
+  const stTitle=document.getElementById('st-title');
+  const stGrid=document.getElementById('st-grid');
+  if(isSingle){
+    stTitle.style.display='block';stGrid.style.display='grid';
+    stTitle.textContent='Tr\u1ea1ng th\u00e1i tr\u1ea1m \u2014 '+(df==='today'?'h\u00f4m nay':fmtDate(viewDate));
+    stGrid.innerHTML=STATIONS.map(s=>{
       const r=dr.find(x=>x.station===s);
-      if(!r)return '<div class="station-card"><div class="station-name">'+s+'</div><span class="station-status status-missing">Chua bao cao</span><div class="station-data">-</div></div>';
-      return '<div class="station-card '+(r.incident?'reported incident':'reported')+'"><div class="station-name">'+s+'</div>'+(r.incident?'<span class="station-status status-incident">Sự cố</span>':'<span class="station-status status-ok">Binh thuong</span>')+'<div class="station-data">DH: <strong>'+r.meterToday+' m3</strong><br>Nuoc SX: <strong>'+r.water+' m3</strong><br>Clo: <strong>'+r.clo+' kg</strong>'+(r.meters>0?'<br>ĐH lắp: <strong>'+r.meters+' cai</strong>':'')+'<br>'+r.reporter+' - '+r.submittedAt+'</div></div>';
+      if(!r)return'<div class="st-card"><div class="st-name">'+s+'</div><span class="badge-st b-miss">Ch\u01b0a b\u00e1o c\u00e1o</span><div class="st-data">\u2014</div></div>';
+      return'<div class="st-card '+(r.incident?'inc':'ok')+'"><div class="st-name">'+s+'</div>'+
+        (r.incident?'<span class="badge-st b-inc">\u26a0\ufe0f S\u1ef1 c\u1ed1</span>':'<span class="badge-st b-ok">\u2705 B\u00ecnh th\u01b0\u1eddng</span>')+
+        '<div class="st-data">\u0110H: <strong>'+r.meterToday+' m\u00b3</strong><br>N\u01b0\u1edbc SX: <strong>'+r.water+' m\u00b3</strong><br>Clo: <strong>'+r.clo+' kg</strong>'+
+        (r.meters>0?'<br>\u0110H l\u1eafp: <strong>'+r.meters+' c\u00e1i</strong>':'')+
+        '<br>'+r.reporter+' \u00b7 '+r.submittedAt+'</div></div>';
     }).join('');
-  }else{ss.style.display='none';sg.style.display='none';}
-  const tbody=document.getElementById('report-table');
-  if(reports.length===0){tbody.innerHTML='';document.getElementById('empty-state').style.display='block';}
+  }else{stTitle.style.display='none';stGrid.style.display='none';}
+
+  // Table
+  const tbody=document.getElementById('tbl-body');
+  const empty=document.getElementById('tbl-empty');
+  if(rs.length===0){tbody.innerHTML='';empty.style.display='block';}
   else{
-    document.getElementById('empty-state').style.display='none';
-    tbody.innerHTML=[...reports].sort((a,b)=>b.date.localeCompare(a.date)).map(r=>
-      '<tr><td>'+formatDate(r.date)+'</td><td><strong>'+r.station+'</strong></td>'+
+    empty.style.display='none';
+    tbody.innerHTML=[...rs].sort((a,b)=>b.date.localeCompare(a.date)).map(r=>
+      '<tr><td>'+fmtDate(r.date)+'</td><td><strong>'+r.station+'</strong></td>'+
       '<td style="font-family:monospace">'+r.meterToday+'</td>'+
       '<td style="font-family:monospace">'+r.water+'</td>'+
       '<td style="font-family:monospace">'+r.clo+'</td>'+
       '<td>'+r.meters+'</td>'+
-      '<td>'+(r.incident?'<span class="badge badge-incident">Sự cố</span>':'<span class="badge badge-ok">OK</span>')+'</td>'+
-      '<td>'+(r.lanGui?'<span class="badge badge-edit">'+r.lanGui+'</span>':'<span style="color:var(--muted);font-size:11px">Lan 1</span>')+'</td></tr>'
+      '<td>'+(r.incident?'<span class="bdg bdg-inc">S\u1ef1 c\u1ed1</span>':'<span class="bdg bdg-ok">OK</span>')+'</td>'+
+      '<td>'+(r.lanGui?'<span class="bdg bdg-edit">'+r.lanGui+'</span>':'<span style="color:var(--muted);font-size:11px">L\u1ea7n 1</span>')+'</td></tr>'
     ).join('');
   }
-  document.getElementById('dash-subtitle').textContent='Cập nhật: '+new Date().toLocaleString('vi-VN')+' — Tổng '+reports.length+' báo cáo';
+  document.getElementById('dash-sub').textContent='C\u1eadp nh\u1eadt: '+new Date().toLocaleString('vi-VN')+' \u2014 T\u1ed5ng '+rs.length+' b\u00e1o c\u00e1o';
 }
 
-function onFilterDateChange(){
-  const df=document.getElementById('filter-date').value;
-  const pk=document.getElementById('dash-date-picker');
-  if(df==='specific'){pk.classList.add('show');document.getElementById('filter-specific-date').value=daysAgo(1);}
+function onDateFilter(){
+  const df=document.getElementById('flt-date').value;
+  const pk=document.getElementById('date-picker');
+  if(df==='specific'){pk.classList.add('show');document.getElementById('flt-specific').value=dAgo(1);}
   else pk.classList.remove('show');
-  renderDashboard();
+  renderDash();
 }
-
-document.getElementById('filter-specific-date').value=todayStr();
-renderDashboard();
 </script>
 </body>
 </html>
