@@ -631,20 +631,28 @@ function loadSheet(){
 
   fetch(SHEET_URL)
     .then(r => r.json())
-    .then(data => {
-      console.log("📥 Dữ liệu nhận được từ server:", data);
+    .then(response => {
+      console.log("📥 Dữ liệu nhận được từ server:", response);
 
-      // Xử lý cả 2 trường hợp: array hoặc object {error: ...}
+      // Xử lý nhiều kiểu trả về khác nhau
       let rows = [];
-      if (Array.isArray(data)) {
-        rows = data;
-      } else if (data && typeof data === 'object') {
-        if (data.error) {
-          console.error("Server trả về lỗi:", data.error);
-        } else {
-          rows = [data];        // nếu chỉ 1 object
+      
+      if (Array.isArray(response)) {
+        rows = response;
+      } 
+      else if (response && typeof response === 'object') {
+        if (response.data && Array.isArray(response.data)) {
+          rows = response.data;
+        } else if (response.rows && Array.isArray(response.rows)) {
+          rows = response.rows;
+        } else if (response.sampleRow) {
+          // Trường hợp đặc biệt của bạn
+          console.log("Phát hiện response có sampleRow");
+          rows = response.sampleRow ? [response.sampleRow] : []; 
         }
       }
+
+      console.log("Số dòng thô để xử lý:", rows.length);
 
       const rs = rows.map(r => ({
         date: toYMD(r.date || r.Ngay || ''),
