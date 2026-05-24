@@ -10,12 +10,10 @@
     --blue:#0a6bff; --blue-dark:#0050cc; --teal:#00c2a8;
     --red:#ff3b3b; --orange:#ff8c00; --bg:#f0f4fb;
     --card:#ffffff; --text:#0d1b3e; --muted:#6b7a99;
-    --border:#d4ddf0; --success:#00b86b;
+    --border:#d4ddf0; --success:#00b86b; --amber:#f59e0b;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-
-  /* NAV */
   .nav{background:var(--text);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;}
   .nav-brand{color:#fff;font-weight:800;font-size:15px;}
   .nav-brand span{color:var(--teal);}
@@ -23,74 +21,88 @@
   .nav-tab{color:rgba(255,255,255,0.6);background:none;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;transition:all .2s;}
   .nav-tab.active{background:rgba(255,255,255,0.12);color:#fff;}
   .nav-tab:hover{background:rgba(255,255,255,0.08);color:#fff;}
-
-  /* VIEWS */
   .view{display:none;padding:20px;max-width:680px;margin:0 auto;}
   .view.active{display:block;}
   .view-dashboard{max-width:100%;}
-
-  /* FORM */
-  .form-header{background:linear-gradient(135deg,#0a6bff 0%,#0050cc 100%);color:#fff;border-radius:16px;padding:24px;margin-bottom:20px;}
+  .form-header{background:linear-gradient(135deg,#0a6bff 0%,#0050cc 100%);color:#fff;border-radius:16px;padding:24px;margin-bottom:20px;transition:background .3s;}
+  .form-header.edit-mode{background:linear-gradient(135deg,#d97706 0%,#b45309 100%);}
   .form-header h1{font-size:22px;font-weight:800;margin-bottom:4px;}
   .form-header p{opacity:.75;font-size:13px;}
   .date-badge{display:inline-block;background:rgba(255,255,255,0.2);border-radius:20px;padding:4px 12px;font-size:12px;font-family:'JetBrains Mono',monospace;margin-top:10px;}
-
   .card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:20px;margin-bottom:16px;}
   .card-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:14px;}
-
   .field{margin-bottom:16px;}
   .field:last-child{margin-bottom:0;}
   label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text);}
   label .req{color:var(--red);margin-left:2px;}
-
-  select,input[type=number],input[type=text],input[type=date],textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none;transition:border-color .2s;-webkit-appearance:none;}
+  select,input[type=number],input[type=text],input[type=date],input[type=password],textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none;transition:border-color .2s;-webkit-appearance:none;}
   select:focus,input:focus,textarea:focus{border-color:var(--blue);background:#fff;}
   textarea{resize:vertical;min-height:80px;}
-
   .input-group{display:flex;align-items:center;gap:10px;}
   .input-unit{font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap;min-width:36px;}
-
   .chem-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-
   .incident-toggle{display:flex;gap:8px;}
   .toggle-btn{flex:1;padding:10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:all .2s;text-align:center;}
   .toggle-btn.selected-no{border-color:var(--success);background:#e8fff5;color:var(--success);}
   .toggle-btn.selected-yes{border-color:var(--red);background:#fff0f0;color:var(--red);}
-
   .incident-detail{display:none;margin-top:12px;}
   .incident-detail.show{display:block;}
-
-  .water-calc{background:var(--blue-light,#e8f0ff);border-radius:8px;padding:12px 14px;margin-top:10px;font-size:13px;color:var(--blue);font-weight:600;display:none;}
+  .water-calc{background:#e8f0ff;border-radius:8px;padding:12px 14px;margin-top:10px;font-size:13px;color:var(--blue);font-weight:600;display:none;}
   .water-calc.show{display:block;}
-
+  /* MODE TOGGLE */
+  .mode-toggle{display:flex;gap:0;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;}
+  .mode-btn{flex:1;padding:10px 8px;background:var(--bg);border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--muted);transition:all .2s;text-align:center;}
+  .mode-btn.active-new{background:var(--blue);color:#fff;}
+  .mode-btn.active-edit{background:var(--amber);color:#fff;}
+  /* EDIT BANNER */
+  .edit-banner{background:#fff8e6;border:1.5px solid var(--amber);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;display:none;}
+  .edit-banner.show{display:block;}
+  .edit-banner strong{color:#b45309;}
+  /* PIN */
+  .pin-box{background:#fff8e6;border:1.5px solid var(--orange);border-radius:10px;padding:14px 16px;margin-bottom:16px;display:none;}
+  .pin-box.show{display:block;}
+  .pin-label{font-weight:700;color:var(--orange);margin-bottom:8px;font-size:13px;}
+  .pin-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .pin-row input{max-width:160px;letter-spacing:4px;font-family:'JetBrains Mono',monospace;font-size:16px;}
+  .pin-hint{font-size:11px;color:var(--muted);margin-top:4px;}
+  .pin-status{font-size:12px;margin-top:6px;min-height:16px;}
+  .pin-status.ok{color:var(--success);}
+  .pin-status.err{color:var(--red);}
+  .admin-pin-section{background:#f0f0ff;border:1.5px solid #8b8bff;border-radius:8px;padding:10px 14px;margin-top:12px;display:none;}
+  .admin-pin-section.show{display:block;}
+  .admin-pin-section > label{color:#4444cc;font-size:12px;}
+  /* ERRORS */
+  .err-msg{border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:12px;display:none;}
+  .err-msg.show{display:block;}
+  .err-msg.type-error{background:#fff0f0;border:1.5px solid var(--red);color:var(--red);}
+  .err-msg.type-info{background:#fff8e6;border:1.5px solid var(--amber);color:#b45309;}
+  /* BUTTONS */
   .btn-submit{width:100%;padding:16px;background:var(--blue);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s;margin-top:8px;}
   .btn-submit:hover{background:var(--blue-dark);}
+  .btn-submit.edit{background:var(--amber);}
+  .btn-submit.edit:hover{background:#b45309;}
   .btn-submit:disabled{background:#aaa;cursor:not-allowed;}
-
+  /* SUCCESS */
   .success-screen{text-align:center;padding:48px 24px;display:none;}
   .success-screen.show{display:block;}
   .success-icon{width:72px;height:72px;background:var(--success);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;}
+  .success-icon.edit-icon{background:var(--amber);}
   .success-screen h2{font-size:22px;font-weight:800;margin-bottom:8px;}
   .success-screen p{color:var(--muted);font-size:14px;line-height:1.6;}
   .btn-new{margin-top:24px;padding:12px 28px;background:var(--blue);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;}
-
   /* DASHBOARD */
   .dash-header{background:var(--text);color:#fff;padding:24px 20px;margin:-20px -20px 20px;}
   .dash-header h1{font-size:20px;font-weight:800;margin-bottom:4px;}
   .dash-header p{font-size:13px;opacity:.6;}
-
   .dash-toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
   .filter-select{padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;background:var(--card);color:var(--text);cursor:pointer;outline:none;}
   .filter-select:focus{border-color:var(--blue);}
   .btn-refresh{padding:7px 16px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
   .btn-refresh:hover{background:var(--blue-dark);}
-
-  /* Date picker cho dashboard */
   .dash-date-picker{display:none;align-items:center;gap:6px;}
   .dash-date-picker.show{display:flex;}
   .dash-date-picker label{font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;}
   .dash-date-picker input{padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;width:140px;}
-
   .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
   .stat-card{background:var(--card);border-radius:12px;padding:16px;border:1px solid var(--border);}
   .stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;margin-bottom:8px;}
@@ -99,11 +111,7 @@
   .stat-value.teal{color:var(--teal);}
   .stat-value.red{color:var(--red);}
   .stat-unit{font-size:13px;font-weight:500;color:var(--muted);margin-top:2px;}
-  /* label động theo filter */
-  #label-reported{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;margin-bottom:8px;}
-
   .section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:12px;}
-
   .station-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:20px;}
   .station-card{background:var(--card);border-radius:10px;padding:14px;border:1.5px solid var(--border);}
   .station-card.reported{border-color:var(--success);}
@@ -115,7 +123,6 @@
   .status-incident{background:#fff0f0;color:var(--red);}
   .station-data{font-size:12px;color:var(--muted);line-height:1.9;}
   .station-data strong{color:var(--text);font-weight:600;}
-
   .table-wrap{background:var(--card);border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:20px;overflow-x:auto;}
   table{width:100%;border-collapse:collapse;font-size:13px;}
   th{background:var(--text);color:rgba(255,255,255,0.8);padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
@@ -125,646 +132,631 @@
   .badge{padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;}
   .badge-ok{background:#e8fff5;color:var(--success);}
   .badge-incident{background:#fff0f0;color:var(--red);}
-
+  .badge-edit{background:#fff8e6;color:#b45309;}
   .empty-state{text-align:center;padding:40px;color:var(--muted);}
   .empty-state .icon{font-size:40px;margin-bottom:12px;}
-
   .alert-bar{background:#fff3e0;border:1.5px solid var(--orange);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;display:flex;align-items:center;gap:10px;}
   .alert-bar.hidden{display:none;}
-
   .loading{text-align:center;padding:30px;color:var(--muted);font-size:14px;}
-
-  @media(max-width:480px){
-    .chem-grid{grid-template-columns:1fr;}
-    .stat-grid{grid-template-columns:1fr 1fr;}
-  }
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media(max-width:480px){.chem-grid{grid-template-columns:1fr;}.stat-grid{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
 
 <nav class="nav">
-  <div class="nav-brand">💧 Trạm Cấp <span>Nước</span></div>
+  <div class="nav-brand">&#128167; Tram Cap <span>Nuoc</span></div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showView('form',this)">Báo cáo</button>
+    <button class="nav-tab active" onclick="showView('form',this)">Bao cao</button>
     <button class="nav-tab" onclick="showView('dashboard',this)">Dashboard</button>
   </div>
 </nav>
 
-<!-- ══ FORM ══ -->
 <div id="view-form" class="view active">
   <div id="form-main">
-    <div class="form-header">
-      <h1>📋 Báo Cáo Ngày</h1>
-      <p>Nhập số liệu vận hành trạm cấp nước</p>
+    <div class="form-header" id="form-header">
+      <h1 id="form-title">&#128203; Bao Cao Ngay</h1>
+      <p id="form-subtitle">Nhap so lieu van hanh tram cap nuoc</p>
       <div class="date-badge" id="today-display"></div>
     </div>
 
+    <div class="mode-toggle">
+      <button class="mode-btn active-new" id="mode-btn-new" onclick="setMode('new')">&#128228; Gui bao cao moi</button>
+      <button class="mode-btn" id="mode-btn-edit" onclick="setMode('edit')">&#9999;&#65039; Chinh sua da gui</button>
+    </div>
+
+    <div class="edit-banner" id="edit-banner">
+      &#9999;&#65039; <strong>Che do chinh sua:</strong> Du lieu cu se bi <strong>ghi de hoan toan</strong>.
+      Nhan vien chi sua duoc trong ngay; quan ly dung PIN quan ly de sua bat ky luc nao.
+    </div>
+
+    <div class="err-msg type-error" id="form-error"></div>
+
     <div class="card">
-      <div class="card-title">Thông tin báo cáo</div>
+      <div class="card-title">Thong tin bao cao</div>
       <div class="field">
-        <label>Ngày báo cáo <span class="req">*</span></label>
+        <label>Ngay bao cao <span class="req">*</span></label>
         <input type="date" id="f-date">
       </div>
       <div class="field">
-        <label>Tên trạm <span class="req">*</span></label>
-        <select id="f-station">
-          <option value="">-- Chọn trạm --</option>
-          <option>Trạm Bù Rên</option>
-          <option>Trạm Bù Gia Mập</option>
-          <option>Trạm Tân Thành</option>
-          <option>Trạm Lộc Hiệp</option>
-          <option>Trạm Tân Tiến</option>
-          <option>Trạm Thiện Hưng</option>
-          <option>Trạm Hưng Phước</option>
-          <option>Trạm Thanh Bình</option>
+        <label>Ten tram <span class="req">*</span></label>
+        <select id="f-station" onchange="onStationChange()">
+          <option value="">-- Chon tram --</option>
+          <option>Tram Bu Ren</option>
+          <option>Tram Bu Gia Map</option>
+          <option>Tram Tan Thanh</option>
+          <option>Tram Loc Hiep</option>
+          <option>Tram Tan Tien</option>
+          <option>Tram Thien Hung</option>
+          <option>Tram Hung Phuoc</option>
+          <option>Tram Thanh Binh</option>
         </select>
       </div>
       <div class="field">
-        <label>Người báo cáo <span class="req">*</span></label>
-        <input type="text" id="f-reporter" placeholder="Họ tên nhân viên">
+        <label>Nguoi bao cao <span class="req">*</span></label>
+        <input type="text" id="f-reporter" placeholder="Ho ten nhan vien">
+      </div>
+    </div>
+
+    <div class="pin-box" id="pin-card">
+      <div class="pin-label">&#128272; Xac thuc PIN</div>
+      <div class="field" style="margin:0;">
+        <label style="font-size:12px;color:var(--muted);font-weight:500;">PIN tram (do quan ly cap)</label>
+        <div class="pin-row">
+          <input type="password" id="f-pin" maxlength="6" placeholder="......" autocomplete="off" oninput="onPinInput()">
+        </div>
+        <div class="pin-status" id="pin-status"></div>
+        <div class="admin-pin-section" id="admin-pin-section">
+          <label>&#128737;&#65039; Hoac nhap PIN quan ly (sua bat ky ngay nao, bypass khoa ngay)</label>
+          <div class="pin-row" style="margin-top:6px;">
+            <input type="password" id="f-admin-pin" maxlength="12" placeholder="........" autocomplete="off" oninput="onAdminPinInput()">
+          </div>
+          <div class="pin-hint">Dung khi nhan vien bao cao sai ngay cu, hoac can sua du lieu da khoa.</div>
+          <div class="pin-status" id="admin-pin-status"></div>
+        </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">Đồng hồ & Sản lượng nước</div>
+      <div class="card-title">Dong ho &amp; San luong nuoc</div>
       <div class="field">
-        <label>Chỉ số đồng hồ tổng hôm nay <span class="req">*</span></label>
+        <label>Chi so dong ho tong hom nay <span class="req">*</span></label>
         <div class="input-group">
           <input type="number" id="f-meter-today" placeholder="0" min="0" step="0.1" oninput="calcWater()">
-          <span class="input-unit">m³</span>
+          <span class="input-unit">m3</span>
         </div>
       </div>
       <div class="field">
-        <label>Chỉ số đồng hồ tổng hôm qua <span id="auto-fill-hint" style="color:var(--success);font-weight:500;font-size:11px;"></span></label>
+        <label>Chi so dong ho tong hom qua <span id="auto-fill-hint" style="color:var(--success);font-weight:500;font-size:11px;"></span></label>
         <div class="input-group">
-          <input type="number" id="f-meter-yesterday" placeholder="Tự động điền nếu có dữ liệu hôm qua" min="0" step="0.1" oninput="calcWater()">
-          <span class="input-unit">m³</span>
+          <input type="number" id="f-meter-yesterday" placeholder="Tu dong dien neu co du lieu" min="0" step="0.1" oninput="calcWater()">
+          <span class="input-unit">m3</span>
         </div>
       </div>
       <div class="water-calc" id="water-calc-result"></div>
     </div>
 
     <div class="card">
-      <div class="card-title">Hóa chất sử dụng</div>
+      <div class="card-title">Hoa chat su dung</div>
       <div class="chem-grid">
         <div class="field">
           <label>Clo</label>
-          <div class="input-group">
-            <input type="number" id="f-clo" placeholder="0" min="0" step="0.01">
-            <span class="input-unit">kg</span>
-          </div>
+          <div class="input-group"><input type="number" id="f-clo" placeholder="0" min="0" step="0.01"><span class="input-unit">kg</span></div>
         </div>
         <div class="field">
-          <label>Phèn</label>
-          <div class="input-group">
-            <input type="number" id="f-phen" placeholder="0" min="0" step="0.01">
-            <span class="input-unit">kg</span>
-          </div>
+          <label>Phen</label>
+          <div class="input-group"><input type="number" id="f-phen" placeholder="0" min="0" step="0.01"><span class="input-unit">kg</span></div>
         </div>
         <div class="field">
-          <label>Vôi</label>
-          <div class="input-group">
-            <input type="number" id="f-voi" placeholder="0" min="0" step="0.01">
-            <span class="input-unit">kg</span>
-          </div>
+          <label>Voi</label>
+          <div class="input-group"><input type="number" id="f-voi" placeholder="0" min="0" step="0.01"><span class="input-unit">kg</span></div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">Sự cố / Bảo trì</div>
+      <div class="card-title">Su co / Bao tri</div>
       <div class="field">
-        <label>Có sự cố hoặc bảo trì hôm nay không? <span class="req">*</span></label>
+        <label>Co su co hoac bao tri hom nay khong? <span class="req">*</span></label>
         <div class="incident-toggle">
-          <button class="toggle-btn" id="btn-no" onclick="setIncident(false)">✅ Không</button>
-          <button class="toggle-btn" id="btn-yes" onclick="setIncident(true)">⚠️ Có</button>
+          <button class="toggle-btn" id="btn-no" onclick="setIncident(false)">&#9989; Khong</button>
+          <button class="toggle-btn" id="btn-yes" onclick="setIncident(true)">&#9888;&#65039; Co</button>
         </div>
         <div class="incident-detail" id="incident-detail">
-          <textarea id="f-incident" placeholder="Mô tả sự cố, biện pháp xử lý, thời gian dừng máy..."></textarea>
+          <textarea id="f-incident" placeholder="Mo ta su co, bien phap xu ly, thoi gian dung may..."></textarea>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">Lắp đặt đồng hồ nước</div>
+      <div class="card-title">Lap dat dong ho nuoc</div>
       <div class="field">
-        <label>Số đồng hồ lắp mới hôm nay</label>
-        <div class="input-group">
-          <input type="number" id="f-meters" placeholder="0" min="0" step="1">
-          <span class="input-unit">cái</span>
-        </div>
+        <label>So dong ho lap moi hom nay</label>
+        <div class="input-group"><input type="number" id="f-meters" placeholder="0" min="0" step="1"><span class="input-unit">cai</span></div>
       </div>
       <div class="field">
-        <label>Ghi chú (địa điểm, khách hàng...)</label>
-        <textarea id="f-meters-note" placeholder="VD: 3 cái tại thôn 5, khách hàng mới..."></textarea>
+        <label>Ghi chu (dia diem, khach hang...)</label>
+        <textarea id="f-meters-note" placeholder="VD: 3 cai tai thon 5, khach hang moi..."></textarea>
       </div>
     </div>
 
-    <button class="btn-submit" id="btn-submit" onclick="submitForm()">📤 Gửi báo cáo</button>
+    <button class="btn-submit" id="btn-submit" onclick="submitForm()">&#128228; Gui bao cao</button>
   </div>
 
   <div class="success-screen" id="success-screen">
-    <div class="success-icon">✓</div>
-    <h2>Đã gửi thành công!</h2>
+    <div class="success-icon" id="success-icon">&#10003;</div>
+    <h2 id="success-title">Da gui thanh cong!</h2>
     <p id="success-msg"></p>
-    <button class="btn-new" onclick="newReport()">+ Báo cáo mới</button>
+    <button class="btn-new" onclick="newReport()">+ Bao cao moi</button>
   </div>
 </div>
 
-<!-- ══ DASHBOARD ══ -->
 <div id="view-dashboard" class="view view-dashboard">
   <div class="dash-header">
-    <h1>📊 Dashboard Quản Lý</h1>
-    <p id="dash-subtitle">Tổng hợp dữ liệu từ 8 trạm cấp nước</p>
+    <h1>&#128202; Dashboard Quan Ly</h1>
+    <p id="dash-subtitle">Tong hop du lieu tu 8 tram cap nuoc</p>
   </div>
-
-  <div id="alert-missing" class="alert-bar hidden">
-    ⚠️ <span id="alert-text"></span>
-  </div>
-
+  <div id="alert-missing" class="alert-bar hidden">&#9888;&#65039; <span id="alert-text"></span></div>
   <div class="dash-toolbar">
     <select class="filter-select" id="filter-date" onchange="onFilterDateChange()">
-      <option value="today">Hôm nay</option>
-      <option value="specific">Chọn ngày cụ thể</option>
-      <option value="week">7 ngày qua</option>
-      <option value="month">30 ngày qua</option>
-      <option value="all">Tất cả</option>
+      <option value="today">Hom nay</option>
+      <option value="specific">Chon ngay cu the</option>
+      <option value="week">7 ngay qua</option>
+      <option value="month">30 ngay qua</option>
+      <option value="all">Tat ca</option>
     </select>
-    <!-- Hiện khi chọn "ngày cụ thể" -->
     <div class="dash-date-picker" id="dash-date-picker">
-      <label>Ngày:</label>
+      <label>Ngay:</label>
       <input type="date" id="filter-specific-date" onchange="renderDashboard()">
     </div>
     <select class="filter-select" id="filter-station" onchange="renderDashboard()">
-      <option value="">Tất cả trạm</option>
-      <option>Trạm Bù Rên</option><option>Trạm Bù Gia Mập</option>
-      <option>Trạm Tân Thành</option><option>Trạm Lộc Hiệp</option>
-      <option>Trạm Tân Tiến</option><option>Trạm Thiện Hưng</option>
-      <option>Trạm Hưng Phước</option><option>Trạm Thanh Bình</option>
+      <option value="">Tat ca tram</option>
+      <option>Tram Bu Ren</option><option>Tram Bu Gia Map</option>
+      <option>Tram Tan Thanh</option><option>Tram Loc Hiep</option>
+      <option>Tram Tan Tien</option><option>Tram Thien Hung</option>
+      <option>Tram Hung Phuoc</option><option>Tram Thanh Binh</option>
     </select>
-    <button class="btn-refresh" onclick="loadFromSheet()">🔄 Tải dữ liệu</button>
+    <button class="btn-refresh" onclick="loadFromSheet()">&#128260; Tai du lieu</button>
   </div>
-
   <div class="stat-grid">
     <div class="stat-card">
-      <div class="stat-label" id="label-reported">Đã báo cáo</div>
+      <div class="stat-label" id="label-reported">Da bao cao</div>
       <div class="stat-value blue" id="d-reported">0</div>
-      <div class="stat-unit" id="label-reported-sub">/ 8 trạm</div>
+      <div class="stat-unit" id="label-reported-sub">/ 8 tram</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label" id="label-water">Tổng nước SX</div>
+      <div class="stat-label" id="label-water">Tong nuoc SX</div>
       <div class="stat-value teal" id="d-total-water">0</div>
-      <div class="stat-unit">m³</div>
+      <div class="stat-unit">m3</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Sự cố</div>
+      <div class="stat-label">Su co</div>
       <div class="stat-value red" id="d-incidents">0</div>
-      <div class="stat-unit">trạm</div>
+      <div class="stat-unit">tram</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label" id="label-clo">Tổng Clo</div>
+      <div class="stat-label" id="label-clo">Tong Clo</div>
       <div class="stat-value" id="d-total-clo">0</div>
       <div class="stat-unit">kg</div>
     </div>
   </div>
-
-  <p class="section-title" id="station-section-title">Trạng thái trạm hôm nay</p>
+  <p class="section-title" id="station-section-title">Trang thai tram hom nay</p>
   <div class="station-grid" id="station-grid"></div>
-
-  <p class="section-title">Lịch sử báo cáo</p>
+  <p class="section-title">Lich su bao cao</p>
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th>Ngày BC</th>
-          <th>Trạm</th>
-          <th>ĐH hôm nay (m³)</th>
-          <th>Nước SX (m³)</th>
-          <th>Clo (kg)</th>
-          <th>ĐH lắp</th>
-          <th>Tình trạng</th>
+          <th>Ngay BC</th><th>Tram</th><th>DH hom nay (m3)</th>
+          <th>Nuoc SX (m3)</th><th>Clo (kg)</th><th>DH lap</th>
+          <th>Tinh trang</th><th>Lan gui</th>
         </tr>
       </thead>
       <tbody id="report-table"></tbody>
     </table>
     <div class="empty-state" id="empty-state" style="display:none">
-      <div class="icon">📭</div>
-      <p>Chưa có báo cáo nào.<br>Bấm "Tải dữ liệu" hoặc nhân viên vào tab "Báo cáo" để nhập.</p>
+      <div class="icon">&#128205;</div>
+      <p>Chua co bao cao nao. Bam "Tai du lieu" de lam moi.</p>
     </div>
-    <div class="loading" id="loading" style="display:none">⏳ Đang tải dữ liệu từ Google Sheet...</div>
+    <div class="loading" id="loading" style="display:none">&#9203; Dang tai du lieu tu Google Sheet...</div>
   </div>
 </div>
 
 <script>
-  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwtysj0-mnQ-GHwVmfncAz8WhCyTtosoO_a1wQUT-43P8j-pNAg_fYOdqlSyHkSUFEE/exec';
-  const STORAGE_KEY = 'water_reports_v2';
-  const STATIONS = ['Trạm Bù Rên','Trạm Bù Gia Mập','Trạm Tân Thành','Trạm Lộc Hiệp','Trạm Tân Tiến','Trạm Thiện Hưng','Trạm Hưng Phước','Trạm Thanh Bình'];
+// CONFIG
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwtysj0-mnQ-GHwVmfncAz8WhCyTtosoO_a1wQUT-43P8j-pNAg_fYOdqlSyHkSUFEE/exec';
+const LOCK_DAYS = 3;
 
-  // ── STORAGE ──
-  function getReports(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}catch{return[];}}
-  function saveReports(d){localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}
+// PIN được xác thực hoàn toàn phía server (Code.gs) — không lưu ở đây nữa
+const STORAGE_KEY = 'water_reports_v4';
+const STATIONS = [
+  'Tram Bu Ren','Tram Bu Gia Map','Tram Tan Thanh','Tram Loc Hiep',
+  'Tram Tan Tien','Tram Thien Hung','Tram Hung Phuoc','Tram Thanh Binh'
+];
+let currentMode = 'new';
+let incidentVal = null;
 
-  // ── DATE ──
-  function todayStr(){return new Date().toISOString().slice(0,10);}
-  function formatDate(str){
-    if(!str)return'';
-    if(str.includes('/')){return str;}
-    const [y,m,d]=str.split('-');return `${d}/${m}/${y}`;
+function getReports(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}catch{return[];}}
+function saveReports(d){localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function formatDate(str){if(!str)return'';if(str.includes('/'))return str;const [y,m,d]=str.split('-');return d+'/'+m+'/'+y;}
+function toYMD(str){
+  if(!str)return'';
+  str=String(str).replace(/^'/,'').trim();
+  if(str.includes('-'))return str.slice(0,10);
+  if(str.includes('/')){const p=str.split('/');return p[2]+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0');}
+  if(!isNaN(str)&&str.length>4)return new Date(parseInt(str)).toISOString().slice(0,10);
+  return str.slice(0,10);
+}
+function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);}
+
+// INIT
+const todayVal=todayStr();
+document.getElementById('f-date').value=todayVal;
+document.getElementById('today-display').textContent='Hom nay: '+formatDate(todayVal);
+document.getElementById('f-date').addEventListener('change',function(){
+  document.getElementById('today-display').textContent=formatDate(this.value);
+  autoFillYesterday();
+  if(currentMode==='edit')checkExistingReport();
+});
+
+// MODE
+function setMode(mode){
+  currentMode=mode;
+  const isEdit=mode==='edit';
+  document.getElementById('mode-btn-new').className='mode-btn'+(isEdit?'':' active-new');
+  document.getElementById('mode-btn-edit').className='mode-btn'+(isEdit?' active-edit':'');
+  document.getElementById('form-header').className='form-header'+(isEdit?' edit-mode':'');
+  document.getElementById('form-title').textContent=isEdit?'Chinh Sua Bao Cao':'Bao Cao Ngay';
+  document.getElementById('form-subtitle').textContent=isEdit
+    ?'Ghi de du lieu da gui — can PIN xac thuc'
+    :'Nhap so lieu van hanh tram cap nuoc';
+  document.getElementById('edit-banner').className='edit-banner'+(isEdit?' show':'');
+  document.getElementById('admin-pin-section').className='admin-pin-section'+(isEdit?' show':'');
+  const btn=document.getElementById('btn-submit');
+  btn.className='btn-submit'+(isEdit?' edit':'');
+  btn.textContent=isEdit?'Xac nhan chinh sua':'Gui bao cao';
+  document.getElementById('f-admin-pin').value='';
+  document.getElementById('admin-pin-status').textContent='';
+  hideMsg();
+  if(isEdit)checkExistingReport();
+}
+
+// Load du lieu cu vao form khi o che do sua
+function checkExistingReport(){
+  const station=document.getElementById('f-station').value;
+  const date=document.getElementById('f-date').value;
+  if(!station||!date)return;
+  const ex=getReports().find(r=>r.station===station&&r.date===date);
+  if(ex){
+    document.getElementById('f-reporter').value=ex.reporter||'';
+    document.getElementById('f-meter-today').value=ex.meterToday||'';
+    document.getElementById('f-meter-yesterday').value=ex.meterYesterday||'';
+    document.getElementById('f-clo').value=ex.clo||'';
+    document.getElementById('f-phen').value=ex.phen||'';
+    document.getElementById('f-voi').value=ex.voi||'';
+    document.getElementById('f-meters').value=ex.meters||'';
+    document.getElementById('f-meters-note').value=ex.metersNote||'';
+    document.getElementById('f-incident').value=ex.incidentDetail||'';
+    setIncident(ex.incident||false);
+    calcWater();
+    showMsg('info','Da tai du lieu cu cua "'+station+'" ngay '+formatDate(date)+'. Sua va xac nhan.');
+  } else {
+    showMsg('info','Khong tim thay ban ghi cuc bo cua "'+station+'" ngay '+formatDate(date)+'. Nhap moi va gui se ghi de tren server.');
   }
-  function toYMD(str){
-    if(!str)return'';
-    // Nếu là string có dấu ' phía trước (do Apps Script ghi text) thì bỏ đi
-    str = String(str).replace(/^'/,'').trim();
-    if(str.includes('-'))return str.slice(0,10);
-    if(str.includes('/')){const [d,m,y]=str.split('/');return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
-    // Trường hợp Google Sheet trả về Date object đã serialize thành số (epoch)
-    if(!isNaN(str) && str.length > 4){
-      const d = new Date(parseInt(str));
-      return d.toISOString().slice(0,10);
+}
+
+// PIN
+function onStationChange(){
+  const station=document.getElementById('f-station').value;
+  const pc=document.getElementById('pin-card');
+  if(station){pc.classList.add('show'); document.getElementById('f-pin').value=''; document.getElementById('pin-status').textContent='';}
+  else pc.classList.remove('show');
+  autoFillYesterday();
+  if(currentMode==='edit')checkExistingReport();
+}
+// PIN feedback — chi xoa trang thai cu khi nguoi dung go lai
+// Xac thuc that su chi thuc hien phia server (Code.gs)
+function onPinInput(){
+  const st=document.getElementById('pin-status');
+  st.textContent=''; st.className='pin-status';
+}
+function onAdminPinInput(){
+  const st=document.getElementById('admin-pin-status');
+  st.textContent=''; st.className='pin-status';
+}
+
+// AUTO FILL
+function autoFillYesterday(){
+  if(currentMode==='edit')return;
+  const station=document.getElementById('f-station').value;
+  const date=document.getElementById('f-date').value;
+  if(!station||!date)return;
+  const d=new Date(date); d.setDate(d.getDate()-1);
+  const yest=d.toISOString().slice(0,10);
+  const prev=getReports().find(r=>r.station===station&&r.date===yest);
+  const fy=document.getElementById('f-meter-yesterday');
+  const hint=document.getElementById('auto-fill-hint');
+  if(prev&&prev.meterToday){fy.value=prev.meterToday;fy.style.background='#e8fff5';hint.textContent='Tu dong lay tu '+formatDate(yest);calcWater();}
+  else{fy.style.background='';hint.textContent='(nhap tay neu chua co)';}
+}
+
+// VIEWS
+function showView(v,btn){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  btn.classList.add('active');
+  if(v==='dashboard')loadFromSheet();
+}
+
+function calcWater(){
+  const t=parseFloat(document.getElementById('f-meter-today').value);
+  const y=parseFloat(document.getElementById('f-meter-yesterday').value);
+  const el=document.getElementById('water-calc-result');
+  if(!isNaN(t)&&!isNaN(y)&&t>=y){el.textContent='Luong nuoc san xuat: '+(t-y).toFixed(1)+' m3';el.classList.add('show');}
+  else el.classList.remove('show');
+}
+
+function setIncident(yes){
+  incidentVal=yes;
+  document.getElementById('btn-no').className='toggle-btn'+((!yes)?' selected-no':'');
+  document.getElementById('btn-yes').className='toggle-btn'+((yes)?' selected-yes':'');
+  document.getElementById('incident-detail').className='incident-detail'+(yes?' show':'');
+}
+
+function showMsg(type, msg){
+  const el=document.getElementById('form-error');
+  el.className='err-msg show type-'+(type==='info'?'info':'error');
+  el.textContent=(type==='info'?'[i] ':'[!] ')+msg;
+  if(type==='error')el.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function hideMsg(){const el=document.getElementById('form-error');el.className='err-msg type-error';}
+
+function checkDateLock(dateValue){
+  const rd=new Date(dateValue); rd.setHours(0,0,0,0);
+  const td=new Date(); td.setHours(0,0,0,0);
+  const diff=Math.floor((td-rd)/86400000);
+  if(diff<0)return 'Ngay bao cao khong duoc la ngay tuong lai!';
+  if(diff>LOCK_DAYS)return 'Ngay nay da qua '+LOCK_DAYS+' ngay. Dung PIN quan ly de sua.';
+  return null;
+}
+
+// SUBMIT
+function submitForm(){
+  hideMsg();
+  const date=document.getElementById('f-date').value;
+  const station=document.getElementById('f-station').value;
+  const reporter=document.getElementById('f-reporter').value.trim();
+  const meterToday=parseFloat(document.getElementById('f-meter-today').value);
+  const meterYest=parseFloat(document.getElementById('f-meter-yesterday').value);
+  const isEdit=currentMode==='edit';
+  const adminPinVal=document.getElementById('f-admin-pin').value.trim();
+
+  if(!date){showMsg('error','Vui long chon ngay bao cao!');return;}
+  if(!station){showMsg('error','Vui long chon ten tram!');return;}
+  if(!reporter){showMsg('error','Vui long nhap ten nguoi bao cao!');return;}
+  if(isNaN(meterToday)||meterToday<0){showMsg('error','Vui long nhap chi so dong ho hom nay!');return;}
+  if(incidentVal===null){showMsg('error','Vui long chon tinh trang su co!');return;}
+
+  // Kiem tra co nhap PIN chua (khong so sanh — server se xac thuc)
+  const pinVal=document.getElementById('f-pin').value.trim();
+  const adminPinVal=document.getElementById('f-admin-pin').value.trim();
+  if(!pinVal&&!adminPinVal){
+    showMsg('error','Vui long nhap PIN tram hoac PIN quan ly!');
+    document.getElementById('f-pin').focus(); return;
+  }
+
+  // Kiem tra ngay phia client (nhanh, tranh gui thua) — server se kiem tra lai
+  if(!adminPinVal){
+    const lockErr=checkDateLock(date);
+    if(lockErr){showMsg('error',lockErr);return;}
+    if(isEdit&&date!==todayStr()){
+      showMsg('error','Nhan vien chi sua duoc bao cao cua hom nay. Dung PIN quan ly de sua ngay khac.');return;
     }
-    return str.slice(0,10);
-  }
-  function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);}
-
-  // ── INIT FORM ──
-  const todayVal = todayStr();
-  document.getElementById('f-date').value = todayVal;
-  document.getElementById('today-display').textContent = '📅 ' + formatDate(todayVal);
-  document.getElementById('f-date').addEventListener('change', function(){
-    document.getElementById('today-display').textContent = '📅 ' + formatDate(this.value);
-    autoFillYesterday();
-  });
-
-  // ── AUTO FILL CHỈ SỐ HÔM QUA ──
-  function autoFillYesterday(){
-    const station = document.getElementById('f-station').value;
-    const date    = document.getElementById('f-date').value;
-    if(!station || !date) return;
-
-    const d = new Date(date);
-    d.setDate(d.getDate() - 1);
-    const yesterday = d.toISOString().slice(0,10);
-
-    const reports = getReports();
-    const prev = reports.find(r => r.station === station && r.date === yesterday);
-
-    const fieldYest = document.getElementById('f-meter-yesterday');
-    const hint = document.getElementById('auto-fill-hint');
-    if(prev && prev.meterToday){
-      fieldYest.value = prev.meterToday;
-      fieldYest.style.background = '#e8fff5';
-      hint.textContent = `✅ Tự động lấy từ ${formatDate(yesterday)}`;
-      calcWater();
-    } else {
-      fieldYest.style.background = '';
-      hint.textContent = '(nhập tay nếu chưa có dữ liệu)';
-    }
   }
 
-  document.getElementById('f-station').addEventListener('change', function(){
-    autoFillYesterday();
-  });
-
-  // ── VIEWS ──
-  function showView(v,btn){
-    document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
-    document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
-    document.getElementById('view-'+v).classList.add('active');
-    btn.classList.add('active');
-    if(v==='dashboard') loadFromSheet();
+  // Che do gui moi: canh bao trung lap cuc bo (server van la trong tai chinh)
+  if(!isEdit&&getReports().some(r=>r.station===station&&r.date===date)){
+    showMsg('error','"'+station+'" da co bao cao ngay '+formatDate(date)+'. Chuyen sang che do Chinh sua de cap nhat.');
+    return;
   }
 
-  // ── WATER CALC ──
-  function calcWater(){
-    const today = parseFloat(document.getElementById('f-meter-today').value);
-    const yesterday = parseFloat(document.getElementById('f-meter-yesterday').value);
-    const el = document.getElementById('water-calc-result');
-    if(!isNaN(today) && !isNaN(yesterday) && today >= yesterday){
-      const diff = (today - yesterday).toFixed(1);
-      el.textContent = `💧 Lượng nước sản xuất hôm nay: ${diff} m³`;
-      el.classList.add('show');
-    } else {
-      el.classList.remove('show');
-    }
-  }
+  const waterProduced=(!isNaN(meterYest)&&meterToday>=meterYest)?parseFloat((meterToday-meterYest).toFixed(1)):0;
+  const report={
+    id:Date.now(), date, station, reporter,
+    meterToday, meterYesterday:isNaN(meterYest)?'':meterYest,
+    water:waterProduced,
+    clo:parseFloat(document.getElementById('f-clo').value)||0,
+    phen:parseFloat(document.getElementById('f-phen').value)||0,
+    voi:parseFloat(document.getElementById('f-voi').value)||0,
+    incident:incidentVal,
+    incidentDetail:document.getElementById('f-incident').value.trim(),
+    meters:parseInt(document.getElementById('f-meters').value)||0,
+    metersNote:document.getElementById('f-meters-note').value.trim(),
+    isEdit,
+    stationPin: document.getElementById('f-pin').value.trim(),
+    adminPin:   document.getElementById('f-admin-pin').value.trim()
+  };
 
-  // ── INCIDENT ──
-  let incidentVal = null;
-  function setIncident(yes){
-    incidentVal = yes;
-    document.getElementById('btn-no').className='toggle-btn'+((!yes)?' selected-no':'');
-    document.getElementById('btn-yes').className='toggle-btn'+((yes)?' selected-yes':'');
-    document.getElementById('incident-detail').className='incident-detail'+(yes?' show':'');
-  }
+  const btn=document.getElementById('btn-submit');
+  btn.innerHTML='<span class="spinner"></span>'+(isEdit?'Dang cap nhat...':'Dang gui...');
+  btn.disabled=true;
 
-  // ── KHOÁ NGÀY ──────────────────────────────────────────────
-  const LOCK_DAYS = 3; // ← Chỉnh số ngày tại đây
-  // ────────────────────────────────────────────────────────────
-  function checkDateLock(dateValue){
-    const reportDate = new Date(dateValue);
-    reportDate.setHours(0,0,0,0);
-    const today = new Date();
-    today.setHours(0,0,0,0);
-    const diffDays = Math.floor((today - reportDate) / 86400000);
-    if(diffDays < 0){
-      alert('⛔ Ngày báo cáo không được là ngày trong tương lai!');
-      return false;
-    }
-    if(diffDays > LOCK_DAYS){
-      alert(`⛔ Không thể gửi!\n\nNgày "${reportDate.toLocaleDateString('vi-VN')}" đã quá ${LOCK_DAYS} ngày.\n\nVui lòng liên hệ quản lý nếu cần điều chỉnh.`);
-      return false;
-    }
-    return true;
-  }
-
-  // ── SUBMIT ──
-  function submitForm(){
-    const date   = document.getElementById('f-date').value;
-    const station= document.getElementById('f-station').value;
-    const reporter=document.getElementById('f-reporter').value.trim();
-    const meterToday = parseFloat(document.getElementById('f-meter-today').value);
-    const meterYest  = parseFloat(document.getElementById('f-meter-yesterday').value);
-
-    if(!date){alert('Vui lòng chọn ngày báo cáo!');return;}
-    if(!station){alert('Vui lòng chọn tên trạm!');return;}
-    if(!reporter){alert('Vui lòng nhập tên người báo cáo!');return;}
-    if(isNaN(meterToday)||meterToday<0){alert('Vui lòng nhập chỉ số đồng hồ hôm nay!');return;}
-    if(incidentVal===null){alert('Vui lòng chọn tình trạng sự cố!');return;}
-    if(!checkDateLock(date)){return;} // ← Kiểm tra khóa ngày
-
-    const waterProduced = (!isNaN(meterYest) && meterToday >= meterYest)
-      ? parseFloat((meterToday - meterYest).toFixed(1)) : 0;
-
-    const report = {
-      id: Date.now(), date,
-      station, reporter,
-      meterToday, meterYesterday: isNaN(meterYest)?'':meterYest,
-      water: waterProduced,
-      clo:   parseFloat(document.getElementById('f-clo').value)||0,
-      phen:  parseFloat(document.getElementById('f-phen').value)||0,
-      voi:   parseFloat(document.getElementById('f-voi').value)||0,
-      incident: incidentVal,
-      incidentDetail: document.getElementById('f-incident').value.trim(),
-      meters: parseInt(document.getElementById('f-meters').value)||0,
-      metersNote: document.getElementById('f-meters-note').value.trim(),
-      submittedAt: new Date().toLocaleString('vi-VN', {
-        day:'2-digit', month:'2-digit', year:'numeric',
-        hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false
-      })
-    };
-
-    // Lưu local
-    const reports = getReports();
-    reports.unshift(report);
-    saveReports(reports);
-
-    // Gửi Sheet
-    const btn = document.getElementById('btn-submit');
-    btn.textContent='⏳ Đang gửi...'; btn.disabled=true;
-
-    fetch(SHEET_URL,{
-      method:'POST', mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(report)
-    })
-    .then(()=>{
-      document.getElementById('success-msg').innerHTML =
-        `<b>${station}</b> — ${reporter}<br>ĐH hôm nay: ${meterToday} m³ | Nước SX: ${waterProduced} m³<br>Clo: ${report.clo} kg | Ngày BC: ${formatDate(date)}<br>✅ Đã lưu vào Google Sheet`;
-    })
-    .catch(()=>{
-      document.getElementById('success-msg').innerHTML =
-        `<b>${station}</b> — ${reporter}<br>Nước SX: ${waterProduced} m³<br>⚠️ Mất mạng — đã lưu tạm, sẽ đồng bộ sau`;
-    })
-    .finally(()=>{
-      btn.textContent='📤 Gửi báo cáo'; btn.disabled=false;
-      document.getElementById('form-main').style.display='none';
-      document.getElementById('success-screen').classList.add('show');
-    });
-  }
-
-  function newReport(){
-    document.getElementById('form-main').style.display='block';
-    document.getElementById('success-screen').classList.remove('show');
-    ['f-meter-today','f-meter-yesterday','f-clo','f-phen','f-voi','f-incident','f-meters','f-meters-note'].forEach(id=>{
-      document.getElementById(id).value='';
-    });
-    document.getElementById('f-date').value = todayStr();
-    document.getElementById('f-station').value='';
-    document.getElementById('f-reporter').value='';
-    document.getElementById('water-calc-result').classList.remove('show');
-    document.getElementById('auto-fill-hint').textContent = '';
-    document.getElementById('f-meter-yesterday').style.background = '';
-    incidentVal=null;
-    document.getElementById('btn-no').className='toggle-btn';
-    document.getElementById('btn-yes').className='toggle-btn';
-    document.getElementById('incident-detail').className='incident-detail';
-  }
-
-  // ── LOAD FROM SHEET ──
-  function loadFromSheet(){
-    const loading = document.getElementById('loading');
-    const empty   = document.getElementById('empty-state');
-    loading.style.display='block';
-    empty.style.display='none';
-
-    fetch(SHEET_URL)
-      .then(r=>r.json())
-      .then(rows=>{
-        const reports = rows.map(r=>({
-          // ── KEY FIX: dùng cột 'Ngày' là ngày báo cáo nhân viên chọn ──
-          date:       toYMD(r['Ngày']||''),
-          station:    r['Trạm']||'',
-          reporter:   r['Người báo cáo']||'',
-          meterToday: parseFloat(r['ĐH hôm nay (m³)'])||0,
-          water:      parseFloat(r['Nước SX (m³)'])||0,
-          clo:        parseFloat(r['Clo (kg)'])||0,
-          phen:       parseFloat(r['Phèn (kg)'])||0,
-          voi:        parseFloat(r['Vôi (kg)'])||0,
-          incident:   (r['Sự cố']||'')==='Có',
-          incidentDetail: r['Chi tiết sự cố']||'',
-          meters:     parseInt(r['ĐH lắp mới (cái)'])||0,
-          metersNote: r['Ghi chú ĐH']||'',
-          submittedAt:r['Giờ gửi']||''
-        })).filter(r=>r.date && r.station);
-
-        saveReports(reports);
-        loading.style.display='none';
-        renderDashboard();
-      })
-      .catch(()=>{
-        loading.style.display='none';
-        renderDashboard();
-      });
-  }
-
-  // ── XỬ LÝ THAY ĐỔI FILTER NGÀY ──
-  function onFilterDateChange(){
-    const df = document.getElementById('filter-date').value;
-    const picker = document.getElementById('dash-date-picker');
-    if(df === 'specific'){
-      picker.classList.add('show');
-      // Mặc định là hôm qua (trường hợp hay dùng nhất)
-      const yesterday = daysAgo(1);
-      document.getElementById('filter-specific-date').value = yesterday;
-    } else {
-      picker.classList.remove('show');
-    }
-    renderDashboard();
-  }
-
-  // ── LẤY NGÀY ĐANG FILTER ──
-  function getFilterDate(){
-    const df = document.getElementById('filter-date').value;
-    if(df === 'today') return todayStr();
-    if(df === 'specific'){
-      return document.getElementById('filter-specific-date').value || todayStr();
-    }
-    return null; // week/month/all không dùng ngày cụ thể
-  }
-
-  // ── FILTER REPORTS ──
-  function filterReports(){
-    let reports = getReports();
-    const df = document.getElementById('filter-date').value;
-    const sf = document.getElementById('filter-station').value;
-
-    if(df === 'today'){
-      reports = reports.filter(r => r.date === todayStr());
-    } else if(df === 'specific'){
-      const sd = document.getElementById('filter-specific-date').value;
-      if(sd) reports = reports.filter(r => r.date === sd);
-    } else if(df === 'week'){
-      const cutoff = daysAgo(7);
-      reports = reports.filter(r => r.date >= cutoff);
-    } else if(df === 'month'){
-      const cutoff = daysAgo(30);
-      reports = reports.filter(r => r.date >= cutoff);
-    }
-    // 'all' → không lọc ngày
-
-    if(sf) reports = reports.filter(r => r.station === sf);
-    return reports;
-  }
-
-  // ── DASHBOARD ──
-  function renderDashboard(){
-    const df = document.getElementById('filter-date').value;
-    const reports = filterReports();
-
-    // Xác định "ngày xem" để hiện station cards và alert
-    let viewDate = null;
-    if(df === 'today') viewDate = todayStr();
-    else if(df === 'specific') viewDate = document.getElementById('filter-specific-date').value || todayStr();
-
-    // Báo cáo của ngày đang xem (dùng cho station cards & stats đầu trang)
-    const dayReports = viewDate ? reports.filter(r => r.date === viewDate) : reports;
-    const reported   = new Set(dayReports.map(r => r.station));
-
-    // ── Stats ──
-    const isSingleDay = (df === 'today' || df === 'specific');
-    document.getElementById('d-reported').textContent   = reported.size;
-    document.getElementById('d-total-water').textContent = dayReports.reduce((s,r)=>s+(r.water||0),0).toFixed(1);
-    document.getElementById('d-incidents').textContent   = dayReports.filter(r=>r.incident).length;
-    document.getElementById('d-total-clo').textContent   = dayReports.reduce((s,r)=>s+(r.clo||0),0).toFixed(2);
-
-    // Cập nhật label động
-    if(df === 'today'){
-      document.getElementById('label-reported').textContent = 'Đã báo cáo hôm nay';
-      document.getElementById('label-reported-sub').textContent = '/ 8 trạm';
-      document.getElementById('label-water').textContent = 'Tổng nước SX hôm nay';
-      document.getElementById('label-clo').textContent = 'Tổng Clo hôm nay';
-    } else if(df === 'specific'){
-      const sd = document.getElementById('filter-specific-date').value;
-      document.getElementById('label-reported').textContent = `Đã BC ngày ${formatDate(sd)}`;
-      document.getElementById('label-reported-sub').textContent = '/ 8 trạm';
-      document.getElementById('label-water').textContent = `Nước SX ngày ${formatDate(sd)}`;
-      document.getElementById('label-clo').textContent = `Clo ngày ${formatDate(sd)}`;
-    } else {
-      const labelMap = {week:'7 ngày qua', month:'30 ngày qua', all:'Tất cả'};
-      document.getElementById('label-reported').textContent = `Trạm đã BC (${labelMap[df]})`;
-      document.getElementById('label-reported-sub').textContent = 'trạm';
-      document.getElementById('label-water').textContent = `Tổng nước SX (${labelMap[df]})`;
-      document.getElementById('label-clo').textContent = `Tổng Clo (${labelMap[df]})`;
-    }
-
-    // ── Alert thiếu báo cáo — chỉ hiện khi xem ngày cụ thể ──
-    const alertBar = document.getElementById('alert-missing');
-    if(isSingleDay){
-      const missing = STATIONS.filter(s => !reported.has(s));
-      if(missing.length > 0 && missing.length < 8){
-        alertBar.classList.remove('hidden');
-        const label = df === 'today' ? 'hôm nay' : `ngày ${formatDate(viewDate)}`;
-        document.getElementById('alert-text').textContent = `Chưa báo cáo ${label}: ` + missing.join(', ');
+  fetch(SHEET_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(report)})
+  .then(r=>r.json())
+  .then(res=>{
+    btn.innerHTML=isEdit?'Xac nhan chinh sua':'Gui bao cao'; btn.disabled=false;
+    if(res.status==='auth_failed'){
+      // Hien thi loi dung o PIN nao sai
+      const isAdminAttempt=!!document.getElementById('f-admin-pin').value.trim();
+      if(isAdminAttempt){
+        const ast=document.getElementById('admin-pin-status');
+        ast.textContent='PIN quan ly khong dung'; ast.className='pin-status err';
       } else {
-        alertBar.classList.add('hidden');
+        const pst=document.getElementById('pin-status');
+        pst.textContent='PIN khong dung'; pst.className='pin-status err';
       }
-    } else {
-      alertBar.classList.add('hidden');
+      showMsg('error','PIN khong dung. Vui long kiem tra lai.');
+      return;
     }
-
-    // ── Station cards — chỉ hiện khi xem ngày cụ thể ──
-    const stationSection = document.getElementById('station-section-title');
-    const stationGrid    = document.getElementById('station-grid');
-    if(isSingleDay){
-      stationSection.style.display = 'block';
-      stationGrid.style.display    = 'grid';
-      const label = df === 'today' ? 'hôm nay' : formatDate(viewDate);
-      stationSection.textContent = `Trạng thái trạm — ${label}`;
-
-      stationGrid.innerHTML = STATIONS.map(s => {
-        const r = dayReports.find(x => x.station === s);
-        if(!r) return `<div class="station-card">
-          <div class="station-name">${s}</div>
-          <span class="station-status status-missing">⏳ Chưa báo cáo</span>
-          <div class="station-data">—</div></div>`;
-        const cls   = r.incident ? 'reported incident' : 'reported';
-        const badge = r.incident
-          ? `<span class="station-status status-incident">⚠️ Sự cố</span>`
-          : `<span class="station-status status-ok">✅ Bình thường</span>`;
-        return `<div class="station-card ${cls}">
-          <div class="station-name">${s}</div>${badge}
-          <div class="station-data">
-            🔢 ĐH: <strong>${r.meterToday||'—'} m³</strong><br>
-            💧 Nước SX: <strong>${r.water||0} m³</strong><br>
-            🧪 Clo: <strong>${r.clo||0} kg</strong>
-            ${r.meters>0?`<br>🔧 ĐH lắp: <strong>${r.meters} cái</strong>`:''}
-            <br>👤 ${r.reporter} · ${r.submittedAt||''}
-          </div></div>`;
-      }).join('');
+    if(res.status==='locked'){showMsg('error',res.message);return;}
+    // PIN dung — hien thi feedback thanh cong
+    const isAdminOK=!!document.getElementById('f-admin-pin').value.trim();
+    if(isAdminOK){
+      const ast=document.getElementById('admin-pin-status');
+      ast.textContent='PIN quan ly hop le'; ast.className='pin-status ok';
     } else {
-      stationSection.style.display = 'none';
-      stationGrid.style.display    = 'none';
+      const pst=document.getElementById('pin-status');
+      pst.textContent='PIN hop le'; pst.className='pin-status ok';
     }
+    report.submittedAt=res.submittedAt||new Date().toLocaleString('vi-VN');
+    _finalize(report, waterProduced, btn, 'Da cap nhat Google Sheet');
+  })
+  .catch(()=>{
+    btn.innerHTML=isEdit?'Xac nhan chinh sua':'Gui bao cao'; btn.disabled=false;
+    report.submittedAt=new Date().toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+    _finalize(report, waterProduced, btn, 'Mat ket noi - da luu tam cuc bo. Lien he quan ly de dong bo.');
+  });
+}
 
-    // ── Table ──
-    const tbody = document.getElementById('report-table');
-    const empty  = document.getElementById('empty-state');
-    if(reports.length === 0){
-      tbody.innerHTML = ''; empty.style.display = 'block';
-    } else {
-      empty.style.display = 'none';
-      // Sắp xếp mới nhất lên trên (theo ngày báo cáo)
-      const sorted = [...reports].sort((a,b) => b.date.localeCompare(a.date));
-      tbody.innerHTML = sorted.map(r=>`<tr>
-        <td>${formatDate(r.date)}</td>
-        <td><strong>${r.station}</strong></td>
-        <td style="font-family:'JetBrains Mono',monospace">${r.meterToday||'—'}</td>
-        <td style="font-family:'JetBrains Mono',monospace">${r.water||0}</td>
-        <td style="font-family:'JetBrains Mono',monospace">${r.clo||0}</td>
-        <td>${r.meters||0}</td>
-        <td>${r.incident
-          ?`<span class="badge badge-incident">⚠️ Sự cố</span>`
-          :`<span class="badge badge-ok">✅ OK</span>`}</td>
-      </tr>`).join('');
-    }
+function _finalize(report, waterProduced, btn, note){
+  // Ghi de local neu da ton tai
+  let rpts=getReports();
+  const idx=rpts.findIndex(r=>r.station===report.station&&r.date===report.date);
+  if(idx>=0)rpts[idx]=report; else rpts.unshift(report);
+  saveReports(rpts);
 
-    document.getElementById('dash-subtitle').textContent =
-      `Cập nhật: ${new Date().toLocaleString('vi-VN')} · Tổng ${reports.length} báo cáo`;
+  const isEdit=currentMode==='edit';
+  document.getElementById('success-icon').className='success-icon'+(isEdit?' edit-icon':'');
+  document.getElementById('success-title').textContent=isEdit?'Da cap nhat!':'Da gui thanh cong!';
+  document.getElementById('success-msg').innerHTML=
+    '<b>'+report.station+'</b> - '+report.reporter+'<br>'+
+    'DH hom nay: '+report.meterToday+' m3 | Nuoc SX: '+waterProduced+' m3<br>'+
+    'Ngay BC: '+formatDate(report.date)+
+    (isEdit?'<br>Chinh sua boi: '+report.editBy:'')+
+    '<br>'+note;
+  document.getElementById('form-main').style.display='none';
+  document.getElementById('success-screen').classList.add('show');
+}
+
+function newReport(){
+  document.getElementById('form-main').style.display='block';
+  document.getElementById('success-screen').classList.remove('show');
+  hideMsg(); setMode('new');
+  ['f-meter-today','f-meter-yesterday','f-clo','f-phen','f-voi','f-incident','f-meters','f-meters-note','f-pin','f-admin-pin'].forEach(id=>{ document.getElementById(id).value=''; });
+  document.getElementById('f-date').value=todayStr();
+  document.getElementById('f-station').value='';
+  document.getElementById('f-reporter').value='';
+  document.getElementById('water-calc-result').classList.remove('show');
+  document.getElementById('auto-fill-hint').textContent='';
+  document.getElementById('f-meter-yesterday').style.background='';
+  document.getElementById('pin-card').classList.remove('show');
+  document.getElementById('pin-status').textContent='';
+  document.getElementById('admin-pin-status').textContent='';
+  incidentVal=null;
+  document.getElementById('btn-no').className='toggle-btn';
+  document.getElementById('btn-yes').className='toggle-btn';
+  document.getElementById('incident-detail').className='incident-detail';
+}
+
+// LOAD SHEET
+function loadFromSheet(){
+  const loading=document.getElementById('loading'); loading.style.display='block';
+  document.getElementById('empty-state').style.display='none';
+  fetch(SHEET_URL).then(r=>r.json()).then(rows=>{
+    const rpts=rows.map(r=>({
+      date:toYMD(r['Ngay']||r['\u0110\u1ecbnh']||''),
+      station:r['Tram']||'',
+      reporter:r['Nguoi bao cao']||'',
+      meterToday:parseFloat(r['\u0110H hom nay (m\u00b3)'])||0,
+      water:parseFloat(r['Nuoc SX (m\u00b3)'])||0,
+      clo:parseFloat(r['Clo (kg)'])||0,
+      phen:parseFloat(r['Phen (kg)'])||0,
+      voi:parseFloat(r['Voi (kg)'])||0,
+      incident:(r['Su co']||'')==='Co',
+      incidentDetail:r['Chi tiet su co']||'',
+      meters:parseInt(r['\u0110H lap moi (cai)'])||0,
+      metersNote:r['Ghi chu \u0110H']||'',
+      submittedAt:r['Gio gui']||'',
+      lanGui:r['Lan gui']||''
+    })).filter(r=>r.date&&r.station);
+    saveReports(rpts);
+    loading.style.display='none';
+    renderDashboard();
+  }).catch(()=>{loading.style.display='none';renderDashboard();});
+}
+
+// DASHBOARD
+function filterReports(){
+  let r=getReports();
+  const df=document.getElementById('filter-date').value;
+  const sf=document.getElementById('filter-station').value;
+  if(df==='today')r=r.filter(x=>x.date===todayStr());
+  else if(df==='specific'){const sd=document.getElementById('filter-specific-date').value;if(sd)r=r.filter(x=>x.date===sd);}
+  else if(df==='week'){const c=daysAgo(7);r=r.filter(x=>x.date>=c);}
+  else if(df==='month'){const c=daysAgo(30);r=r.filter(x=>x.date>=c);}
+  if(sf)r=r.filter(x=>x.station===sf);
+  return r;
+}
+
+function renderDashboard(){
+  const df=document.getElementById('filter-date').value;
+  const reports=filterReports();
+  let viewDate=null;
+  if(df==='today')viewDate=todayStr();
+  else if(df==='specific')viewDate=document.getElementById('filter-specific-date').value||todayStr();
+  const dr=viewDate?reports.filter(r=>r.date===viewDate):reports;
+  const reported=new Set(dr.map(r=>r.station));
+  document.getElementById('d-reported').textContent=reported.size;
+  document.getElementById('d-total-water').textContent=dr.reduce((s,r)=>s+(r.water||0),0).toFixed(1);
+  document.getElementById('d-incidents').textContent=dr.filter(r=>r.incident).length;
+  document.getElementById('d-total-clo').textContent=dr.reduce((s,r)=>s+(r.clo||0),0).toFixed(2);
+  const isSingle=df==='today'||df==='specific';
+  if(df==='today'){document.getElementById('label-reported').textContent='Da bao cao hom nay';document.getElementById('label-reported-sub').textContent='/ 8 tram';document.getElementById('label-water').textContent='Tong nuoc SX hom nay';document.getElementById('label-clo').textContent='Tong Clo hom nay';}
+  else if(df==='specific'){const sd=document.getElementById('filter-specific-date').value;document.getElementById('label-reported').textContent='Da BC ngay '+formatDate(sd);document.getElementById('label-reported-sub').textContent='/ 8 tram';document.getElementById('label-water').textContent='Nuoc SX ngay '+formatDate(sd);document.getElementById('label-clo').textContent='Clo ngay '+formatDate(sd);}
+  else{const m={week:'7 ngay qua',month:'30 ngay qua',all:'Tat ca'};document.getElementById('label-reported').textContent='Tram da BC ('+m[df]+')';document.getElementById('label-reported-sub').textContent='tram';document.getElementById('label-water').textContent='Tong nuoc SX ('+m[df]+')';document.getElementById('label-clo').textContent='Tong Clo ('+m[df]+')';}
+  const ab=document.getElementById('alert-missing');
+  if(isSingle){const miss=STATIONS.filter(s=>!reported.has(s));if(miss.length>0&&miss.length<8){ab.classList.remove('hidden');document.getElementById('alert-text').textContent='Chua bao cao '+(df==='today'?'hom nay':'ngay '+formatDate(viewDate))+': '+miss.join(', ');}else ab.classList.add('hidden');}else ab.classList.add('hidden');
+  const ss=document.getElementById('station-section-title');
+  const sg=document.getElementById('station-grid');
+  if(isSingle){
+    ss.style.display='block';sg.style.display='grid';
+    ss.textContent='Trang thai tram - '+(df==='today'?'hom nay':formatDate(viewDate));
+    sg.innerHTML=STATIONS.map(s=>{
+      const r=dr.find(x=>x.station===s);
+      if(!r)return '<div class="station-card"><div class="station-name">'+s+'</div><span class="station-status status-missing">Chua bao cao</span><div class="station-data">-</div></div>';
+      return '<div class="station-card '+(r.incident?'reported incident':'reported')+'"><div class="station-name">'+s+'</div>'+(r.incident?'<span class="station-status status-incident">Su co</span>':'<span class="station-status status-ok">Binh thuong</span>')+'<div class="station-data">DH: <strong>'+r.meterToday+' m3</strong><br>Nuoc SX: <strong>'+r.water+' m3</strong><br>Clo: <strong>'+r.clo+' kg</strong>'+(r.meters>0?'<br>DH lap: <strong>'+r.meters+' cai</strong>':'')+'<br>'+r.reporter+' - '+r.submittedAt+'</div></div>';
+    }).join('');
+  }else{ss.style.display='none';sg.style.display='none';}
+  const tbody=document.getElementById('report-table');
+  if(reports.length===0){tbody.innerHTML='';document.getElementById('empty-state').style.display='block';}
+  else{
+    document.getElementById('empty-state').style.display='none';
+    tbody.innerHTML=[...reports].sort((a,b)=>b.date.localeCompare(a.date)).map(r=>
+      '<tr><td>'+formatDate(r.date)+'</td><td><strong>'+r.station+'</strong></td>'+
+      '<td style="font-family:monospace">'+r.meterToday+'</td>'+
+      '<td style="font-family:monospace">'+r.water+'</td>'+
+      '<td style="font-family:monospace">'+r.clo+'</td>'+
+      '<td>'+r.meters+'</td>'+
+      '<td>'+(r.incident?'<span class="badge badge-incident">Su co</span>':'<span class="badge badge-ok">OK</span>')+'</td>'+
+      '<td>'+(r.lanGui?'<span class="badge badge-edit">'+r.lanGui+'</span>':'<span style="color:var(--muted);font-size:11px">Lan 1</span>')+'</td></tr>'
+    ).join('');
   }
+  document.getElementById('dash-subtitle').textContent='Cap nhat: '+new Date().toLocaleString('vi-VN')+' - Tong '+reports.length+' bao cao';
+}
 
-  // Khởi tạo date picker với ngày hôm nay
-  document.getElementById('filter-specific-date').value = todayStr();
+function onFilterDateChange(){
+  const df=document.getElementById('filter-date').value;
+  const pk=document.getElementById('dash-date-picker');
+  if(df==='specific'){pk.classList.add('show');document.getElementById('filter-specific-date').value=daysAgo(1);}
+  else pk.classList.remove('show');
   renderDashboard();
+}
+
+document.getElementById('filter-specific-date').value=todayStr();
+renderDashboard();
 </script>
 </body>
 </html>
