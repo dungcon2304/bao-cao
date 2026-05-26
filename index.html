@@ -454,7 +454,7 @@ function autoFill(){
   const st=document.getElementById('f-station').value;
   const dt=document.getElementById('f-date').value;
   if(!st||!dt)return;
-  const d=new Date(dt);d.setDate(d.getDate()-1);
+  const [y,mo,dy]=dt.split('-').map(Number);const d=new Date(y,mo-1,dy-1);
   const yest=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
   const prev=getR().find(r=>r.station===st&&r.date===yest);
   const fy=document.getElementById('f-meter-yest');
