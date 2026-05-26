@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quan Ly Tram Cap Nuoc</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
   :root{--blue:#0a6bff;--blue-dark:#0050cc;--teal:#00c2a8;--red:#ff3b3b;--orange:#ff8c00;--bg:#f0f4fb;--card:#fff;--text:#0d1b3e;--muted:#6b7a99;--border:#d4ddf0;--success:#00b86b;--amber:#f59e0b;}
@@ -99,6 +100,8 @@
   .fsel:focus{border-color:var(--blue);}
   .btn-reload{padding:7px 16px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
   .btn-reload:hover{background:var(--blue-dark);}
+  .btn-excel{padding:7px 16px;background:var(--success);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
+  .btn-excel:hover{background:#009958;}
   .date-picker{display:none;align-items:center;gap:6px;}
   .date-picker.show{display:flex;}
   .date-picker label{font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;}
@@ -168,7 +171,7 @@
 
     <div class="edit-banner" id="edit-banner">
       ✏️ <strong>Chế độ chỉnh sửa:</strong> Dữ liệu cũ sẽ bị <strong>ghi đè hoàn toàn</strong>.
-      Nhân viên chỉ sửa được trong ngày; quản lý dùng PIN quản lý để sửa bất kỳ lúc nào.
+      Nhân viên chỉ sửa được trong 3 ngày; quản lý dùng PIN quản lý để sửa bất kỳ lúc nào.
     </div>
 
     <div class="msg err" id="form-msg"></div>
@@ -321,6 +324,7 @@
       <option>Trạm Hưng Phước</option><option>Trạm Thanh Bình</option>
     </select>
     <button type="button" class="btn-reload" onclick="loadSheet()">🔄 Tải dữ liệu</button>
+    <button type="button" class="btn-excel" onclick="xuatExcel()">📥 Xuất Excel</button>
   </div>
 
   <div class="stat-grid">
@@ -356,8 +360,8 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwCPeb1alnsNGLrl7lJEV
 const LOCK_DAYS = 3;
 const STORE_KEY = 'wtr_v5';
 const STATIONS = [
-  'Tr\u1ea1m B\u00f9 R\u00ean','Tr\u1ea1m B\u00f9 Gia M\u1eadp','Tr\u1ea1m T\u00e2n Th\u00e0nh','Tr\u1ea1m L\u1ed9c Hi\u1ec7p',
-  'Tr\u1ea1m T\u00e2n Ti\u1ebfn','Tr\u1ea1m Thi\u1ec7n H\u01b0ng','Tr\u1ea1m H\u01b0ng Ph\u01b0\u1edbc','Tr\u1ea1m Thanh B\u00ecnh'
+  'Trạm Bù Rên','Trạm Bù Gia Mập','Trạm Tân Thành','Trạm Lộc Hiệp',
+  'Trạm Tân Tiến','Trạm Thiện Hưng','Trạm Hưng Phước','Trạm Thanh Bình'
 ];
 
 // === STATE ===
@@ -403,12 +407,12 @@ function setMode(m){
   document.getElementById('btn-mode-new').className='mode-btn'+(e?'':' m-new');
   document.getElementById('btn-mode-edit').className='mode-btn'+(e?' m-edit':'');
   document.getElementById('form-header').className='form-header'+(e?' edit-mode':'');
-  document.getElementById('form-title').textContent=e?'Ch\u1ec9nh S\u1eeda B\u00e1o C\u00e1o':'B\u00e1o C\u00e1o Ng\u00e0y';
-  document.getElementById('form-sub').textContent=e?'Ghi \u0111\u00e8 d\u1eef li\u1ec7u \u0111\u00e3 g\u1eedi \u2014 c\u1ea7n PIN x\u00e1c th\u1ef1c':'Nh\u1eadp s\u1ed1 li\u1ec7u v\u1eadn h\u00e0nh tr\u1ea1m c\u1ea5p n\u01b0\u1edbc';
+  document.getElementById('form-title').textContent=e?'Chỉnh Sửa Báo Cáo':'Báo Cáo Ngày';
+  document.getElementById('form-sub').textContent=e?'Ghi đè dữ liệu đã gửi — cần PIN xác thực':'Nhập số liệu vận hành trạm cấp nước';
   document.getElementById('edit-banner').className='edit-banner'+(e?' show':'');
   const btn=document.getElementById('btn-submit');
   btn.className='btn-submit'+(e?' edit':'');
-  btn.textContent=e?'X\u00e1c nh\u1eadn ch\u1ec9nh s\u1eeda':'G\u1eedi b\u00e1o c\u00e1o';
+  btn.textContent=e?'Xác nhận chỉnh sửa':'Gửi báo cáo';
   document.getElementById('f-admin-pin').value='';
   document.getElementById('admin-pin-st').textContent='';
   hideMsg();
@@ -432,9 +436,9 @@ function loadOld(){
     document.getElementById('f-incident').value=ex.incidentDetail||'';
     setInc(!!ex.incident);
     calcWater();
-    showMsg('info','\u0110\u00e3 t\u1ea3i d\u1eef li\u1ec7u c\u0169 c\u1ee7a "'+st+'" ng\u00e0y '+fmtDate(dt)+'. H\u00e3y s\u1eeda v\u00e0 x\u00e1c nh\u1eadn.');
+    showMsg('info','Đã tải dữ liệu cũ của "'+st+'" ngày '+fmtDate(dt)+'. Hãy sửa và xác nhận.');
   }else{
-    showMsg('info','Kh\u00f4ng t\u00ecm th\u1ea5y b\u1ea3n ghi c\u1ee5c b\u1ed9. Nh\u1eadp m\u1edbi v\u00e0 g\u1eedi s\u1ebd ghi \u0111\u00e8 tr\u00ean server n\u1ebfu t\u1ed3n t\u1ea1i.');
+    showMsg('info','Không tìm thấy bản ghi cục bộ. Nhập mới và gửi sẽ ghi đè trên server nếu tồn tại.');
   }
 }
 
@@ -448,20 +452,21 @@ function onStationChange(){
   if(mode==='edit')loadOld();
 }
 
-// === AUTO FILL ===
+// === AUTO FILL — sửa múi giờ ===
 function autoFill(){
   if(mode==='edit')return;
   const st=document.getElementById('f-station').value;
   const dt=document.getElementById('f-date').value;
   if(!st||!dt)return;
-  const [y,mo,dy]=dt.split('-').map(Number);const d=new Date(y,mo-1,dy-1);
+  const [y,mo,dy]=dt.split('-').map(Number);
+  const d=new Date(y,mo-1,dy-1);
   const yest=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
   const prev=getR().find(r=>r.station===st&&r.date===yest);
   const fy=document.getElementById('f-meter-yest');
   const hint=document.getElementById('fill-hint');
   if(prev&&prev.meterToday){
     fy.value=prev.meterToday;fy.style.background='#e8fff5';
-    hint.textContent='\u2705 T\u1ef1 \u0111\u1ed9ng l\u1ea5y t\u1eeb '+fmtDate(yest);
+    hint.textContent='✅ Tự động lấy từ '+fmtDate(yest);
     calcWater();
   }else{fy.style.background='';hint.textContent='';}
 }
@@ -481,7 +486,7 @@ function calcWater(){
   const y=parseFloat(document.getElementById('f-meter-yest').value);
   const el=document.getElementById('water-calc');
   if(!isNaN(t)&&!isNaN(y)&&t>=y){
-    el.textContent='\U0001f4a7 L\u01b0\u1ee3ng n\u01b0\u1edbc s\u1ea3n xu\u1ea5t: '+(t-y).toFixed(1)+' m\u00b3';
+    el.textContent='💧 Lượng nước sản xuất: '+(t-y).toFixed(1)+' m³';
     el.classList.add('show');
   }else el.classList.remove('show');
 }
@@ -503,49 +508,49 @@ function showMsg(type,msg){
 }
 function hideMsg(){const el=document.getElementById('form-msg');el.className='msg err';}
 
-// === DATE LOCK (client-side pre-check) ===
+// === DATE LOCK ===
 function dateLockErr(dt){
-  const rd=new Date(dt);rd.setHours(0,0,0,0);
+  const [y,mo,dy]=dt.split('-').map(Number);
+  const rd=new Date(y,mo-1,dy);
   const td=new Date();td.setHours(0,0,0,0);
   const diff=Math.floor((td-rd)/86400000);
-  if(diff<0)return 'Ng\u00e0y b\u00e1o c\u00e1o kh\u00f4ng \u0111\u01b0\u1ee3c l\u00e0 ng\u00e0y t\u01b0\u01a1ng lai!';
-  if(diff>LOCK_DAYS)return 'Ng\u00e0y n\u00e0y \u0111\u00e3 qu\u00e1 '+LOCK_DAYS+' ng\u00e0y. D\u00f9ng PIN qu\u1ea3n l\u00fd \u0111\u1ec3 s\u1eeda.';
+  if(diff<0)return 'Ngày báo cáo không được là ngày tương lai!';
+  if(diff>LOCK_DAYS)return 'Ngày này đã quá '+LOCK_DAYS+' ngày. Dùng PIN quản lý để sửa.';
   return null;
 }
 
 // === SUBMIT ===
 function submitForm(){
   hideMsg();
-  const date   = document.getElementById('f-date').value;
-  const station= document.getElementById('f-station').value;
+  const date   =document.getElementById('f-date').value;
+  const station=document.getElementById('f-station').value;
   const reporter=document.getElementById('f-reporter').value.trim();
-  const mT     = parseFloat(document.getElementById('f-meter-today').value);
-  const mY     = parseFloat(document.getElementById('f-meter-yest').value);
-  const isEdit = mode==='edit';
-  const pinVal = document.getElementById('f-pin').value.trim();
+  const mT     =parseFloat(document.getElementById('f-meter-today').value);
+  const mY     =parseFloat(document.getElementById('f-meter-yest').value);
+  const isEdit =mode==='edit';
+  const pinVal =document.getElementById('f-pin').value.trim();
   const adminPin=document.getElementById('f-admin-pin').value.trim();
 
-  if(!date)   {showMsg('err','Vui l\u00f2ng ch\u1ecdn ng\u00e0y b\u00e1o c\u00e1o!');return;}
-  if(!station){showMsg('err','Vui l\u00f2ng ch\u1ecdn t\u00ean tr\u1ea1m!');return;}
-  if(!reporter){showMsg('err','Vui l\u00f2ng nh\u1eadp t\u00ean ng\u01b0\u1eddi b\u00e1o c\u00e1o!');return;}
-  if(isNaN(mT)||mT<0){showMsg('err','Vui l\u00f2ng nh\u1eadp ch\u1ec9 s\u1ed1 \u0111\u1ed3ng h\u1ed3 h\u00f4m nay!');return;}
-  if(incVal===null){showMsg('err','Vui l\u00f2ng ch\u1ecdn t\u00ecnh tr\u1ea1ng s\u1ef1 c\u1ed1!');return;}
-  if(!pinVal&&!adminPin){showMsg('err','Vui l\u00f2ng nh\u1eadp PIN tr\u1ea1m ho\u1eb7c PIN qu\u1ea3n l\u00fd!');return;}
+  if(!date)    {showMsg('err','Vui lòng chọn ngày báo cáo!');return;}
+  if(!station) {showMsg('err','Vui lòng chọn tên trạm!');return;}
+  if(!reporter){showMsg('err','Vui lòng nhập tên người báo cáo!');return;}
+  if(isNaN(mT)||mT<0){showMsg('err','Vui lòng nhập chỉ số đồng hồ hôm nay!');return;}
+  if(incVal===null){showMsg('err','Vui lòng chọn tình trạng sự cố!');return;}
+  if(!pinVal&&!adminPin){showMsg('err','Vui lòng nhập PIN trạm hoặc PIN quản lý!');return;}
 
-  // Client pre-check (server se kiem tra lai)
   if(!adminPin){
     const err=dateLockErr(date);
     if(err){showMsg('err',err);return;}
     if(isEdit&&dateLockErr(date)){showMsg('err',dateLockErr(date));return;}
   }
   if(!isEdit&&getR().some(r=>r.station===station&&r.date===date)){
-    showMsg('err','"'+station+'" \u0111\u00e3 c\u00f3 b\u00e1o c\u00e1o ng\u00e0y '+fmtDate(date)+'. Chuy\u1ec3n sang ch\u1ebf \u0111\u1ed9 Ch\u1ec9nh s\u1eeda \u0111\u1ec3 c\u1eadp nh\u1eadt.');return;
+    showMsg('err','"'+station+'" đã có báo cáo ngày '+fmtDate(date)+'. Chuyển sang chế độ Chỉnh sửa để cập nhật.');return;
   }
 
   const water=(!isNaN(mY)&&mT>=mY)?parseFloat((mT-mY).toFixed(1)):0;
   const payload={
     date,station,reporter,
-    meterToday:mT, meterYesterday:isNaN(mY)?'':mY, water,
+    meterToday:mT,meterYesterday:isNaN(mY)?'':mY,water,
     clo:parseFloat(document.getElementById('f-clo').value)||0,
     phen:parseFloat(document.getElementById('f-phen').value)||0,
     voi:parseFloat(document.getElementById('f-voi').value)||0,
@@ -553,32 +558,32 @@ function submitForm(){
     incidentDetail:document.getElementById('f-incident').value.trim(),
     meters:parseInt(document.getElementById('f-meters').value)||0,
     metersNote:document.getElementById('f-meters-note').value.trim(),
-    isEdit, stationPin:pinVal, adminPin
+    isEdit,stationPin:pinVal,adminPin
   };
 
   const btn=document.getElementById('btn-submit');
-  btn.innerHTML='<span class="spinner"></span>'+(isEdit?'\u0110ang c\u1eadp nh\u1eadt...':'\u0110ang g\u1eedi...');
+  btn.innerHTML='<span class="spinner"></span>'+(isEdit?'Đang cập nhật...':'Đang gửi...');
   btn.disabled=true;
 
   fetch(SHEET_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
   .then(r=>r.json())
   .then(res=>{
-    btn.textContent=isEdit?'X\u00e1c nh\u1eadn ch\u1ec9nh s\u1eeda':'G\u1eedi b\u00e1o c\u00e1o';btn.disabled=false;
+    btn.textContent=isEdit?'Xác nhận chỉnh sửa':'Gửi báo cáo';btn.disabled=false;
     if(res.status==='auth_failed'){
-      document.getElementById(adminPin?'admin-pin-st':'pin-st').textContent='PIN kh\u00f4ng \u0111\u00fang';
+      document.getElementById(adminPin?'admin-pin-st':'pin-st').textContent='PIN không đúng';
       document.getElementById(adminPin?'admin-pin-st':'pin-st').className='pin-st err';
-      showMsg('err','PIN kh\u00f4ng \u0111\u00fang. Vui l\u00f2ng ki\u1ec3m tra l\u1ea1i.');return;
+      showMsg('err','PIN không đúng. Vui lòng kiểm tra lại.');return;
     }
     if(res.status==='locked'){showMsg('err',res.message);return;}
-    document.getElementById(adminPin?'admin-pin-st':'pin-st').textContent='PIN h\u1ee3p l\u1ec7';
+    document.getElementById(adminPin?'admin-pin-st':'pin-st').textContent='PIN hợp lệ';
     document.getElementById(adminPin?'admin-pin-st':'pin-st').className='pin-st ok';
     const rec={...payload,id:Date.now(),submittedAt:res.submittedAt||new Date().toLocaleString('vi-VN'),lanGui:''};
-    saveAndShow(rec,water,'\u0110\u00e3 l\u01b0u v\u00e0o Google Sheet');
+    saveAndShow(rec,water,'Đã lưu vào Google Sheet');
   })
   .catch(()=>{
-    btn.textContent=isEdit?'X\u00e1c nh\u1eadn ch\u1ec9nh s\u1eeda':'G\u1eedi b\u00e1o c\u00e1o';btn.disabled=false;
+    btn.textContent=isEdit?'Xác nhận chỉnh sửa':'Gửi báo cáo';btn.disabled=false;
     const rec={...payload,id:Date.now(),submittedAt:new Date().toLocaleString('vi-VN'),lanGui:''};
-    saveAndShow(rec,water,'\u26a0\ufe0f M\u1ea5t k\u1ebft n\u1ed1i \u2014 \u0111\u00e3 l\u01b0u t\u1ea1m c\u1ee5c b\u1ed9. Li\u00ean h\u1ec7 qu\u1ea3n l\u00fd \u0111\u1ec3 \u0111\u1ed3ng b\u1ed9.');
+    saveAndShow(rec,water,'⚠️ Mất kết nối — đã lưu tạm cục bộ. Liên hệ quản lý để đồng bộ.');
   });
 }
 
@@ -589,11 +594,11 @@ function saveAndShow(rec,water,note){
   setR(rs);
   const e=mode==='edit';
   document.getElementById('suc-icon').className='suc-icon'+(e?' edit':'');
-  document.getElementById('suc-title').textContent=e?'\u0110\u00e3 c\u1eadp nh\u1eadt!':'\u0110\u00e3 g\u1eedi th\u00e0nh c\u00f4ng!';
+  document.getElementById('suc-title').textContent=e?'Đã cập nhật!':'Đã gửi thành công!';
   document.getElementById('suc-msg').innerHTML=
-    '<b>'+rec.station+'</b> \u2014 '+rec.reporter+'<br>'+
-    '\u0110H h\u00f4m nay: '+rec.meterToday+' m\u00b3 | N\u01b0\u1edbc SX: '+water+' m\u00b3<br>'+
-    'Ng\u00e0y BC: '+fmtDate(rec.date)+'<br>'+note;
+    '<b>'+rec.station+'</b> — '+rec.reporter+'<br>'+
+    'ĐH hôm nay: '+rec.meterToday+' m³ | Nước SX: '+water+' m³<br>'+
+    'Ngày BC: '+fmtDate(rec.date)+'<br>'+note;
   document.getElementById('form-main').style.display='none';
   document.getElementById('success-screen').classList.add('show');
 }
@@ -621,70 +626,49 @@ function newReport(){
 }
 
 // === LOAD FROM SHEET ===
-// doGet da tra ve object voi key camelCase (date, station, reporter, meterToday, water, clo, phen, voi, incident, meters, lanGui...)
 function loadSheet(){
-  const ld = document.getElementById('tbl-loading');
-  const em = document.getElementById('tbl-empty');
-  ld.style.display = 'block';
-  em.style.display = 'none';
+  const ld=document.getElementById('tbl-loading');
+  const em=document.getElementById('tbl-empty');
+  ld.style.display='block';
+  em.style.display='none';
 
   fetch(SHEET_URL)
-    .then(r => r.json())
-    .then(response => {
-      console.log("📥 Dữ liệu nhận được từ server:", response);
-
-      // Xử lý nhiều kiểu trả về khác nhau
-      let rows = [];
-      
-      if (Array.isArray(response)) {
-        rows = response;
-      } 
-      else if (response && typeof response === 'object') {
-        if (response.data && Array.isArray(response.data)) {
-          rows = response.data;
-        } else if (response.rows && Array.isArray(response.rows)) {
-          rows = response.rows;
-        } else if (response.sampleRow) {
-          // Trường hợp đặc biệt của bạn
-          console.log("Phát hiện response có sampleRow");
-          rows = response.sampleRow ? [response.sampleRow] : []; 
-        }
+    .then(r=>r.json())
+    .then(response=>{
+      let rows=[];
+      if(Array.isArray(response)) rows=response;
+      else if(response&&typeof response==='object'){
+        if(response.data&&Array.isArray(response.data)) rows=response.data;
+        else if(response.rows&&Array.isArray(response.rows)) rows=response.rows;
       }
 
-      console.log("Số dòng thô để xử lý:", rows.length);
-
-      const rs = rows.map(r => ({
-        date: toYMD(r.date || r.Ngay || ''),
-        station: r.station || r['Trạm'] || '',
-        reporter: r.reporter || r['Người báo cáo'] || '',
-        meterToday: parseFloat(r.meterToday || r['ĐH hôm nay (m³)']) || 0,
-        meterYesterday: r.meterYesterday || r['ĐH hôm qua (m³)'] || '',
-        water: parseFloat(r.water || r['Nước SX (m³)']) || 0,
-        clo: parseFloat(r.clo || r['Clo (kg)']) || 0,
-        phen: parseFloat(r.phen || r['Phèn (kg)']) || 0,
-        voi: parseFloat(r.voi || r['Vôi (kg)']) || 0,
-        incident: r.incident === true || String(r.incident || r['Sự cố']).trim() === 'Có',
-        incidentDetail: r.incidentDetail || r['Chi tiết sự cố'] || '',
-        meters: parseInt(r.meters || r['ĐH lắp mới (cái)']) || 0,
-        metersNote: r.metersNote || r['Ghi chú ĐH'] || '',
-        submittedAt: r.submittedAt || r['Gi�� g�� i'] || '',
-        lanGui: r.lanGui || r['Lần gửi'] || ''
-      })).filter(r => r.date && r.station);
-
-      console.log("Sau khi xử lý còn " + rs.length + " dòng");
+      const rs=rows.map(r=>({
+        date:toYMD(r.date||r.Ngay||''),
+        station:r.station||r['Trạm']||'',
+        reporter:r.reporter||r['Người báo cáo']||'',
+        meterToday:parseFloat(r.meterToday||r['ĐH hôm nay (m³)'])||0,
+        meterYesterday:r.meterYesterday||r['ĐH hôm qua (m³)']||'',
+        water:parseFloat(r.water||r['Nước SX (m³)'])||0,
+        clo:parseFloat(r.clo||r['Clo (kg)'])||0,
+        phen:parseFloat(r.phen||r['Phèn (kg)'])||0,
+        voi:parseFloat(r.voi||r['Vôi (kg)'])||0,
+        incident:r.incident===true||String(r.incident||r['Sự cố']||'').trim()==='Có',
+        incidentDetail:r.incidentDetail||r['Chi tiết sự cố']||'',
+        meters:parseInt(r.meters||r['ĐH lắp mới (cái)'])||0,
+        metersNote:r.metersNote||r['Ghi chú ĐH']||'',
+        submittedAt:r.submittedAt||'',
+        lanGui:r.lanGui||r['Lần gửi']||''
+      })).filter(r=>r.date&&r.station);
 
       setR(rs);
-      ld.style.display = 'none';
+      ld.style.display='none';
       renderDash();
-
-      if (rs.length === 0) {
-        em.style.display = 'block';
-      }
+      if(rs.length===0) em.style.display='block';
     })
-    .catch(err => {
-      console.error("Lỗi tải dữ liệu:", err);
-      ld.style.display = 'none';
-      em.style.display = 'block';
+    .catch(err=>{
+      console.error('Lỗi tải dữ liệu:',err);
+      ld.style.display='none';
+      em.style.display='block';
     });
 }
 
@@ -718,22 +702,22 @@ function renderDash(){
 
   // Labels
   if(df==='today'){
-    document.getElementById('lbl-rep').textContent='\u0110\u00e3 b\u00e1o c\u00e1o h\u00f4m nay';
-    document.getElementById('lbl-rep-sub').textContent='/ 8 tr\u1ea1m';
-    document.getElementById('lbl-water').textContent='T\u1ed5ng n\u01b0\u1edbc SX h\u00f4m nay';
-    document.getElementById('lbl-clo').textContent='T\u1ed5ng Clo h\u00f4m nay';
+    document.getElementById('lbl-rep').textContent='Đã báo cáo hôm nay';
+    document.getElementById('lbl-rep-sub').textContent='/ 8 trạm';
+    document.getElementById('lbl-water').textContent='Tổng nước SX hôm nay';
+    document.getElementById('lbl-clo').textContent='Tổng Clo hôm nay';
   }else if(df==='specific'){
     const sd=document.getElementById('flt-specific').value;
-    document.getElementById('lbl-rep').textContent='\u0110\u00e3 BC ng\u00e0y '+fmtDate(sd);
-    document.getElementById('lbl-rep-sub').textContent='/ 8 tr\u1ea1m';
-    document.getElementById('lbl-water').textContent='N\u01b0\u1edbc SX ng\u00e0y '+fmtDate(sd);
-    document.getElementById('lbl-clo').textContent='Clo ng\u00e0y '+fmtDate(sd);
+    document.getElementById('lbl-rep').textContent='Đã BC ngày '+fmtDate(sd);
+    document.getElementById('lbl-rep-sub').textContent='/ 8 trạm';
+    document.getElementById('lbl-water').textContent='Nước SX ngày '+fmtDate(sd);
+    document.getElementById('lbl-clo').textContent='Clo ngày '+fmtDate(sd);
   }else{
-    const m={week:'7 ng\u00e0y qua',month:'30 ng\u00e0y qua',all:'T\u1ea5t c\u1ea3'};
-    document.getElementById('lbl-rep').textContent='Tr\u1ea1m \u0111\u00e3 BC ('+m[df]+')';
-    document.getElementById('lbl-rep-sub').textContent='tr\u1ea1m';
-    document.getElementById('lbl-water').textContent='T\u1ed5ng n\u01b0\u1edbc SX ('+m[df]+')';
-    document.getElementById('lbl-clo').textContent='T\u1ed5ng Clo ('+m[df]+')';
+    const m={week:'7 ngày qua',month:'30 ngày qua',all:'Tất cả'};
+    document.getElementById('lbl-rep').textContent='Trạm đã BC ('+m[df]+')';
+    document.getElementById('lbl-rep-sub').textContent='trạm';
+    document.getElementById('lbl-water').textContent='Tổng nước SX ('+m[df]+')';
+    document.getElementById('lbl-clo').textContent='Tổng Clo ('+m[df]+')';
   }
 
   // Alert missing
@@ -743,7 +727,7 @@ function renderDash(){
     if(miss.length>0&&miss.length<8){
       ab.classList.remove('hidden');
       document.getElementById('alert-txt').textContent=
-        'Ch\u01b0a b\u00e1o c\u00e1o '+(df==='today'?'h\u00f4m nay':'ng\u00e0y '+fmtDate(viewDate))+': '+miss.join(', ');
+        'Chưa báo cáo '+(df==='today'?'hôm nay':'ngày '+fmtDate(viewDate))+': '+miss.join(', ');
     }else ab.classList.add('hidden');
   }else ab.classList.add('hidden');
 
@@ -752,15 +736,15 @@ function renderDash(){
   const stGrid=document.getElementById('st-grid');
   if(isSingle){
     stTitle.style.display='block';stGrid.style.display='grid';
-    stTitle.textContent='Tr\u1ea1ng th\u00e1i tr\u1ea1m \u2014 '+(df==='today'?'h\u00f4m nay':fmtDate(viewDate));
+    stTitle.textContent='Trạng thái trạm — '+(df==='today'?'hôm nay':fmtDate(viewDate));
     stGrid.innerHTML=STATIONS.map(s=>{
       const r=dr.find(x=>x.station===s);
-      if(!r)return'<div class="st-card"><div class="st-name">'+s+'</div><span class="badge-st b-miss">Ch\u01b0a b\u00e1o c\u00e1o</span><div class="st-data">\u2014</div></div>';
+      if(!r)return'<div class="st-card"><div class="st-name">'+s+'</div><span class="badge-st b-miss">Chưa báo cáo</span><div class="st-data">—</div></div>';
       return'<div class="st-card '+(r.incident?'inc':'ok')+'"><div class="st-name">'+s+'</div>'+
-        (r.incident?'<span class="badge-st b-inc">\u26a0\ufe0f S\u1ef1 c\u1ed1</span>':'<span class="badge-st b-ok">\u2705 B\u00ecnh th\u01b0\u1eddng</span>')+
-        '<div class="st-data">\u0110H: <strong>'+r.meterToday+' m\u00b3</strong><br>N\u01b0\u1edbc SX: <strong>'+r.water+' m\u00b3</strong><br>Clo: <strong>'+r.clo+' kg</strong>'+
-        (r.meters>0?'<br>\u0110H l\u1eafp: <strong>'+r.meters+' c\u00e1i</strong>':'')+
-        '<br>'+r.reporter+' \u00b7 '+r.submittedAt+'</div></div>';
+        (r.incident?'<span class="badge-st b-inc">⚠️ Sự cố</span>':'<span class="badge-st b-ok">✅ Bình thường</span>')+
+        '<div class="st-data">ĐH: <strong>'+r.meterToday+' m³</strong><br>Nước SX: <strong>'+r.water+' m³</strong><br>Clo: <strong>'+r.clo+' kg</strong>'+
+        (r.meters>0?'<br>ĐH lắp: <strong>'+r.meters+' cái</strong>':'')+
+        '<br>'+r.reporter+' · '+r.submittedAt+'</div></div>';
     }).join('');
   }else{stTitle.style.display='none';stGrid.style.display='none';}
 
@@ -776,11 +760,11 @@ function renderDash(){
       '<td style="font-family:monospace">'+r.water+'</td>'+
       '<td style="font-family:monospace">'+r.clo+'</td>'+
       '<td>'+r.meters+'</td>'+
-      '<td>'+(r.incident?'<span class="bdg bdg-inc">S\u1ef1 c\u1ed1</span>':'<span class="bdg bdg-ok">OK</span>')+'</td>'+
-      '<td>'+(r.lanGui?'<span class="bdg bdg-edit">'+r.lanGui+'</span>':'<span style="color:var(--muted);font-size:11px">L\u1ea7n 1</span>')+'</td></tr>'
+      '<td>'+(r.incident?'<span class="bdg bdg-inc">Sự cố</span>':'<span class="bdg bdg-ok">OK</span>')+'</td>'+
+      '<td>'+(r.lanGui?'<span class="bdg bdg-edit">'+r.lanGui+'</span>':'<span style="color:var(--muted);font-size:11px">Lần 1</span>')+'</td></tr>'
     ).join('');
   }
-  document.getElementById('dash-sub').textContent='C\u1eadp nh\u1eadt: '+new Date().toLocaleString('vi-VN')+' \u2014 T\u1ed5ng '+rs.length+' b\u00e1o c\u00e1o';
+  document.getElementById('dash-sub').textContent='Cập nhật: '+new Date().toLocaleString('vi-VN')+' — Tổng '+rs.length+' báo cáo';
 }
 
 function onDateFilter(){
@@ -789,6 +773,43 @@ function onDateFilter(){
   if(df==='specific'){pk.classList.add('show');document.getElementById('flt-specific').value=dAgo(1);}
   else pk.classList.remove('show');
   renderDash();
+}
+
+// === XUẤT EXCEL ===
+function xuatExcel(){
+  const rs=getFiltered();
+  if(rs.length===0){alert('Không có dữ liệu để xuất!');return;}
+
+  const cols=[
+    'Ngày','Trạm','Người BC',
+    'ĐH hôm nay (m³)','ĐH hôm qua (m³)','Nước SX (m³)',
+    'Clo (kg)','Phèn (kg)','Vôi (kg)',
+    'Sự cố','Chi tiết sự cố','ĐH lắp mới','Ghi chú','Lần gửi'
+  ];
+  const rows=rs.sort((a,b)=>a.date.localeCompare(b.date)).map(r=>[
+    fmtDate(r.date),r.station,r.reporter,
+    r.meterToday,r.meterYesterday,r.water,
+    r.clo,r.phen,r.voi,
+    r.incident?'Có':'Không',r.incidentDetail,
+    r.meters,r.metersNote,r.lanGui||'Lần 1'
+  ]);
+
+  const ws=XLSX.utils.aoa_to_sheet([cols,...rows]);
+  ws['!cols']=[
+    {wch:12},{wch:18},{wch:18},{wch:14},{wch:14},{wch:12},
+    {wch:10},{wch:10},{wch:10},{wch:8},{wch:30},{wch:10},{wch:30},{wch:30}
+  ];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Báo cáo');
+
+  const d=new Date();
+  const sf=document.getElementById('flt-station').value;
+  const df=document.getElementById('flt-date').value;
+  const tenFile='BaoCao'
+    +(sf?'_'+sf.replace('Trạm ',''):'')
+    +'_'+(df==='today'||df==='specific'?fmtDate(df==='today'?today():document.getElementById('flt-specific').value).replace(/\//g,''):d.getFullYear()+pad(d.getMonth()+1))
+    +'.xlsx';
+  XLSX.writeFile(wb,tenFile);
 }
 </script>
 </body>
