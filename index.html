@@ -406,7 +406,6 @@ function setMode(m){
   document.getElementById('form-title').textContent=e?'Ch\u1ec9nh S\u1eeda B\u00e1o C\u00e1o':'B\u00e1o C\u00e1o Ng\u00e0y';
   document.getElementById('form-sub').textContent=e?'Ghi \u0111\u00e8 d\u1eef li\u1ec7u \u0111\u00e3 g\u1eedi \u2014 c\u1ea7n PIN x\u00e1c th\u1ef1c':'Nh\u1eadp s\u1ed1 li\u1ec7u v\u1eadn h\u00e0nh tr\u1ea1m c\u1ea5p n\u01b0\u1edbc';
   document.getElementById('edit-banner').className='edit-banner'+(e?' show':'');
-  document.getElementById('admin-box').className='admin-box'+(e?' show':'');
   const btn=document.getElementById('btn-submit');
   btn.className='btn-submit'+(e?' edit':'');
   btn.textContent=e?'X\u00e1c nh\u1eadn ch\u1ec9nh s\u1eeda':'G\u1eedi b\u00e1o c\u00e1o';
@@ -537,7 +536,7 @@ function submitForm(){
   if(!adminPin){
     const err=dateLockErr(date);
     if(err){showMsg('err',err);return;}
-    if(isEdit&&date!==today()){showMsg('err','Nh\u00e2n vi\u00ean ch\u1ec9 s\u1eeda \u0111\u01b0\u1ee3c b\u00e1o c\u00e1o c\u1ee7a h\u00f4m nay. D\u00f9ng PIN qu\u1ea3n l\u00fd \u0111\u1ec3 s\u1eeda ng\u00e0y kh\u00e1c.');return;}
+    if(isEdit&&dateLockErr(date)){showMsg('err',dateLockErr(date));return;}
   }
   if(!isEdit&&getR().some(r=>r.station===station&&r.date===date)){
     showMsg('err','"'+station+'" \u0111\u00e3 c\u00f3 b\u00e1o c\u00e1o ng\u00e0y '+fmtDate(date)+'. Chuy\u1ec3n sang ch\u1ebf \u0111\u1ed9 Ch\u1ec9nh s\u1eeda \u0111\u1ec3 c\u1eadp nh\u1eadt.');return;
