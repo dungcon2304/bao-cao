@@ -310,6 +310,8 @@
       <option value="specific">Chọn ngày cụ thể</option>
       <option value="week">7 ngày qua</option>
       <option value="month">30 ngày qua</option>
+      <option value="thismonth">Tháng này</option>
+      <option value="lastmonth">Tháng trước</option>
       <option value="all">Tất cả</option>
     </select>
     <div class="date-picker" id="date-picker">
@@ -681,6 +683,8 @@ function getFiltered(){
   else if(df==='specific'){const sd=document.getElementById('flt-specific').value;if(sd)rs=rs.filter(r=>r.date===sd);}
   else if(df==='week'){const c=dAgo(7);rs=rs.filter(r=>r.date>=c);}
   else if(df==='month'){const c=dAgo(30);rs=rs.filter(r=>r.date>=c);}
+  else if(df==='thismonth'){const n=new Date();const c=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-01';rs=rs.filter(r=>r.date>=c);}
+  else if(df==='lastmonth'){const n=new Date();const y=n.getMonth()===0?n.getFullYear()-1:n.getFullYear();const mo=n.getMonth()===0?12:n.getMonth();const c1=y+'-'+pad(mo)+'-01';const c2=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-01';rs=rs.filter(r=>r.date>=c1&&r.date<c2);}
   if(sf)rs=rs.filter(r=>r.station===sf);
   return rs;
 }
@@ -713,7 +717,7 @@ function renderDash(){
     document.getElementById('lbl-water').textContent='Nước SX ngày '+fmtDate(sd);
     document.getElementById('lbl-clo').textContent='Clo ngày '+fmtDate(sd);
   }else{
-    const m={week:'7 ngày qua',month:'30 ngày qua',all:'Tất cả'};
+    const now=new Date();const m={week:'7 ngày qua',month:'30 ngày qua',thismonth:'Tháng '+pad(now.getMonth()+1)+'/'+now.getFullYear(),lastmonth:'Tháng '+(now.getMonth()===0?'12/'+(now.getFullYear()-1):pad(now.getMonth())+'/'+now.getFullYear()),all:'Tất cả'};
     document.getElementById('lbl-rep').textContent='Trạm đã BC ('+m[df]+')';
     document.getElementById('lbl-rep-sub').textContent='trạm';
     document.getElementById('lbl-water').textContent='Tổng nước SX ('+m[df]+')';
