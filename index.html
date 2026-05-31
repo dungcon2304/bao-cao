@@ -10,7 +10,6 @@
   :root{--blue:#0a6bff;--blue-dark:#0050cc;--teal:#00c2a8;--red:#ff3b3b;--orange:#ff8c00;--bg:#f0f4fb;--card:#fff;--text:#0d1b3e;--muted:#6b7a99;--border:#d4ddf0;--success:#00b86b;--amber:#f59e0b;}
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:"Be Vietnam Pro",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-  /* NAV */
   .nav{background:var(--text);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;}
   .nav-brand{color:#fff;font-weight:800;font-size:15px;}
   .nav-brand span{color:var(--teal);}
@@ -18,17 +17,14 @@
   .nav-tab{color:rgba(255,255,255,.6);background:none;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;transition:all .2s;}
   .nav-tab.active{background:rgba(255,255,255,.12);color:#fff;}
   .nav-tab:hover{background:rgba(255,255,255,.08);color:#fff;}
-  /* VIEWS */
   .view{display:none;padding:20px;max-width:680px;margin:0 auto;}
   .view.active{display:block;}
   .view-dash{max-width:100%;}
-  /* FORM HEADER */
   .form-header{background:linear-gradient(135deg,#0a6bff,#0050cc);color:#fff;border-radius:16px;padding:24px;margin-bottom:20px;transition:.3s;}
   .form-header.edit-mode{background:linear-gradient(135deg,#d97706,#b45309);}
   .form-header h1{font-size:22px;font-weight:800;margin-bottom:4px;}
   .form-header p{opacity:.75;font-size:13px;}
   .date-badge{display:inline-block;background:rgba(255,255,255,.2);border-radius:20px;padding:4px 14px;font-size:13px;font-family:"JetBrains Mono",monospace;margin-top:10px;font-weight:600;}
-  /* CARDS */
   .card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:20px;margin-bottom:16px;}
   .card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:14px;}
   .field{margin-bottom:16px;}
@@ -41,26 +37,26 @@
   .input-group{display:flex;align-items:center;gap:10px;}
   .input-unit{font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap;}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  /* MODE TOGGLE */
   .mode-toggle{display:flex;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;}
   .mode-btn{flex:1;padding:10px;background:var(--bg);border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--muted);transition:.2s;text-align:center;}
   .mode-btn.m-new{background:var(--blue);color:#fff;}
   .mode-btn.m-edit{background:var(--amber);color:#fff;}
-  /* EDIT BANNER */
   .edit-banner{background:#fff8e6;border:1.5px solid var(--amber);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;display:none;}
   .edit-banner.show{display:block;}
   .edit-banner strong{color:#b45309;}
-  /* INCIDENT */
+  .msg{border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:12px;display:none;}
+  .msg.show{display:block;}
+  .msg.err{background:#fff0f0;border:1.5px solid var(--red);color:var(--red);}
+  .msg.info{background:#fff8e6;border:1.5px solid var(--amber);color:#b45309;}
+  .msg.success{background:#e8fff5;border:1.5px solid var(--success);color:#007a4d;}
   .inc-toggle{display:flex;gap:8px;}
   .tog-btn{flex:1;padding:10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:.2s;text-align:center;}
   .tog-btn.sel-no{border-color:var(--success);background:#e8fff5;color:var(--success);}
   .tog-btn.sel-yes{border-color:var(--red);background:#fff0f0;color:var(--red);}
   .inc-detail{display:none;margin-top:12px;}
   .inc-detail.show{display:block;}
-  /* WATER CALC */
   .water-calc{background:#e8f0ff;border-radius:8px;padding:12px 14px;margin-top:10px;font-size:13px;color:var(--blue);font-weight:600;display:none;}
   .water-calc.show{display:block;}
-  /* PIN */
   .pin-box{background:#fff8e6;border:1.5px solid var(--orange);border-radius:10px;padding:14px 16px;margin-bottom:16px;display:none;}
   .pin-box.show{display:block;}
   .pin-label{font-weight:700;color:var(--orange);margin-bottom:8px;font-size:13px;}
@@ -72,18 +68,14 @@
   .admin-box{background:#f0f0ff;border:1.5px solid #8b8bff;border-radius:8px;padding:10px 14px;margin-top:12px;display:none;}
   .admin-box.show{display:block;}
   .admin-box label{color:#4444cc;font-size:12px;}
-  /* MESSAGES */
-  .msg{border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:12px;display:none;}
-  .msg.show{display:block;}
-  .msg.err{background:#fff0f0;border:1.5px solid var(--red);color:var(--red);}
-  .msg.info{background:#fff8e6;border:1.5px solid var(--amber);color:#b45309;}
-  /* SUBMIT */
+  /* Loading overlay for edit mode */
+  .load-overlay{background:#fff8e6;border:1.5px solid var(--amber);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:#92400e;display:none;align-items:center;gap:10px;}
+  .load-overlay.show{display:flex;}
   .btn-submit{width:100%;padding:16px;background:var(--blue);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;margin-top:8px;}
   .btn-submit:hover{background:var(--blue-dark);}
   .btn-submit.edit{background:var(--amber);}
   .btn-submit.edit:hover{background:#b45309;}
   .btn-submit:disabled{background:#aaa;cursor:not-allowed;}
-  /* SUCCESS */
   .success{text-align:center;padding:48px 24px;display:none;}
   .success.show{display:block;}
   .suc-icon{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;background:var(--success);}
@@ -91,7 +83,6 @@
   .success h2{font-size:22px;font-weight:800;margin-bottom:8px;}
   .success p{color:var(--muted);font-size:14px;line-height:1.6;}
   .btn-new{margin-top:24px;padding:12px 28px;background:var(--blue);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;}
-  /* DASHBOARD */
   .dash-header{background:var(--text);color:#fff;padding:24px 20px;margin:-20px -20px 20px;}
   .dash-header h1{font-size:20px;font-weight:800;margin-bottom:4px;}
   .dash-header p{font-size:13px;opacity:.6;}
@@ -141,6 +132,7 @@
   .alert-bar.hidden{display:none;}
   .loading{text-align:center;padding:30px;color:var(--muted);font-size:14px;}
   .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+  .spinner-dark{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,.15);border-top-color:#92400e;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
   @keyframes spin{to{transform:rotate(360deg)}}
   @media(max-width:480px){.grid2{grid-template-columns:1fr;}.stat-grid{grid-template-columns:1fr 1fr;}}
 </style>
@@ -174,7 +166,13 @@
       Nhân viên chỉ sửa được trong 3 ngày; quản lý dùng PIN quản lý để sửa bất kỳ lúc nào.
     </div>
 
-    <div class="msg err" id="form-msg"></div>
+    <!-- Loading indicator khi đang tải dữ liệu cũ (edit mode) -->
+    <div class="load-overlay" id="load-overlay">
+      <span class="spinner-dark"></span>
+      <span id="load-overlay-txt">Đang tải dữ liệu báo cáo...</span>
+    </div>
+
+    <div class="msg" id="form-msg"></div>
 
     <div class="card">
       <div class="card-title">Thông tin báo cáo</div>
@@ -388,6 +386,13 @@ function toYMD(s){
 }
 function dAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);}
 
+// Tính ngày hôm qua từ chuỗi yyyy-mm-dd (tránh lỗi múi giờ)
+function prevDay(dateStr){
+  const [y,mo,dy]=dateStr.split('-').map(Number);
+  const d=new Date(y,mo-1,dy-1); // dùng local time, không UTC
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+
 // === INIT ===
 ;(function(){
   const t=today();
@@ -395,11 +400,15 @@ function dAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOStrin
   document.getElementById('today-display').textContent=fmtDate(t);
   document.getElementById('f-date').addEventListener('change',function(){
     document.getElementById('today-display').textContent=fmtDate(this.value);
-    autoFill();
-    if(mode==='edit')loadOld();
+    if(mode==='new') autoFill();
+    else if(mode==='edit') loadOld();
   });
   document.getElementById('flt-specific').value=t;
+
+  // FIX 1: Load dữ liệu từ server ngay khi trang mở
+  // Render từ cache trước để có UI ngay lập tức, sau đó tải mới từ server
   renderDash();
+  loadSheet(); // tự động tải khi vào trang
 })();
 
 // === MODE ===
@@ -409,38 +418,111 @@ function setMode(m){
   document.getElementById('btn-mode-new').className='mode-btn'+(e?'':' m-new');
   document.getElementById('btn-mode-edit').className='mode-btn'+(e?' m-edit':'');
   document.getElementById('form-header').className='form-header'+(e?' edit-mode':'');
-  document.getElementById('form-title').textContent=e?'Chỉnh Sửa Báo Cáo':'Báo Cáo Ngày';
+  document.getElementById('form-title').textContent=e?'✏️ Chỉnh Sửa Báo Cáo':'📋 Báo Cáo Ngày';
   document.getElementById('form-sub').textContent=e?'Ghi đè dữ liệu đã gửi — cần PIN xác thực':'Nhập số liệu vận hành trạm cấp nước';
   document.getElementById('edit-banner').className='edit-banner'+(e?' show':'');
   const btn=document.getElementById('btn-submit');
   btn.className='btn-submit'+(e?' edit':'');
-  btn.textContent=e?'Xác nhận chỉnh sửa':'Gửi báo cáo';
+  btn.textContent=e?'✔️ Xác nhận chỉnh sửa':'📤 Gửi báo cáo';
   document.getElementById('f-admin-pin').value='';
   document.getElementById('admin-pin-st').textContent='';
   hideMsg();
-  if(e)loadOld();
+  // FIX 2: Khi chuyển sang edit mode, tải dữ liệu cũ ngay nếu đã có trạm+ngày
+  if(e) loadOld();
 }
 
+// FIX 2: loadOld — ưu tiên server, fallback localStorage
+// Hiển thị số liệu báo cáo đã gửi vào form để người dùng sửa
 function loadOld(){
   const st=document.getElementById('f-station').value;
   const dt=document.getElementById('f-date').value;
-  if(!st||!dt)return;
-  const ex=getR().find(r=>r.station===st&&r.date===dt);
-  if(ex){
-    document.getElementById('f-reporter').value=ex.reporter||'';
-    document.getElementById('f-meter-today').value=ex.meterToday||'';
-    document.getElementById('f-meter-yest').value=ex.meterYesterday||'';
-    document.getElementById('f-clo').value=ex.clo||'';
-    document.getElementById('f-phen').value=ex.phen||'';
-    document.getElementById('f-voi').value=ex.voi||'';
-    document.getElementById('f-meters').value=ex.meters||'';
-    document.getElementById('f-meters-note').value=ex.metersNote||'';
-    document.getElementById('f-incident').value=ex.incidentDetail||'';
-    setInc(!!ex.incident);
-    calcWater();
-    showMsg('info','Đã tải dữ liệu cũ của "'+st+'" ngày '+fmtDate(dt)+'. Hãy sửa và xác nhận.');
-  }else{
-    showMsg('info','Không tìm thấy bản ghi cục bộ. Nhập mới và gửi sẽ ghi đè trên server nếu tồn tại.');
+  if(!st||!dt) return;
+
+  // Thử tìm trong localStorage trước (nhanh)
+  const local=getR().find(r=>r.station===st&&r.date===dt);
+  if(local){
+    _fillEditForm(local);
+    showMsg('success','✅ Đã tải dữ liệu cũ của "'+st+'" ngày '+fmtDate(dt)+'. Hãy sửa và xác nhận.');
+    return;
+  }
+
+  // Không có local → thử fetch từ server
+  document.getElementById('load-overlay').classList.add('show');
+  document.getElementById('load-overlay-txt').textContent='Đang tải dữ liệu từ server...';
+  document.getElementById('btn-submit').disabled=true;
+
+  fetch(SHEET_URL)
+    .then(r=>r.json())
+    .then(response=>{
+      document.getElementById('load-overlay').classList.remove('show');
+      document.getElementById('btn-submit').disabled=false;
+
+      let rows=[];
+      if(Array.isArray(response)) rows=response;
+      else if(response&&response.data) rows=response.data;
+      else if(response&&response.rows) rows=response.rows;
+
+      const rs=rows.map(r=>({
+        date:toYMD(r.date||r.Ngay||''),
+        station:r.station||r['Trạm']||'',
+        reporter:r.reporter||r['Người báo cáo']||'',
+        meterToday:parseFloat(r.meterToday||r['ĐH hôm nay (m³)'])||0,
+        meterYesterday:r.meterYesterday||r['ĐH hôm qua (m³)']||'',
+        water:parseFloat(r.water||r['Nước SX (m³)'])||0,
+        clo:parseFloat(r.clo||r['Clo (kg)'])||0,
+        phen:parseFloat(r.phen||r['Phèn (kg)'])||0,
+        voi:parseFloat(r.voi||r['Vôi (kg)'])||0,
+        incident:r.incident===true||String(r.incident||r['Sự cố']||'').trim()==='Có',
+        incidentDetail:r.incidentDetail||r['Chi tiết sự cố']||'',
+        meters:parseInt(r.meters||r['ĐH lắp mới (cái)'])||0,
+        metersNote:r.metersNote||r['Ghi chú ĐH']||'',
+        submittedAt:r.submittedAt||'',
+        lanGui:r.lanGui||r['Lần gửi']||''
+      })).filter(r=>r.date&&r.station);
+
+      // Lưu vào local để dùng sau
+      const merged=getR();
+      rs.forEach(r=>{
+        const i=merged.findIndex(x=>x.station===r.station&&x.date===r.date);
+        if(i>=0) merged[i]=r; else merged.unshift(r);
+      });
+      setR(merged);
+      renderDash();
+
+      // Tìm bản ghi cần edit
+      const found=rs.find(r=>r.station===st&&r.date===dt);
+      if(found){
+        _fillEditForm(found);
+        showMsg('success','✅ Đã tải dữ liệu từ server: "'+st+'" ngày '+fmtDate(dt)+'. Hãy sửa và xác nhận.');
+      }else{
+        showMsg('info','ℹ️ Không tìm thấy báo cáo của "'+st+'" ngày '+fmtDate(dt)+' trên server. Nhập mới và gửi sẽ tạo bản ghi.');
+      }
+    })
+    .catch(()=>{
+      document.getElementById('load-overlay').classList.remove('show');
+      document.getElementById('btn-submit').disabled=false;
+      showMsg('info','⚠️ Không kết nối được server. Nếu đã gửi báo cáo từ thiết bị này, hãy kiểm tra lại bên dưới.');
+    });
+}
+
+// Đổ dữ liệu vào form edit
+function _fillEditForm(r){
+  document.getElementById('f-reporter').value=r.reporter||'';
+  document.getElementById('f-meter-today').value=r.meterToday||'';
+  document.getElementById('f-meter-yest').value=r.meterYesterday||'';
+  document.getElementById('f-clo').value=r.clo||'';
+  document.getElementById('f-phen').value=r.phen||'';
+  document.getElementById('f-voi').value=r.voi||'';
+  document.getElementById('f-meters').value=r.meters||'';
+  document.getElementById('f-meters-note').value=r.metersNote||'';
+  document.getElementById('f-incident').value=r.incidentDetail||'';
+  setInc(!!r.incident);
+  calcWater();
+  // Hiển thị admin box vì có thể cần PIN quản lý khi sửa ngày cũ
+  const dt=document.getElementById('f-date').value;
+  const lockErr=dateLockErr(dt);
+  if(lockErr){
+    document.getElementById('admin-box').classList.add('show');
   }
 }
 
@@ -448,29 +530,39 @@ function loadOld(){
 function onStationChange(){
   const st=document.getElementById('f-station').value;
   const pc=document.getElementById('pin-card');
-  if(st){pc.classList.add('show');document.getElementById('f-pin').value='';document.getElementById('pin-st').textContent='';}
-  else pc.classList.remove('show');
-  autoFill();
-  if(mode==='edit')loadOld();
+  if(st){
+    pc.classList.add('show');
+    document.getElementById('f-pin').value='';
+    document.getElementById('pin-st').textContent='';
+  }else{
+    pc.classList.remove('show'); // FIX: ẩn PIN box khi chọn lại "-- Chọn trạm --"
+  }
+  if(mode==='new') autoFill();
+  else if(mode==='edit') loadOld();
 }
 
-// === AUTO FILL — sửa múi giờ ===
+// === AUTO FILL (chỉ dùng khi mode='new') ===
 function autoFill(){
-  if(mode==='edit')return;
   const st=document.getElementById('f-station').value;
   const dt=document.getElementById('f-date').value;
-  if(!st||!dt)return;
-  const [y,mo,dy]=dt.split('-').map(Number);
-  const d=new Date(y,mo-1,dy-1);
-  const yest=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  if(!st||!dt) return;
+  const yest=prevDay(dt);
   const prev=getR().find(r=>r.station===st&&r.date===yest);
   const fy=document.getElementById('f-meter-yest');
   const hint=document.getElementById('fill-hint');
   if(prev&&prev.meterToday){
-    fy.value=prev.meterToday;fy.style.background='#e8fff5';
+    fy.value=prev.meterToday;
+    fy.style.background='#e8fff5';
     hint.textContent='✅ Tự động lấy từ '+fmtDate(yest);
     calcWater();
-  }else{fy.style.background='';hint.textContent='';}
+  }else{
+    // Không tìm thấy local → không xóa nếu người dùng đã nhập tay
+    if(!fy.dataset.userTyped){
+      fy.value='';
+      fy.style.background='';
+    }
+    hint.textContent='';
+  }
 }
 
 // === VIEWS ===
@@ -479,7 +571,7 @@ function showView(v,btn){
   document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
   btn.classList.add('active');
-  if(v==='dash')loadSheet();
+  if(v==='dash') renderDash(); // render từ cache ngay, không loadSheet lại
 }
 
 // === WATER CALC ===
@@ -490,7 +582,9 @@ function calcWater(){
   if(!isNaN(t)&&!isNaN(y)&&t>=y){
     el.textContent='💧 Lượng nước sản xuất: '+(t-y).toFixed(1)+' m³';
     el.classList.add('show');
-  }else el.classList.remove('show');
+  }else{
+    el.classList.remove('show');
+  }
 }
 
 // === INCIDENT ===
@@ -504,55 +598,60 @@ function setInc(yes){
 // === MESSAGES ===
 function showMsg(type,msg){
   const el=document.getElementById('form-msg');
-  el.className='msg show '+(type==='info'?'info':'err');
+  el.className='msg show '+type;
   el.textContent=msg;
-  if(type==='err')el.scrollIntoView({behavior:'smooth',block:'center'});
+  if(type==='err') el.scrollIntoView({behavior:'smooth',block:'center'});
 }
-function hideMsg(){const el=document.getElementById('form-msg');el.className='msg err';}
+function hideMsg(){document.getElementById('form-msg').className='msg err';}
 
 // === DATE LOCK ===
 function dateLockErr(dt){
   const [y,mo,dy]=dt.split('-').map(Number);
-  const rd=new Date(y,mo-1,dy);
+  const rd=new Date(y,mo-1,dy);rd.setHours(0,0,0,0);
   const td=new Date();td.setHours(0,0,0,0);
   const diff=Math.floor((td-rd)/86400000);
-  if(diff<0)return 'Ngày báo cáo không được là ngày tương lai!';
-  if(diff>LOCK_DAYS)return 'Ngày này đã quá '+LOCK_DAYS+' ngày. Dùng PIN quản lý để sửa.';
+  if(diff<0) return 'Ngày báo cáo không được là ngày tương lai!';
+  if(diff>LOCK_DAYS) return 'Ngày này đã quá '+LOCK_DAYS+' ngày. Dùng PIN quản lý để sửa.';
   return null;
 }
 
 // === SUBMIT ===
 function submitForm(){
   hideMsg();
-  const date   =document.getElementById('f-date').value;
-  const station=document.getElementById('f-station').value;
+  const date    =document.getElementById('f-date').value;
+  const station =document.getElementById('f-station').value;
   const reporter=document.getElementById('f-reporter').value.trim();
-  const mT     =parseFloat(document.getElementById('f-meter-today').value);
-  const mY     =parseFloat(document.getElementById('f-meter-yest').value);
-  const isEdit =mode==='edit';
-  const pinVal =document.getElementById('f-pin').value.trim();
+  const mT      =parseFloat(document.getElementById('f-meter-today').value);
+  const mY      =parseFloat(document.getElementById('f-meter-yest').value);
+  const isEdit  =mode==='edit';
+  const pinVal  =document.getElementById('f-pin').value.trim();
   const adminPin=document.getElementById('f-admin-pin').value.trim();
 
-  if(!date)    {showMsg('err','Vui lòng chọn ngày báo cáo!');return;}
-  if(!station) {showMsg('err','Vui lòng chọn tên trạm!');return;}
-  if(!reporter){showMsg('err','Vui lòng nhập tên người báo cáo!');return;}
+  if(!date)     {showMsg('err','Vui lòng chọn ngày báo cáo!');return;}
+  if(!station)  {showMsg('err','Vui lòng chọn tên trạm!');return;}
+  if(!reporter) {showMsg('err','Vui lòng nhập tên người báo cáo!');return;}
   if(isNaN(mT)||mT<0){showMsg('err','Vui lòng nhập chỉ số đồng hồ hôm nay!');return;}
   if(incVal===null){showMsg('err','Vui lòng chọn tình trạng sự cố!');return;}
   if(!pinVal&&!adminPin){showMsg('err','Vui lòng nhập PIN trạm hoặc PIN quản lý!');return;}
 
+  // Chỉ kiểm tra lock nếu không có adminPin
   if(!adminPin){
     const err=dateLockErr(date);
     if(err){showMsg('err',err);return;}
-    if(isEdit&&dateLockErr(date)){showMsg('err',dateLockErr(date));return;}
   }
+
+  // Báo cáo mới: kiểm tra trùng
   if(!isEdit&&getR().some(r=>r.station===station&&r.date===date)){
-    showMsg('err','"'+station+'" đã có báo cáo ngày '+fmtDate(date)+'. Chuyển sang chế độ Chỉnh sửa để cập nhật.');return;
+    showMsg('err','"'+station+'" đã có báo cáo ngày '+fmtDate(date)+'. Chuyển sang chế độ Chỉnh sửa để cập nhật.');
+    return;
   }
 
   const water=(!isNaN(mY)&&mT>=mY)?parseFloat((mT-mY).toFixed(1)):0;
   const payload={
     date,station,reporter,
-    meterToday:mT,meterYesterday:isNaN(mY)?'':mY,water,
+    meterToday:mT,
+    meterYesterday:isNaN(mY)?'':mY,
+    water,
     clo:parseFloat(document.getElementById('f-clo').value)||0,
     phen:parseFloat(document.getElementById('f-phen').value)||0,
     voi:parseFloat(document.getElementById('f-voi').value)||0,
@@ -570,20 +669,25 @@ function submitForm(){
   fetch(SHEET_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
   .then(r=>r.json())
   .then(res=>{
-    btn.textContent=isEdit?'Xác nhận chỉnh sửa':'Gửi báo cáo';btn.disabled=false;
+    btn.textContent=isEdit?'✔️ Xác nhận chỉnh sửa':'📤 Gửi báo cáo';
+    btn.disabled=false;
     if(res.status==='auth_failed'){
-      document.getElementById(adminPin?'admin-pin-st':'pin-st').textContent='PIN không đúng';
-      document.getElementById(adminPin?'admin-pin-st':'pin-st').className='pin-st err';
-      showMsg('err','PIN không đúng. Vui lòng kiểm tra lại.');return;
+      const pinEl=adminPin?'admin-pin-st':'pin-st';
+      document.getElementById(pinEl).textContent='❌ PIN không đúng';
+      document.getElementById(pinEl).className='pin-st err';
+      showMsg('err','PIN không đúng. Vui lòng kiểm tra lại.');
+      return;
     }
     if(res.status==='locked'){showMsg('err',res.message);return;}
-    document.getElementById(adminPin?'admin-pin-st':'pin-st').textContent='PIN hợp lệ';
-    document.getElementById(adminPin?'admin-pin-st':'pin-st').className='pin-st ok';
+    const pinEl=adminPin?'admin-pin-st':'pin-st';
+    document.getElementById(pinEl).textContent='✅ PIN hợp lệ';
+    document.getElementById(pinEl).className='pin-st ok';
     const rec={...payload,id:Date.now(),submittedAt:res.submittedAt||new Date().toLocaleString('vi-VN'),lanGui:''};
     saveAndShow(rec,water,'Đã lưu vào Google Sheet');
   })
   .catch(()=>{
-    btn.textContent=isEdit?'Xác nhận chỉnh sửa':'Gửi báo cáo';btn.disabled=false;
+    btn.textContent=isEdit?'✔️ Xác nhận chỉnh sửa':'📤 Gửi báo cáo';
+    btn.disabled=false;
     const rec={...payload,id:Date.now(),submittedAt:new Date().toLocaleString('vi-VN'),lanGui:''};
     saveAndShow(rec,water,'⚠️ Mất kết nối — đã lưu tạm cục bộ. Liên hệ quản lý để đồng bộ.');
   });
@@ -592,7 +696,7 @@ function submitForm(){
 function saveAndShow(rec,water,note){
   let rs=getR();
   const i=rs.findIndex(r=>r.station===rec.station&&r.date===rec.date);
-  if(i>=0)rs[i]=rec;else rs.unshift(rec);
+  if(i>=0) rs[i]=rec; else rs.unshift(rec);
   setR(rs);
   const e=mode==='edit';
   document.getElementById('suc-icon').className='suc-icon'+(e?' edit':'');
@@ -608,7 +712,8 @@ function saveAndShow(rec,water,note){
 function newReport(){
   document.getElementById('form-main').style.display='block';
   document.getElementById('success-screen').classList.remove('show');
-  hideMsg();setMode('new');
+  hideMsg();
+  setMode('new');
   ['f-meter-today','f-meter-yest','f-clo','f-phen','f-voi','f-incident','f-meters','f-meters-note','f-pin','f-admin-pin']
     .forEach(id=>{document.getElementById(id).value='';});
   document.getElementById('f-date').value=today();
@@ -619,6 +724,8 @@ function newReport(){
   document.getElementById('fill-hint').textContent='';
   document.getElementById('f-meter-yest').style.background='';
   document.getElementById('pin-card').classList.remove('show');
+  document.getElementById('admin-box').classList.remove('show');
+  document.getElementById('load-overlay').classList.remove('show');
   document.getElementById('pin-st').textContent='';document.getElementById('pin-st').className='pin-st';
   document.getElementById('admin-pin-st').textContent='';document.getElementById('admin-pin-st').className='pin-st';
   incVal=null;
@@ -665,6 +772,12 @@ function loadSheet(){
       setR(rs);
       ld.style.display='none';
       renderDash();
+
+      // FIX 1: Sau khi load xong, chạy autoFill để ĐH hôm qua tự điền
+      if(mode==='new'){
+        autoFill();
+      }
+
       if(rs.length===0) em.style.display='block';
     })
     .catch(err=>{
@@ -679,13 +792,20 @@ function getFiltered(){
   let rs=getR();
   const df=document.getElementById('flt-date').value;
   const sf=document.getElementById('flt-station').value;
-  if(df==='today')rs=rs.filter(r=>r.date===today());
+  if(df==='today') rs=rs.filter(r=>r.date===today());
   else if(df==='specific'){const sd=document.getElementById('flt-specific').value;if(sd)rs=rs.filter(r=>r.date===sd);}
   else if(df==='week'){const c=dAgo(7);rs=rs.filter(r=>r.date>=c);}
   else if(df==='month'){const c=dAgo(30);rs=rs.filter(r=>r.date>=c);}
   else if(df==='thismonth'){const n=new Date();const c=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-01';rs=rs.filter(r=>r.date>=c);}
-  else if(df==='lastmonth'){const n=new Date();const y=n.getMonth()===0?n.getFullYear()-1:n.getFullYear();const mo=n.getMonth()===0?12:n.getMonth();const c1=y+'-'+pad(mo)+'-01';const c2=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-01';rs=rs.filter(r=>r.date>=c1&&r.date<c2);}
-  if(sf)rs=rs.filter(r=>r.station===sf);
+  else if(df==='lastmonth'){
+    const n=new Date();
+    const y=n.getMonth()===0?n.getFullYear()-1:n.getFullYear();
+    const mo=n.getMonth()===0?12:n.getMonth();
+    const c1=y+'-'+pad(mo)+'-01';
+    const c2=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-01';
+    rs=rs.filter(r=>r.date>=c1&&r.date<c2);
+  }
+  if(sf) rs=rs.filter(r=>r.station===sf);
   return rs;
 }
 
@@ -694,8 +814,8 @@ function renderDash(){
   const rs=getFiltered();
   const isSingle=df==='today'||df==='specific';
   let viewDate=null;
-  if(df==='today')viewDate=today();
-  else if(df==='specific')viewDate=document.getElementById('flt-specific').value;
+  if(df==='today') viewDate=today();
+  else if(df==='specific') viewDate=document.getElementById('flt-specific').value;
   const dr=viewDate?rs.filter(r=>r.date===viewDate):rs;
   const repSet=new Set(dr.map(r=>r.station));
 
@@ -704,7 +824,6 @@ function renderDash(){
   document.getElementById('d-inc').textContent=dr.filter(r=>r.incident).length;
   document.getElementById('d-clo').textContent=dr.reduce((s,r)=>s+(r.clo||0),0).toFixed(2);
 
-  // Labels
   if(df==='today'){
     document.getElementById('lbl-rep').textContent='Đã báo cáo hôm nay';
     document.getElementById('lbl-rep-sub').textContent='/ 8 trạm';
@@ -717,14 +836,17 @@ function renderDash(){
     document.getElementById('lbl-water').textContent='Nước SX ngày '+fmtDate(sd);
     document.getElementById('lbl-clo').textContent='Clo ngày '+fmtDate(sd);
   }else{
-    const now=new Date();const m={week:'7 ngày qua',month:'30 ngày qua',thismonth:'Tháng '+pad(now.getMonth()+1)+'/'+now.getFullYear(),lastmonth:'Tháng '+(now.getMonth()===0?'12/'+(now.getFullYear()-1):pad(now.getMonth())+'/'+now.getFullYear()),all:'Tất cả'};
+    const now=new Date();
+    const m={week:'7 ngày qua',month:'30 ngày qua',
+      thismonth:'Tháng '+pad(now.getMonth()+1)+'/'+now.getFullYear(),
+      lastmonth:'Tháng '+(now.getMonth()===0?'12/'+(now.getFullYear()-1):pad(now.getMonth())+'/'+now.getFullYear()),
+      all:'Tất cả'};
     document.getElementById('lbl-rep').textContent='Trạm đã BC ('+m[df]+')';
     document.getElementById('lbl-rep-sub').textContent='trạm';
     document.getElementById('lbl-water').textContent='Tổng nước SX ('+m[df]+')';
     document.getElementById('lbl-clo').textContent='Tổng Clo ('+m[df]+')';
   }
 
-  // Alert missing
   const ab=document.getElementById('alert-bar');
   if(isSingle){
     const miss=STATIONS.filter(s=>!repSet.has(s));
@@ -735,7 +857,6 @@ function renderDash(){
     }else ab.classList.add('hidden');
   }else ab.classList.add('hidden');
 
-  // Station cards
   const stTitle=document.getElementById('st-title');
   const stGrid=document.getElementById('st-grid');
   if(isSingle){
@@ -744,15 +865,17 @@ function renderDash(){
     stGrid.innerHTML=STATIONS.map(s=>{
       const r=dr.find(x=>x.station===s);
       if(!r)return'<div class="st-card"><div class="st-name">'+s+'</div><span class="badge-st b-miss">Chưa báo cáo</span><div class="st-data">—</div></div>';
-      return'<div class="st-card '+(r.incident?'inc':'ok')+'"><div class="st-name">'+s+'</div>'+
+      return'<div class="st-card '+(r.incident?'inc':'ok')+'">'+
+        '<div class="st-name">'+s+'</div>'+
         (r.incident?'<span class="badge-st b-inc">⚠️ Sự cố</span>':'<span class="badge-st b-ok">✅ Bình thường</span>')+
-        '<div class="st-data">ĐH: <strong>'+r.meterToday+' m³</strong><br>Nước SX: <strong>'+r.water+' m³</strong><br>Clo: <strong>'+r.clo+' kg</strong>'+
+        '<div class="st-data">ĐH: <strong>'+r.meterToday+' m³</strong><br>'+
+        'Nước SX: <strong>'+r.water+' m³</strong><br>'+
+        'Clo: <strong>'+r.clo+' kg</strong>'+
         (r.meters>0?'<br>ĐH lắp: <strong>'+r.meters+' cái</strong>':'')+
         '<br>'+r.reporter+' · '+r.submittedAt+'</div></div>';
     }).join('');
   }else{stTitle.style.display='none';stGrid.style.display='none';}
 
-  // Table
   const tbody=document.getElementById('tbl-body');
   const empty=document.getElementById('tbl-empty');
   if(rs.length===0){tbody.innerHTML='';empty.style.display='block';}
@@ -783,7 +906,6 @@ function onDateFilter(){
 function xuatExcel(){
   const rs=getFiltered();
   if(rs.length===0){alert('Không có dữ liệu để xuất!');return;}
-
   const cols=[
     'Ngày','Trạm','Người BC',
     'ĐH hôm nay (m³)','ĐH hôm qua (m³)','Nước SX (m³)',
@@ -797,7 +919,6 @@ function xuatExcel(){
     r.incident?'Có':'Không',r.incidentDetail,
     r.meters,r.metersNote,r.lanGui||'Lần 1'
   ]);
-
   const ws=XLSX.utils.aoa_to_sheet([cols,...rows]);
   ws['!cols']=[
     {wch:12},{wch:18},{wch:18},{wch:14},{wch:14},{wch:12},
@@ -805,13 +926,14 @@ function xuatExcel(){
   ];
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'Báo cáo');
-
   const d=new Date();
   const sf=document.getElementById('flt-station').value;
   const df=document.getElementById('flt-date').value;
   const tenFile='BaoCao'
     +(sf?'_'+sf.replace('Trạm ',''):'')
-    +'_'+(df==='today'||df==='specific'?fmtDate(df==='today'?today():document.getElementById('flt-specific').value).replace(/\//g,''):d.getFullYear()+pad(d.getMonth()+1))
+    +'_'+(df==='today'||df==='specific'
+      ?fmtDate(df==='today'?today():document.getElementById('flt-specific').value).replace(/\//g,'')
+      :d.getFullYear()+pad(d.getMonth()+1))
     +'.xlsx';
   XLSX.writeFile(wb,tenFile);
 }
