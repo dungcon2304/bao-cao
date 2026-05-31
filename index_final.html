@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản Lý Trạm Cấp Nước</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+:root{
+  --blue:#0a6bff;--blue-dark:#0050cc;--teal:#00c2a8;--red:#ff3b3b;
+  --orange:#ff8c00;--bg:#f0f4fb;--card:#fff;--text:#0d1b3e;
+  --muted:#6b7a99;--border:#d4ddf0;--success:#00b86b;--amber:#f59e0b;
+  --purple:#7c3aed;--pink:#db2777;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Be Vietnam Pro",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── NAV ── */
+.nav{background:var(--text);padding:0 12px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;}
+.nav-brand{color:#fff;font-weight:800;font-size:15px;white-space:nowrap;}
+.nav-brand span{color:var(--teal);}
+.nav-tabs{display:flex;gap:2px;overflow-x:auto;}
+.nav-tab{color:rgba(255,255,255,.6);background:none;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;transition:all .2s;white-space:nowrap;}
+.nav-tab.active{background:rgba(255,255,255,.12);color:#fff;}
+.nav-tab:hover{background:rgba(255,255,255,.08);color:#fff;}
+
+/* ── VIEWS ── */
+.view{display:none;padding:20px;max-width:680px;margin:0 auto;}
+.view.active{display:block;}
+.view-dash,.view-analytics{max-width:100%;}
+
+/* ── FORM ── */
+.form-header{background:linear-gradient(135deg,#0a6bff,#0050cc);color:#fff;border-radius:16px;padding:24px;margin-bottom:20px;transition:.3s;}
+.form-header.edit-mode{background:linear-gradient(135deg,#d97706,#b45309);}
+.form-header h1{font-size:22px;font-weight:800;margin-bottom:4px;}
+.form-header p{opacity:.75;font-size:13px;}
+.date-badge{display:inline-block;background:rgba(255,255,255,.2);border-radius:20px;padding:4px 14px;font-size:13px;font-family:"JetBrains Mono",monospace;margin-top:10px;font-weight:600;}
+.card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:20px;margin-bottom:16px;}
+.card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:14px;}
+.field{margin-bottom:16px;}.field:last-child{margin-bottom:0;}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;}
+.req{color:var(--red);margin-left:2px;}
+select,input[type=number],input[type=text],input[type=date],input[type=password],textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none;transition:border-color .2s;-webkit-appearance:none;}
+select:focus,input:focus,textarea:focus{border-color:var(--blue);background:#fff;}
+textarea{resize:vertical;min-height:80px;}
+.input-group{display:flex;align-items:center;gap:10px;}
+.input-unit{font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.mode-toggle{display:flex;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;}
+.mode-btn{flex:1;padding:10px;background:var(--bg);border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--muted);transition:.2s;text-align:center;}
+.mode-btn.m-new{background:var(--blue);color:#fff;}
+.mode-btn.m-edit{background:var(--amber);color:#fff;}
+.edit-banner{background:#fff8e6;border:1.5px solid var(--amber);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;display:none;}
+.edit-banner.show{display:block;}
+.edit-banner strong{color:#b45309;}
+.load-overlay{background:#fff8e6;border:1.5px solid var(--amber);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:#92400e;display:none;align-items:center;gap:10px;}
+.load-overlay.show{display:flex;}
+.msg{border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:12px;display:none;}
+.msg.show{display:block;}
+.msg.err{background:#fff0f0;border:1.5px solid var(--red);color:var(--red);}
+.msg.info{background:#fff8e6;border:1.5px solid var(--amber);color:#b45309;}
+.msg.success{background:#e8fff5;border:1.5px solid var(--success);color:#007a4d;}
+.inc-toggle{display:flex;gap:8px;}
+.tog-btn{flex:1;padding:10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:.2s;text-align:center;}
+.tog-btn.sel-no{border-color:var(--success);background:#e8fff5;color:var(--success);}
+.tog-btn.sel-yes{border-color:var(--red);background:#fff0f0;color:var(--red);}
+.inc-detail{display:none;margin-top:12px;}.inc-detail.show{display:block;}
+.water-calc{background:#e8f0ff;border-radius:8px;padding:12px 14px;margin-top:10px;font-size:13px;color:var(--blue);font-weight:600;display:none;}
+.water-calc.show{display:block;}
+.pin-box{background:#fff8e6;border:1.5px solid var(--orange);border-radius:10px;padding:14px 16px;margin-bottom:16px;display:none;}
+.pin-box.show{display:block;}
+.pin-label{font-weight:700;color:var(--orange);margin-bottom:8px;font-size:13px;}
+.pin-row input{max-width:160px;letter-spacing:4px;font-family:"JetBrains Mono",monospace;font-size:16px;}
+.pin-hint{font-size:11px;color:var(--muted);margin-top:4px;}
+.pin-st{font-size:12px;margin-top:6px;min-height:16px;}
+.pin-st.ok{color:var(--success);}.pin-st.err{color:var(--red);}
+.admin-box{background:#f0f0ff;border:1.5px solid #8b8bff;border-radius:8px;padding:10px 14px;margin-top:12px;display:none;}
+.admin-box.show{display:block;}
+.admin-box label{color:#4444cc;font-size:12px;}
+.btn-submit{width:100%;padding:16px;background:var(--blue);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;margin-top:8px;}
+.btn-submit:hover{background:var(--blue-dark);}
+.btn-submit.edit{background:var(--amber);}.btn-submit.edit:hover{background:#b45309;}
+.btn-submit:disabled{background:#aaa;cursor:not-allowed;}
+.success-screen{text-align:center;padding:48px 24px;display:none;}
+.success-screen.show{display:block;}
+.suc-icon{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;background:var(--success);}
+.suc-icon.edit{background:var(--amber);}
+.success-screen h2{font-size:22px;font-weight:800;margin-bottom:8px;}
+.success-screen p{color:var(--muted);font-size:14px;line-height:1.6;}
+.btn-new{margin-top:24px;padding:12px 28px;background:var(--blue);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;}
+
+/* ── DASHBOARD ── */
+.dash-header{background:var(--text);color:#fff;padding:24px 20px;margin:-20px -20px 20px;}
+.dash-header h1{font-size:20px;font-weight:800;margin-bottom:4px;}
+.dash-header p{font-size:13px;opacity:.6;}
+.toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+.fsel{padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;background:var(--card);color:var(--text);cursor:pointer;outline:none;}
+.fsel:focus{border-color:var(--blue);}
+.btn-reload{padding:7px 16px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
+.btn-reload:hover{background:var(--blue-dark);}
+.btn-excel{padding:7px 16px;background:var(--success);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
+.btn-excel:hover{background:#009958;}
+.date-picker{display:none;align-items:center;gap:6px;}
+.date-picker.show{display:flex;}
+.date-picker label{font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;}
+.date-picker input{padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;width:140px;}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
+.stat-card{background:var(--card);border-radius:12px;padding:16px;border:1px solid var(--border);}
+.stat-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;margin-bottom:8px;}
+.stat-val{font-size:28px;font-weight:800;font-family:"JetBrains Mono",monospace;}
+.stat-val.blue{color:var(--blue);}.stat-val.teal{color:var(--teal);}.stat-val.red{color:var(--red);}
+.stat-unit{font-size:13px;color:var(--muted);margin-top:2px;}
+.sec-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:12px;}
+.st-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:20px;}
+.st-card{background:var(--card);border-radius:10px;padding:14px;border:1.5px solid var(--border);}
+.st-card.ok{border-color:var(--success);}.st-card.inc{border-color:var(--red);}
+.st-name{font-size:13px;font-weight:700;margin-bottom:8px;}
+.badge-st{font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;display:inline-block;margin-bottom:8px;}
+.b-ok{background:#e8fff5;color:var(--success);}
+.b-miss{background:#fff8e6;color:var(--orange);}
+.b-inc{background:#fff0f0;color:var(--red);}
+.st-data{font-size:12px;color:var(--muted);line-height:1.9;}
+.st-data strong{color:var(--text);font-weight:600;}
+.tbl-wrap{background:var(--card);border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:20px;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:var(--text);color:rgba(255,255,255,.8);padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+td{padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--bg);}
+.bdg{padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;}
+.bdg-ok{background:#e8fff5;color:var(--success);}
+.bdg-inc{background:#fff0f0;color:var(--red);}
+.bdg-edit{background:#fff8e6;color:#b45309;}
+.empty{text-align:center;padding:40px;color:var(--muted);}
+.alert-bar{background:#fff3e0;border:1.5px solid var(--orange);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;display:flex;align-items:center;gap:10px;}
+.alert-bar.hidden{display:none;}
+.loading{text-align:center;padding:30px;color:var(--muted);font-size:14px;}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+.spinner-dark{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,.15);border-top-color:#92400e;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── ANALYTICS ── */
+.analytics-header{background:linear-gradient(135deg,#0d1b3e 0%,#1a3a6e 100%);color:#fff;padding:24px 20px;margin:-20px -20px 24px;position:relative;overflow:hidden;}
+.analytics-header::after{content:'';position:absolute;right:-40px;top:-40px;width:220px;height:220px;border-radius:50%;background:rgba(0,194,168,.08);pointer-events:none;}
+.analytics-header h1{font-size:20px;font-weight:800;margin-bottom:4px;}
+.analytics-header p{font-size:13px;opacity:.6;}
+.an-toolbar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
+.btn-an{padding:7px 16px;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
+.btn-blue{background:var(--blue);color:#fff;}.btn-blue:hover{background:var(--blue-dark);}
+.btn-green{background:var(--success);color:#fff;}.btn-green:hover{background:#009958;}
+.btn-purple{background:var(--purple);color:#fff;}.btn-purple:hover{background:#6d28d9;}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px;}
+.kpi-card{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:16px 18px;position:relative;overflow:hidden;}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.kpi-card.kblue::before{background:var(--blue);}
+.kpi-card.kteal::before{background:var(--teal);}
+.kpi-card.kamber::before{background:var(--amber);}
+.kpi-card.kred::before{background:var(--red);}
+.kpi-card.kpurple::before{background:var(--purple);}
+.kpi-card.kgreen::before{background:var(--success);}
+.kpi-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:8px;}
+.kpi-val{font-size:26px;font-weight:800;font-family:"JetBrains Mono",monospace;line-height:1;}
+.kpi-val.blue{color:var(--blue);}.kpi-val.teal{color:var(--teal);}.kpi-val.amber{color:var(--amber);}
+.kpi-val.red{color:var(--red);}.kpi-val.purple{color:var(--purple);}.kpi-val.green{color:var(--success);}
+.kpi-unit{font-size:12px;color:var(--muted);margin-top:4px;}
+.kpi-delta{font-size:11px;margin-top:6px;font-weight:600;}
+.kpi-delta.up{color:var(--success);}.kpi-delta.down{color:var(--red);}.kpi-delta.warn{color:var(--amber);}
+.chart-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.chart-grid-1{margin-bottom:16px;}
+.chart-card{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:20px;}
+.chart-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.chart-sub{font-size:11px;color:var(--muted);margin-bottom:16px;}
+.chart-wrap{position:relative;}
+.loss-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px;}
+.loss-table th{background:var(--bg);color:var(--muted);padding:8px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid var(--border);}
+.loss-table td{padding:10px 12px;border-bottom:1px solid var(--border);}
+.loss-table tr:last-child td{border-bottom:none;}
+.loss-table tr:hover td{background:var(--bg);}
+.loss-pct{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:13px;}
+.loss-bar-wrap{width:80px;height:8px;background:#eee;border-radius:4px;display:inline-block;vertical-align:middle;margin-right:6px;}
+.loss-bar{height:8px;border-radius:4px;}
+.pct-ok{color:var(--success);}.pct-warn{color:var(--amber);}.pct-bad{color:var(--red);}
+.bar-ok{background:var(--success);}.bar-warn{background:var(--amber);}.bar-bad{background:var(--red);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--card);border-radius:16px;padding:24px;width:100%;max-width:520px;max-height:85vh;overflow-y:auto;}
+.modal-title{font-size:17px;font-weight:800;margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;}
+.modal-close{float:right;background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);margin-top:-4px;}
+.rev-table{width:100%;border-collapse:collapse;font-size:13px;}
+.rev-table th{background:var(--bg);padding:8px 10px;font-size:11px;font-weight:700;color:var(--muted);text-align:left;border-bottom:1.5px solid var(--border);}
+.rev-table td{padding:6px 4px;border-bottom:1px solid var(--border);}
+.rev-table td:first-child{padding-left:10px;font-weight:600;font-size:12px;}
+.rev-input{width:100%;padding:6px 10px;border:1.5px solid var(--border);border-radius:6px;font-family:"JetBrains Mono",monospace;font-size:13px;background:var(--bg);color:var(--text);outline:none;}
+.rev-input:focus{border-color:var(--blue);background:#fff;}
+.modal-actions{display:flex;gap:8px;margin-top:20px;}
+.modal-actions .btn-an{flex:1;padding:12px;}
+.no-data{text-align:center;padding:40px;color:var(--muted);font-size:14px;}
+.month-nav{display:flex;align-items:center;gap:10px;}
+.month-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.month-btn:hover{background:var(--border);}
+.month-lbl{font-size:14px;font-weight:700;min-width:100px;text-align:center;}
+.badge{padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;}
+.badge-ok{background:#e8fff5;color:var(--success);}
+.badge-warn{background:#fff8e6;color:#b45309;}
+.badge-bad{background:#fff0f0;color:var(--red);}
+
+@media(max-width:600px){
+  .chart-grid-2{grid-template-columns:1fr;}
+  .kpi-grid{grid-template-columns:1fr 1fr;}
+  .grid2{grid-template-columns:1fr;}
+  .stat-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">💧 Trạm Cấp <span>Nước</span></div>
+  <div class="nav-tabs">
+    <button type="button" class="nav-tab active" onclick="showView('form',this)">📋 Báo cáo</button>
+    <button type="button" class="nav-tab" onclick="showView('dash',this)">📊 Dashboard</button>
+    <button type="button" class="nav-tab" onclick="showView('analytics',this)">📈 Phân tích</button>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════
+     VIEW: FORM BÁO CÁO
+════════════════════════════════════════════ -->
+<div id="view-form" class="view active">
+  <div id="form-main">
+    <div class="form-header" id="form-header">
+      <h1 id="form-title">📋 Báo Cáo Ngày</h1>
+      <p id="form-sub">Nhập số liệu vận hành trạm cấp nước</p>
+      <div class="date-badge" id="today-display"></div>
+    </div>
+
+    <div class="mode-toggle">
+      <button type="button" class="mode-btn m-new" id="btn-mode-new" onclick="setMode('new')">📤 Gửi báo cáo mới</button>
+      <button type="button" class="mode-btn" id="btn-mode-edit" onclick="setMode('edit')">✏️ Chỉnh sửa đã gửi</button>
+    </div>
+    <div class="edit-banner" id="edit-banner">
+      ✏️ <strong>Chế độ chỉnh sửa:</strong> Dữ liệu cũ sẽ bị <strong>ghi đè hoàn toàn</strong>.
+      Nhân viên chỉ sửa được trong 3 ngày; quản lý dùng PIN quản lý để sửa bất kỳ lúc nào.
+    </div>
+    <div class="load-overlay" id="load-overlay">
+      <span class="spinner-dark"></span>
+      <span id="load-overlay-txt">Đang tải dữ liệu báo cáo...</span>
+    </div>
+    <div class="msg" id="form-msg"></div>
+
+    <div class="card">
+      <div class="card-title">Thông tin báo cáo</div>
+      <div class="field">
+        <label>Ngày báo cáo <span class="req">*</span></label>
+        <input type="date" id="f-date">
+      </div>
+      <div class="field">
+        <label>Tên trạm <span class="req">*</span></label>
+        <select id="f-station" onchange="onStationChange()">
+          <option value="">-- Chọn trạm --</option>
+          <option>Trạm Bù Rên</option><option>Trạm Bù Gia Mập</option>
+          <option>Trạm Tân Thành</option><option>Trạm Lộc Hiệp</option>
+          <option>Trạm Tân Tiến</option><option>Trạm Thiện Hưng</option>
+          <option>Trạm Hưng Phước</option><option>Trạm Thanh Bình</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Người báo cáo <span class="req">*</span></label>
+        <input type="text" id="f-reporter" placeholder="Họ tên nhân viên">
+      </div>
+    </div>
+
+    <div class="pin-box" id="pin-card">
+      <div class="pin-label">🔐 Xác thực PIN</div>
+      <div class="field" style="margin:0">
+        <label style="font-size:12px;color:var(--muted);font-weight:500">PIN trạm (do quản lý cấp)</label>
+        <div class="pin-row" style="display:flex;gap:8px;margin-top:6px">
+          <input type="password" id="f-pin" maxlength="8" placeholder="••••" autocomplete="off">
+        </div>
+        <div class="pin-st" id="pin-st"></div>
+        <div class="admin-box" id="admin-box">
+          <label>🛡️ Hoặc nhập PIN quản lý (sửa bất kỳ ngày nào)</label>
+          <div class="pin-row" style="display:flex;gap:8px;margin-top:6px">
+            <input type="password" id="f-admin-pin" maxlength="12" placeholder="••••••" autocomplete="off">
+          </div>
+          <div class="pin-hint">Dùng khi cần sửa dữ liệu ngày cũ hoặc đã khóa.</div>
+          <div class="pin-st" id="admin-pin-st"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Đồng hồ &amp; Sản lượng nước</div>
+      <div class="field">
+        <label>Chỉ số đồng hồ tổng hôm nay <span class="req">*</span></label>
+        <div class="input-group">
+          <input type="number" id="f-meter-today" placeholder="0" min="0" step="0.1" oninput="calcWater()">
+          <span class="input-unit">m³</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Chỉ số đồng hồ tổng hôm qua <span id="fill-hint" style="color:var(--success);font-weight:500;font-size:11px"></span></label>
+        <div class="input-group">
+          <input type="number" id="f-meter-yest" placeholder="Tự động điền nếu có dữ liệu" min="0" step="0.1" oninput="calcWater()">
+          <span class="input-unit">m³</span>
+        </div>
+      </div>
+      <div class="water-calc" id="water-calc"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Hóa chất sử dụng</div>
+      <div class="grid2">
+        <div class="field"><label>Clo</label><div class="input-group"><input type="number" id="f-clo" placeholder="0" min="0" step="0.01"><span class="input-unit">kg</span></div></div>
+        <div class="field"><label>Phèn</label><div class="input-group"><input type="number" id="f-phen" placeholder="0" min="0" step="0.01"><span class="input-unit">kg</span></div></div>
+        <div class="field"><label>Vôi</label><div class="input-group"><input type="number" id="f-voi" placeholder="0" min="0" step="0.01"><span class="input-unit">kg</span></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Sự cố / Bảo trì</div>
+      <div class="field">
+        <label>Có sự cố hoặc bảo trì hôm nay không? <span class="req">*</span></label>
+        <div class="inc-toggle">
+          <button type="button" class="tog-btn" id="btn-no" onclick="setInc(false)">✅ Không</button>
+          <button type="button" class="tog-btn" id="btn-yes" onclick="setInc(true)">⚠️ Có</button>
+        </div>
+        <div class="inc-detail" id="inc-detail">
+          <textarea id="f-incident" placeholder="Mô tả sự cố, biện pháp xử lý, thời gian dừng máy..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Lắp đặt đồng hồ nước</div>
+      <div class="field">
+        <label>Số đồng hồ lắp mới hôm nay</label>
+        <div class="input-group"><input type="number" id="f-meters" placeholder="0" min="0" step="1"><span class="input-unit">cái</span></div>
+      </div>
+      <div class="field">
+        <label>Ghi chú (địa điểm, khách hàng...)</label>
+        <textarea id="f-meters-note" placeholder="VD: 3 cái tại thôn 5, khách hàng mới..."></textarea>
+      </div>
+    </div>
+
+    <button class="btn-submit" id="btn-submit" onclick="submitForm()">📤 Gửi báo cáo</button>
+  </div>
+
+  <div class="success-screen" id="success-screen">
+    <div class="suc-icon" id="suc-icon">✓</div>
+    <h2 id="suc-title">Đã gửi thành công!</h2>
+    <p id="suc-msg"></p>
+    <button type="button" class="btn-new" onclick="newReport()">+ Báo cáo mới</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     VIEW: DASHBOARD
+════════════════════════════════════════════ -->
+<div id="view-dash" class="view view-dash">
+  <div class="dash-header">
+    <h1>📊 Dashboard Quản Lý</h1>
+    <p id="dash-sub">Tổng hợp dữ liệu từ 8 trạm cấp nước</p>
+  </div>
+
+  <div id="alert-bar" class="alert-bar hidden">⚠️ <span id="alert-txt"></span></div>
+
+  <div class="toolbar">
+    <select class="fsel" id="flt-date" onchange="onDateFilter()">
+      <option value="today">Hôm nay</option>
+      <option value="specific">Chọn ngày cụ thể</option>
+      <option value="week">7 ngày qua</option>
+      <option value="month">30 ngày qua</option>
+      <option value="thismonth">Tháng này</option>
+      <option value="lastmonth">Tháng trước</option>
+      <option value="all">Tất cả</option>
+    </select>
+    <div class="date-picker" id="date-picker">
+      <label>Ngày:</label>
+      <input type="date" id="flt-specific" onchange="renderDash()">
+    </div>
+    <select class="fsel" id="flt-station" onchange="renderDash()">
+      <option value="">Tất cả trạm</option>
+      <option>Trạm Bù Rên</option><option>Trạm Bù Gia Mập</option>
+      <option>Trạm Tân Thành</option><option>Trạm Lộc Hiệp</option>
+      <option>Trạm Tân Tiến</option><option>Trạm Thiện Hưng</option>
+      <option>Trạm Hưng Phước</option><option>Trạm Thanh Bình</option>
+    </select>
+    <button type="button" class="btn-reload" onclick="loadSheet()">🔄 Tải dữ liệu</button>
+    <button type="button" class="btn-excel" onclick="xuatExcel()">📥 Xuất Excel</button>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-lbl" id="lbl-rep">Đã báo cáo</div><div class="stat-val blue" id="d-rep">0</div><div class="stat-unit" id="lbl-rep-sub">/ 8 trạm</div></div>
+    <div class="stat-card"><div class="stat-lbl" id="lbl-water">Tổng nước SX</div><div class="stat-val teal" id="d-water">0</div><div class="stat-unit">m³</div></div>
+    <div class="stat-card"><div class="stat-lbl">Sự cố</div><div class="stat-val red" id="d-inc">0</div><div class="stat-unit">trạm</div></div>
+    <div class="stat-card"><div class="stat-lbl" id="lbl-clo">Tổng Clo</div><div class="stat-val" id="d-clo">0</div><div class="stat-unit">kg</div></div>
+  </div>
+
+  <p class="sec-title" id="st-title">Trạng thái trạm hôm nay</p>
+  <div class="st-grid" id="st-grid"></div>
+
+  <p class="sec-title">Lịch sử báo cáo</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>Ngày BC</th><th>Trạm</th><th>ĐH hôm nay (m³)</th>
+        <th>Nước SX (m³)</th><th>Clo (kg)</th><th>ĐH lắp</th>
+        <th>Tình trạng</th><th>Lần gửi</th>
+      </tr></thead>
+      <tbody id="tbl-body"></tbody>
+    </table>
+    <div class="empty" id="tbl-empty" style="display:none"><p>📭 Chưa có báo cáo nào. Bấm "Tải dữ liệu" để làm mới.</p></div>
+    <div class="loading" id="tbl-loading" style="display:none">⏳ Đang tải dữ liệu...</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     VIEW: PHÂN TÍCH
+════════════════════════════════════════════ -->
+<div id="view-analytics" class="view view-analytics">
+  <div class="analytics-header">
+    <h1>📈 Phân Tích Vận Hành</h1>
+    <p>Sản lượng · Doanh thu · Thất thoát nước</p>
+  </div>
+
+  <div class="an-toolbar">
+    <div class="month-nav">
+      <button class="month-btn" onclick="changeMonth(-1)">◀</button>
+      <span class="month-lbl" id="month-lbl">—</span>
+      <button class="month-btn" onclick="changeMonth(1)">▶</button>
+    </div>
+    <select class="fsel" id="an-station" onchange="renderAnalytics()">
+      <option value="">Tất cả trạm</option>
+      <option>Trạm Bù Rên</option><option>Trạm Bù Gia Mập</option>
+      <option>Trạm Tân Thành</option><option>Trạm Lộc Hiệp</option>
+      <option>Trạm Tân Tiến</option><option>Trạm Thiện Hưng</option>
+      <option>Trạm Hưng Phước</option><option>Trạm Thanh Bình</option>
+    </select>
+    <button class="btn-an btn-purple" onclick="openRevModal()">💰 Nhập doanh thu tháng</button>
+    <button class="btn-an btn-blue" onclick="loadSheetAndAnalytics()">🔄 Tải dữ liệu</button>
+    <button class="btn-an btn-green" onclick="xuatExcelPhanTich()">📥 Xuất Excel</button>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card kblue"><div class="kpi-lbl">Nước SX (tháng)</div><div class="kpi-val blue" id="kpi-sx">—</div><div class="kpi-unit">m³</div><div class="kpi-delta" id="kpi-sx-d"></div></div>
+    <div class="kpi-card kteal"><div class="kpi-lbl">Nước bán được</div><div class="kpi-val teal" id="kpi-ban">—</div><div class="kpi-unit">m³</div></div>
+    <div class="kpi-card kred"><div class="kpi-lbl">Thất thoát</div><div class="kpi-val red" id="kpi-tt">—</div><div class="kpi-unit">% tổng sản xuất</div><div class="kpi-delta" id="kpi-tt-d"></div></div>
+    <div class="kpi-card kgreen"><div class="kpi-lbl">Doanh thu</div><div class="kpi-val green" id="kpi-dt">—</div><div class="kpi-unit">triệu VNĐ</div></div>
+    <div class="kpi-card kamber"><div class="kpi-lbl">Giá nước TB</div><div class="kpi-val amber" id="kpi-gia">—</div><div class="kpi-unit">VNĐ/m³</div></div>
+    <div class="kpi-card kpurple"><div class="kpi-lbl">Ngày có BC</div><div class="kpi-val purple" id="kpi-ngay">—</div><div class="kpi-unit">/ <span id="kpi-ngay-tong">—</span> ngày</div></div>
+  </div>
+
+  <div class="chart-card chart-grid-1">
+    <div class="chart-title">📊 Sản lượng nước sản xuất theo ngày</div>
+    <div class="chart-sub" id="chart1-sub">Tổng toàn công ty hoặc từng trạm tùy bộ lọc</div>
+    <div class="chart-wrap"><canvas id="chart-daily" height="90"></canvas></div>
+  </div>
+
+  <div class="chart-grid-2">
+    <div class="chart-card">
+      <div class="chart-title">🏭 So sánh SX giữa các trạm</div>
+      <div class="chart-sub">Tổng m³ trong tháng đang xem</div>
+      <div class="chart-wrap"><canvas id="chart-stations" height="180"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">📉 Xu hướng 6 tháng gần nhất</div>
+      <div class="chart-sub">Nước SX · Bán · Thất thoát %</div>
+      <div class="chart-wrap"><canvas id="chart-trend" height="180"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-card chart-grid-1">
+    <div class="chart-title">🔴 Thất thoát theo từng trạm — tháng đang xem</div>
+    <div class="chart-sub">SX - Bán = Thất thoát. Ngưỡng: &gt;20% <span class="badge badge-warn">Cần xem lại</span> &gt;30% <span class="badge badge-bad">Nghiêm trọng</span></div>
+    <div id="loss-wrap"><div class="no-data">Chưa có dữ liệu doanh thu. Bấm "💰 Nhập doanh thu tháng" để bắt đầu.</div></div>
+  </div>
+</div>
+
+<!-- Modal nhập doanh thu -->
+<div class="modal-overlay" id="rev-modal" onclick="closeRevModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeRevModal()">✕</button>
+    <div class="modal-title">💰 Nhập doanh thu tháng</div>
+    <div class="modal-sub" id="modal-sub"></div>
+    <table class="rev-table">
+      <thead><tr><th>Trạm</th><th>M³ bán được</th><th>Doanh thu (triệu VNĐ)</th></tr></thead>
+      <tbody id="rev-tbody"></tbody>
+    </table>
+    <div class="modal-actions">
+      <button class="btn-an" style="background:var(--bg);border:1.5px solid var(--border);color:var(--text)" onclick="closeRevModal()">Hủy</button>
+      <button class="btn-an btn-blue" onclick="saveRevData()">💾 Lưu dữ liệu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwCPeb1alnsNGLrl7lJEVDZljtU_F1mQzS-87T6_IvEJCZTo4NTkDOmbsItV1UZ_dS9/exec';
+const LOCK_DAYS = 3;
+const STORE_KEY = 'wtr_v5';
+const REV_KEY   = 'wtr_revenue_v1';
+const STATIONS  = [
+  'Trạm Bù Rên','Trạm Bù Gia Mập','Trạm Tân Thành','Trạm Lộc Hiệp',
+  'Trạm Tân Tiến','Trạm Thiện Hưng','Trạm Hưng Phước','Trạm Thanh Bình'
+];
+const STATION_COLORS = ['#0a6bff','#00c2a8','#f59e0b','#ff3b3b','#7c3aed','#db2777','#059669','#0891b2'];
+
+// ════════════════════════════════════════════
+// SHARED STATE
+// ════════════════════════════════════════════
+let mode    = 'new';
+let incVal  = null;
+let anCharts= {};
+let anYear  = new Date().getFullYear();
+let anMonth = new Date().getMonth()+1;
+
+// ════════════════════════════════════════════
+// STORAGE
+// ════════════════════════════════════════════
+function getR(){try{return JSON.parse(localStorage.getItem(STORE_KEY)||'[]');}catch{return[];}}
+function setR(d){localStorage.setItem(STORE_KEY,JSON.stringify(d));}
+function getRevAll(){try{return JSON.parse(localStorage.getItem(REV_KEY)||'{}');}catch{return{};}}
+function saveRevAll(d){localStorage.setItem(REV_KEY,JSON.stringify(d));}
+
+// ════════════════════════════════════════════
+// DATE UTILS
+// ════════════════════════════════════════════
+function today(){const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function pad(n){return String(n).padStart(2,'0');}
+function fmtDate(s){if(!s)return'';if(s.includes('/'))return s;const[y,m,d]=s.split('-');return d+'/'+m+'/'+y;}
+function toYMD(s){
+  if(!s)return'';s=String(s).replace(/^'/,'').trim();
+  if(/^\d{4}-/.test(s))return s.slice(0,10);
+  if(s.includes('/')){const p=s.split('/');if(p.length===3)return p[2]+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0');}
+  if(!isNaN(s)&&s.length>5)return new Date(+s).toISOString().slice(0,10);
+  return s.slice(0,10);
+}
+function dAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);}
+function prevDay(dateStr){
+  const[y,mo,dy]=dateStr.split('-').map(Number);
+  const d=new Date(y,mo-1,dy-1);
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function monthKey(y,m){return y+'-'+pad(m);}
+function daysInMonth(y,m){return new Date(y,m,0).getDate();}
+function fmtNum(n){if(!n&&n!==0)return'—';return Math.round(n).toLocaleString('vi-VN');}
+
+// ════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════
+;(function(){
+  const t=today();
+  document.getElementById('f-date').value=t;
+  document.getElementById('today-display').textContent=fmtDate(t);
+  document.getElementById('f-date').addEventListener('change',function(){
+    document.getElementById('today-display').textContent=fmtDate(this.value);
+    if(mode==='new') autoFill(); else loadOld();
+  });
+  document.getElementById('flt-specific').value=t;
+  renderDash();
+  loadSheet(); // tự tải khi vào trang
+  updateMonthLabel();
+})();
+
+// ════════════════════════════════════════════
+// VIEW SWITCHING
+// ════════════════════════════════════════════
+function showView(v,btn){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  btn.classList.add('active');
+  if(v==='dash') renderDash();
+  if(v==='analytics') renderAnalytics();
+}
+
+// ════════════════════════════════════════════
+// FORM — MODE
+// ════════════════════════════════════════════
+function setMode(m){
+  mode=m;const e=m==='edit';
+  document.getElementById('btn-mode-new').className='mode-btn'+(e?'':' m-new');
+  document.getElementById('btn-mode-edit').className='mode-btn'+(e?' m-edit':'');
+  document.getElementById('form-header').className='form-header'+(e?' edit-mode':'');
+  document.getElementById('form-title').textContent=e?'✏️ Chỉnh Sửa Báo Cáo':'📋 Báo Cáo Ngày';
+  document.getElementById('form-sub').textContent=e?'Ghi đè dữ liệu đã gửi — cần PIN xác thực':'Nhập số liệu vận hành trạm cấp nước';
+  document.getElementById('edit-banner').className='edit-banner'+(e?' show':'');
+  const btn=document.getElementById('btn-submit');
+  btn.className='btn-submit'+(e?' edit':'');
+  btn.textContent=e?'✔️ Xác nhận chỉnh sửa':'📤 Gửi báo cáo';
+  document.getElementById('f-admin-pin').value='';
+  document.getElementById('admin-pin-st').textContent='';
+  hideMsg();
+  if(e) loadOld();
+}
+
+// ════════════════════════════════════════════
+// FORM — LOAD OLD (edit mode)
+// ════════════════════════════════════════════
+function loadOld(){
+  const st=document.getElementById('f-station').value;
+  const dt=document.getElementById('f-date').value;
+  if(!st||!dt)return;
+  const local=getR().find(r=>r.station===st&&r.date===dt);
+  if(local){_fillEditForm(local);showMsg('success','✅ Đã tải dữ liệu cũ của "'+st+'" ngày '+fmtDate(dt)+'. Hãy sửa và xác nhận.');return;}
+  document.getElementById('load-overlay').classList.add('show');
+  document.getElementById('btn-submit').disabled=true;
+  fetch(SHEET_URL)
+    .then(r=>r.json())
+    .then(response=>{
+      document.getElementById('load-overlay').classList.remove('show');
+      document.getElementById('btn-submit').disabled=false;
+      let rows=[];
+      if(Array.isArray(response))rows=response;
+      else if(response&&response.data)rows=response.data;
+      const rs=_parseRows(rows);
+      _mergeLocal(rs);
+      renderDash();
+      const found=rs.find(r=>r.station===st&&r.date===dt);
+      if(found){_fillEditForm(found);showMsg('success','✅ Đã tải từ server: "'+st+'" ngày '+fmtDate(dt)+'.');}
+      else showMsg('info','ℹ️ Không tìm thấy báo cáo của "'+st+'" ngày '+fmtDate(dt)+' trên server.');
+    })
+    .catch(()=>{
+      document.getElementById('load-overlay').classList.remove('show');
+      document.getElementById('btn-submit').disabled=false;
+      showMsg('info','⚠️ Không kết nối được server.');
+    });
+}
+
+function _fillEditForm(r){
+  document.getElementById('f-reporter').value=r.reporter||'';
+  document.getElementById('f-meter-today').value=r.meterToday||'';
+  document.getElementById('f-meter-yest').value=r.meterYesterday||'';
+  document.getElementById('f-clo').value=r.clo||'';
+  document.getElementById('f-phen').value=r.phen||'';
+  document.getElementById('f-voi').value=r.voi||'';
+  document.getElementById('f-meters').value=r.meters||'';
+  document.getElementById('f-meters-note').value=r.metersNote||'';
+  document.getElementById('f-incident').value=r.incidentDetail||'';
+  setInc(!!r.incident);calcWater();
+  const lockErr=dateLockErr(document.getElementById('f-date').value);
+  if(lockErr) document.getElementById('admin-box').classList.add('show');
+}
+
+// ════════════════════════════════════════════
+// FORM — STATION CHANGE
+// ════════════════════════════════════════════
+function onStationChange(){
+  const st=document.getElementById('f-station').value;
+  const pc=document.getElementById('pin-card');
+  if(st){pc.classList.add('show');document.getElementById('f-pin').value='';document.getElementById('pin-st').textContent='';}
+  else pc.classList.remove('show');
+  if(mode==='new') autoFill(); else loadOld();
+}
+
+// ════════════════════════════════════════════
+// FORM — AUTO FILL hôm qua
+// ════════════════════════════════════════════
+function autoFill(){
+  const st=document.getElementById('f-station').value;
+  const dt=document.getElementById('f-date').value;
+  if(!st||!dt)return;
+  const yest=prevDay(dt);
+  const prev=getR().find(r=>r.station===st&&r.date===yest);
+  const fy=document.getElementById('f-meter-yest');
+  const hint=document.getElementById('fill-hint');
+  if(prev&&prev.meterToday){
+    fy.value=prev.meterToday;fy.style.background='#e8fff5';
+    hint.textContent='✅ Tự động lấy từ '+fmtDate(yest);calcWater();
+  }else{fy.style.background='';hint.textContent='';}
+}
+
+// ════════════════════════════════════════════
+// FORM — WATER CALC
+// ════════════════════════════════════════════
+function calcWater(){
+  const t=parseFloat(document.getElementById('f-meter-today').value);
+  const y=parseFloat(document.getElementById('f-meter-yest').value);
+  const el=document.getElementById('water-calc');
+  if(!isNaN(t)&&!isNaN(y)&&t>=y){el.textContent='💧 Lượng nước sản xuất: '+(t-y).toFixed(1)+' m³';el.classList.add('show');}
+  else el.classList.remove('show');
+}
+
+// ════════════════════════════════════════════
+// FORM — INCIDENT
+// ════════════════════════════════════════════
+function setInc(yes){
+  incVal=yes;
+  document.getElementById('btn-no').className='tog-btn'+(yes?'':' sel-no');
+  document.getElementById('btn-yes').className='tog-btn'+(yes?' sel-yes':'');
+  document.getElementById('inc-detail').className='inc-detail'+(yes?' show':'');
+}
+
+// ════════════════════════════════════════════
+// FORM — MESSAGES
+// ════════════════════════════════════════════
+function showMsg(type,msg){
+  const el=document.getElementById('form-msg');
+  el.className='msg show '+type;el.textContent=msg;
+  if(type==='err')el.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function hideMsg(){document.getElementById('form-msg').className='msg err';}
+
+// ════════════════════════════════════════════
+// FORM — DATE LOCK
+// ════════════════════════════════════════════
+function dateLockErr(dt){
+  const[y,mo,dy]=dt.split('-').map(Number);
+  const rd=new Date(y,mo-1,dy);rd.setHours(0,0,0,0);
+  const td=new Date();td.setHours(0,0,0,0);
+  const diff=Math.floor((td-rd)/86400000);
+  if(diff<0)return'Ngày báo cáo không được là ngày tương lai!';
+  if(diff>LOCK_DAYS)return'Ngày này đã quá '+LOCK_DAYS+' ngày. Dùng PIN quản lý để sửa.';
+  return null;
+}
+
+// ════════════════════════════════════════════
+// FORM — SUBMIT
+// ════════════════════════════════════════════
+function submitForm(){
+  hideMsg();
+  const date    =document.getElementById('f-date').value;
+  const station =document.getElementById('f-station').value;
+  const reporter=document.getElementById('f-reporter').value.trim();
+  const mT      =parseFloat(document.getElementById('f-meter-today').value);
+  const mY      =parseFloat(document.getElementById('f-meter-yest').value);
+  const isEdit  =mode==='edit';
+  const pinVal  =document.getElementById('f-pin').value.trim();
+  const adminPin=document.getElementById('f-admin-pin').value.trim();
+  if(!date)    {showMsg('err','Vui lòng chọn ngày báo cáo!');return;}
+  if(!station) {showMsg('err','Vui lòng chọn tên trạm!');return;}
+  if(!reporter){showMsg('err','Vui lòng nhập tên người báo cáo!');return;}
+  if(isNaN(mT)||mT<0){showMsg('err','Vui lòng nhập chỉ số đồng hồ hôm nay!');return;}
+  if(incVal===null){showMsg('err','Vui lòng chọn tình trạng sự cố!');return;}
+  if(!pinVal&&!adminPin){showMsg('err','Vui lòng nhập PIN trạm hoặc PIN quản lý!');return;}
+  if(!adminPin){const err=dateLockErr(date);if(err){showMsg('err',err);return;}}
+  if(!isEdit&&getR().some(r=>r.station===station&&r.date===date)){
+    showMsg('err','"'+station+'" đã có báo cáo ngày '+fmtDate(date)+'. Chuyển sang chế độ Chỉnh sửa để cập nhật.');return;
+  }
+  const water=(!isNaN(mY)&&mT>=mY)?parseFloat((mT-mY).toFixed(1)):0;
+  const payload={
+    date,station,reporter,meterToday:mT,meterYesterday:isNaN(mY)?'':mY,water,
+    clo:parseFloat(document.getElementById('f-clo').value)||0,
+    phen:parseFloat(document.getElementById('f-phen').value)||0,
+    voi:parseFloat(document.getElementById('f-voi').value)||0,
+    incident:incVal,incidentDetail:document.getElementById('f-incident').value.trim(),
+    meters:parseInt(document.getElementById('f-meters').value)||0,
+    metersNote:document.getElementById('f-meters-note').value.trim(),
+    isEdit,stationPin:pinVal,adminPin
+  };
+  const btn=document.getElementById('btn-submit');
+  btn.innerHTML='<span class="spinner"></span>'+(isEdit?'Đang cập nhật...':'Đang gửi...');
+  btn.disabled=true;
+  fetch(SHEET_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(r=>r.json())
+    .then(res=>{
+      btn.textContent=isEdit?'✔️ Xác nhận chỉnh sửa':'📤 Gửi báo cáo';btn.disabled=false;
+      if(res.status==='auth_failed'){
+        const pEl=adminPin?'admin-pin-st':'pin-st';
+        document.getElementById(pEl).textContent='❌ PIN không đúng';
+        document.getElementById(pEl).className='pin-st err';
+        showMsg('err','PIN không đúng. Vui lòng kiểm tra lại.');return;
+      }
+      if(res.status==='locked'){showMsg('err',res.message);return;}
+      const pEl=adminPin?'admin-pin-st':'pin-st';
+      document.getElementById(pEl).textContent='✅ PIN hợp lệ';
+      document.getElementById(pEl).className='pin-st ok';
+      const rec={...payload,id:Date.now(),submittedAt:res.submittedAt||new Date().toLocaleString('vi-VN'),lanGui:''};
+      saveAndShow(rec,water,'Đã lưu vào Google Sheet');
+    })
+    .catch(()=>{
+      btn.textContent=isEdit?'✔️ Xác nhận chỉnh sửa':'📤 Gửi báo cáo';btn.disabled=false;
+      const rec={...payload,id:Date.now(),submittedAt:new Date().toLocaleString('vi-VN'),lanGui:''};
+      saveAndShow(rec,water,'⚠️ Mất kết nối — đã lưu tạm cục bộ.');
+    });
+}
+
+function saveAndShow(rec,water,note){
+  let rs=getR();
+  const i=rs.findIndex(r=>r.station===rec.station&&r.date===rec.date);
+  if(i>=0)rs[i]=rec;else rs.unshift(rec);setR(rs);
+  const e=mode==='edit';
+  document.getElementById('suc-icon').className='suc-icon'+(e?' edit':'');
+  document.getElementById('suc-title').textContent=e?'Đã cập nhật!':'Đã gửi thành công!';
+  document.getElementById('suc-msg').innerHTML=
+    '<b>'+rec.station+'</b> — '+rec.reporter+'<br>'+
+    'ĐH hôm nay: '+rec.meterToday+' m³ | Nước SX: '+water+' m³<br>'+
+    'Ngày BC: '+fmtDate(rec.date)+'<br>'+note;
+  document.getElementById('form-main').style.display='none';
+  document.getElementById('success-screen').classList.add('show');
+}
+
+function newReport(){
+  document.getElementById('form-main').style.display='block';
+  document.getElementById('success-screen').classList.remove('show');
+  hideMsg();setMode('new');
+  ['f-meter-today','f-meter-yest','f-clo','f-phen','f-voi','f-incident','f-meters','f-meters-note','f-pin','f-admin-pin']
+    .forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('f-date').value=today();
+  document.getElementById('today-display').textContent=fmtDate(today());
+  document.getElementById('f-station').value='';
+  document.getElementById('f-reporter').value='';
+  document.getElementById('water-calc').classList.remove('show');
+  document.getElementById('fill-hint').textContent='';
+  document.getElementById('f-meter-yest').style.background='';
+  document.getElementById('pin-card').classList.remove('show');
+  document.getElementById('admin-box').classList.remove('show');
+  document.getElementById('load-overlay').classList.remove('show');
+  document.getElementById('pin-st').textContent='';document.getElementById('pin-st').className='pin-st';
+  document.getElementById('admin-pin-st').textContent='';document.getElementById('admin-pin-st').className='pin-st';
+  incVal=null;
+  document.getElementById('btn-no').className='tog-btn';
+  document.getElementById('btn-yes').className='tog-btn';
+  document.getElementById('inc-detail').className='inc-detail';
+}
+
+// ════════════════════════════════════════════
+// LOAD FROM SHEET (dùng chung)
+// ════════════════════════════════════════════
+function _parseRows(rows){
+  return rows.map(r=>({
+    date:toYMD(r.date||r.Ngay||''),
+    station:r.station||r['Trạm']||'',
+    reporter:r.reporter||r['Người báo cáo']||'',
+    meterToday:parseFloat(r.meterToday||r['ĐH hôm nay (m³)'])||0,
+    meterYesterday:r.meterYesterday||r['ĐH hôm qua (m³)']||'',
+    water:parseFloat(r.water||r['Nước SX (m³)'])||0,
+    clo:parseFloat(r.clo||r['Clo (kg)'])||0,
+    phen:parseFloat(r.phen||r['Phèn (kg)'])||0,
+    voi:parseFloat(r.voi||r['Vôi (kg)'])||0,
+    incident:r.incident===true||String(r.incident||r['Sự cố']||'').trim()==='Có',
+    incidentDetail:r.incidentDetail||r['Chi tiết sự cố']||'',
+    meters:parseInt(r.meters||r['ĐH lắp mới (cái)'])||0,
+    metersNote:r.metersNote||r['Ghi chú ĐH']||'',
+    submittedAt:r.submittedAt||'',
+    lanGui:r.lanGui||r['Lần gửi']||''
+  })).filter(r=>r.date&&r.station);
+}
+
+function _mergeLocal(rs){
+  const merged=getR();
+  rs.forEach(r=>{const i=merged.findIndex(x=>x.station===r.station&&x.date===r.date);if(i>=0)merged[i]=r;else merged.unshift(r);});
+  setR(merged);
+}
+
+function loadSheet(){
+  const ld=document.getElementById('tbl-loading');
+  const em=document.getElementById('tbl-empty');
+  ld.style.display='block';em.style.display='none';
+  fetch(SHEET_URL)
+    .then(r=>r.json())
+    .then(response=>{
+      let rows=[];
+      if(Array.isArray(response))rows=response;
+      else if(response&&response.data)rows=response.data;
+      else if(response&&response.rows)rows=response.rows;
+      const rs=_parseRows(rows);
+      setR(rs);
+      ld.style.display='none';
+      renderDash();
+      if(mode==='new') autoFill();
+      if(rs.length===0) em.style.display='block';
+    })
+    .catch(err=>{console.error(err);ld.style.display='none';em.style.display='block';});
+}
+
+function loadSheetAndAnalytics(){
+  loadSheet();
+  renderAnalytics();
+}
+
+// ════════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════════
+function getFiltered(){
+  let rs=getR();
+  const df=document.getElementById('flt-date').value;
+  const sf=document.getElementById('flt-station').value;
+  if(df==='today')rs=rs.filter(r=>r.date===today());
+  else if(df==='specific'){const sd=document.getElementById('flt-specific').value;if(sd)rs=rs.filter(r=>r.date===sd);}
+  else if(df==='week'){const c=dAgo(7);rs=rs.filter(r=>r.date>=c);}
+  else if(df==='month'){const c=dAgo(30);rs=rs.filter(r=>r.date>=c);}
+  else if(df==='thismonth'){const n=new Date();const c=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-01';rs=rs.filter(r=>r.date>=c);}
+  else if(df==='lastmonth'){
+    const n=new Date();const y=n.getMonth()===0?n.getFullYear()-1:n.getFullYear();
+    const mo=n.getMonth()===0?12:n.getMonth();
+    const c1=y+'-'+pad(mo)+'-01';const c2=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-01';
+    rs=rs.filter(r=>r.date>=c1&&r.date<c2);
+  }
+  if(sf)rs=rs.filter(r=>r.station===sf);
+  return rs;
+}
+
+function renderDash(){
+  const df=document.getElementById('flt-date').value;
+  const rs=getFiltered();
+  const isSingle=df==='today'||df==='specific';
+  let viewDate=null;
+  if(df==='today')viewDate=today();
+  else if(df==='specific')viewDate=document.getElementById('flt-specific').value;
+  const dr=viewDate?rs.filter(r=>r.date===viewDate):rs;
+  const repSet=new Set(dr.map(r=>r.station));
+  document.getElementById('d-rep').textContent=repSet.size;
+  document.getElementById('d-water').textContent=dr.reduce((s,r)=>s+(r.water||0),0).toFixed(1);
+  document.getElementById('d-inc').textContent=dr.filter(r=>r.incident).length;
+  document.getElementById('d-clo').textContent=dr.reduce((s,r)=>s+(r.clo||0),0).toFixed(2);
+  if(df==='today'){
+    document.getElementById('lbl-rep').textContent='Đã báo cáo hôm nay';
+    document.getElementById('lbl-rep-sub').textContent='/ 8 trạm';
+    document.getElementById('lbl-water').textContent='Tổng nước SX hôm nay';
+    document.getElementById('lbl-clo').textContent='Tổng Clo hôm nay';
+  }else if(df==='specific'){
+    const sd=document.getElementById('flt-specific').value;
+    document.getElementById('lbl-rep').textContent='Đã BC ngày '+fmtDate(sd);
+    document.getElementById('lbl-rep-sub').textContent='/ 8 trạm';
+    document.getElementById('lbl-water').textContent='Nước SX ngày '+fmtDate(sd);
+    document.getElementById('lbl-clo').textContent='Clo ngày '+fmtDate(sd);
+  }else{
+    const now=new Date();
+    const m={week:'7 ngày qua',month:'30 ngày qua',
+      thismonth:'Tháng '+pad(now.getMonth()+1)+'/'+now.getFullYear(),
+      lastmonth:'Tháng '+(now.getMonth()===0?'12/'+(now.getFullYear()-1):pad(now.getMonth())+'/'+now.getFullYear()),
+      all:'Tất cả'};
+    document.getElementById('lbl-rep').textContent='Trạm đã BC ('+m[df]+')';
+    document.getElementById('lbl-rep-sub').textContent='trạm';
+    document.getElementById('lbl-water').textContent='Tổng nước SX ('+m[df]+')';
+    document.getElementById('lbl-clo').textContent='Tổng Clo ('+m[df]+')';
+  }
+  const ab=document.getElementById('alert-bar');
+  if(isSingle){
+    const miss=STATIONS.filter(s=>!repSet.has(s));
+    if(miss.length>0&&miss.length<8){ab.classList.remove('hidden');document.getElementById('alert-txt').textContent='Chưa báo cáo '+(df==='today'?'hôm nay':'ngày '+fmtDate(viewDate))+': '+miss.join(', ');}
+    else ab.classList.add('hidden');
+  }else ab.classList.add('hidden');
+  const stTitle=document.getElementById('st-title');
+  const stGrid=document.getElementById('st-grid');
+  if(isSingle){
+    stTitle.style.display='block';stGrid.style.display='grid';
+    stTitle.textContent='Trạng thái trạm — '+(df==='today'?'hôm nay':fmtDate(viewDate));
+    stGrid.innerHTML=STATIONS.map(s=>{
+      const r=dr.find(x=>x.station===s);
+      if(!r)return'<div class="st-card"><div class="st-name">'+s+'</div><span class="badge-st b-miss">Chưa báo cáo</span><div class="st-data">—</div></div>';
+      return'<div class="st-card '+(r.incident?'inc':'ok')+'"><div class="st-name">'+s+'</div>'+
+        (r.incident?'<span class="badge-st b-inc">⚠️ Sự cố</span>':'<span class="badge-st b-ok">✅ Bình thường</span>')+
+        '<div class="st-data">ĐH: <strong>'+r.meterToday+' m³</strong><br>Nước SX: <strong>'+r.water+' m³</strong><br>Clo: <strong>'+r.clo+' kg</strong>'+
+        (r.meters>0?'<br>ĐH lắp: <strong>'+r.meters+' cái</strong>':'')+
+        '<br>'+r.reporter+' · '+r.submittedAt+'</div></div>';
+    }).join('');
+  }else{stTitle.style.display='none';stGrid.style.display='none';}
+  const tbody=document.getElementById('tbl-body');
+  const empty=document.getElementById('tbl-empty');
+  if(rs.length===0){tbody.innerHTML='';empty.style.display='block';}
+  else{
+    empty.style.display='none';
+    tbody.innerHTML=[...rs].sort((a,b)=>b.date.localeCompare(a.date)).map(r=>
+      '<tr><td>'+fmtDate(r.date)+'</td><td><strong>'+r.station+'</strong></td>'+
+      '<td style="font-family:monospace">'+r.meterToday+'</td>'+
+      '<td style="font-family:monospace">'+r.water+'</td>'+
+      '<td style="font-family:monospace">'+r.clo+'</td>'+
+      '<td>'+r.meters+'</td>'+
+      '<td>'+(r.incident?'<span class="bdg bdg-inc">Sự cố</span>':'<span class="bdg bdg-ok">OK</span>')+'</td>'+
+      '<td>'+(r.lanGui?'<span class="bdg bdg-edit">'+r.lanGui+'</span>':'<span style="color:var(--muted);font-size:11px">Lần 1</span>')+'</td></tr>'
+    ).join('');
+  }
+  document.getElementById('dash-sub').textContent='Cập nhật: '+new Date().toLocaleString('vi-VN')+' — Tổng '+rs.length+' báo cáo';
+}
+
+function onDateFilter(){
+  const df=document.getElementById('flt-date').value;
+  const pk=document.getElementById('date-picker');
+  if(df==='specific'){pk.classList.add('show');document.getElementById('flt-specific').value=dAgo(1);}
+  else pk.classList.remove('show');
+  renderDash();
+}
+
+function xuatExcel(){
+  const rs=getFiltered();if(rs.length===0){alert('Không có dữ liệu để xuất!');return;}
+  const cols=['Ngày','Trạm','Người BC','ĐH hôm nay (m³)','ĐH hôm qua (m³)','Nước SX (m³)','Clo (kg)','Phèn (kg)','Vôi (kg)','Sự cố','Chi tiết sự cố','ĐH lắp mới','Ghi chú','Lần gửi'];
+  const rows=rs.sort((a,b)=>a.date.localeCompare(b.date)).map(r=>[fmtDate(r.date),r.station,r.reporter,r.meterToday,r.meterYesterday,r.water,r.clo,r.phen,r.voi,r.incident?'Có':'Không',r.incidentDetail,r.meters,r.metersNote,r.lanGui||'Lần 1']);
+  const ws=XLSX.utils.aoa_to_sheet([cols,...rows]);
+  ws['!cols']=[{wch:12},{wch:18},{wch:18},{wch:14},{wch:14},{wch:12},{wch:10},{wch:10},{wch:10},{wch:8},{wch:30},{wch:10},{wch:30},{wch:30}];
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Báo cáo');
+  const d=new Date();const sf=document.getElementById('flt-station').value;const df=document.getElementById('flt-date').value;
+  XLSX.writeFile(wb,'BaoCao'+(sf?'_'+sf.replace('Trạm ',''):'')+'_'+(df==='today'||df==='specific'?fmtDate(df==='today'?today():document.getElementById('flt-specific').value).replace(/\//g,''):d.getFullYear()+pad(d.getMonth()+1))+'.xlsx');
+}
+
+// ════════════════════════════════════════════
+// ANALYTICS — MONTH NAV
+// ════════════════════════════════════════════
+function changeMonth(dir){
+  anMonth+=dir;
+  if(anMonth>12){anMonth=1;anYear++;}
+  if(anMonth<1){anMonth=12;anYear--;}
+  renderAnalytics();
+}
+function updateMonthLabel(){
+  document.getElementById('month-lbl').textContent='T'+pad(anMonth)+'/'+anYear;
+}
+
+// ════════════════════════════════════════════
+// ANALYTICS — RENDER ALL
+// ════════════════════════════════════════════
+function renderAnalytics(){
+  updateMonthLabel();
+  const mk    =monthKey(anYear,anMonth);
+  const stFlt =document.getElementById('an-station').value;
+  const all   =getR();
+  const rev   =getRevAll();
+  const monthRows=all.filter(r=>r.date&&r.date.startsWith(mk)&&(stFlt?r.station===stFlt:true));
+  const revMonth =rev[mk]||{};
+
+  const totalSX =monthRows.reduce((s,r)=>s+(r.water||0),0);
+  const totalBan=STATIONS.reduce((s,st)=>{if(stFlt&&st!==stFlt)return s;return s+(parseFloat((revMonth[st]||{}).ban)||0);},0);
+  const totalDT =STATIONS.reduce((s,st)=>{if(stFlt&&st!==stFlt)return s;return s+(parseFloat((revMonth[st]||{}).dt)||0);},0);
+  const ttPct   =totalSX>0?((totalSX-totalBan)/totalSX*100):null;
+  const giaTB   =totalBan>0?(totalDT*1e6/totalBan):null;
+  const daysRep =new Set(monthRows.map(r=>r.date)).size;
+  const daysTotal=daysInMonth(anYear,anMonth);
+
+  document.getElementById('kpi-sx').textContent  =totalSX>0?fmtNum(totalSX):'—';
+  document.getElementById('kpi-ban').textContent =totalBan>0?fmtNum(totalBan):'—';
+  document.getElementById('kpi-tt').textContent  =ttPct!==null?ttPct.toFixed(1)+'%':'—';
+  document.getElementById('kpi-dt').textContent  =totalDT>0?totalDT.toFixed(2):'—';
+  document.getElementById('kpi-gia').textContent =giaTB?Math.round(giaTB).toLocaleString('vi-VN'):'—';
+  document.getElementById('kpi-ngay').textContent=daysRep;
+  document.getElementById('kpi-ngay-tong').textContent=daysTotal;
+  if(ttPct!==null){
+    document.getElementById('kpi-tt').className='kpi-val '+(ttPct>30?'red':ttPct>20?'amber':'teal');
+    document.getElementById('kpi-tt-d').textContent=ttPct>30?'⚠️ Nghiêm trọng':ttPct>20?'⚠️ Cần xem lại':'✅ Trong ngưỡng';
+    document.getElementById('kpi-tt-d').className='kpi-delta '+(ttPct>20?'down':'up');
+  }
+
+  // So tháng trước
+  const prevM=anMonth===1?12:anMonth-1;const prevY=anMonth===1?anYear-1:anYear;
+  const prevRows=all.filter(r=>r.date&&r.date.startsWith(monthKey(prevY,prevM))&&(stFlt?r.station===stFlt:true));
+  const prevSX=prevRows.reduce((s,r)=>s+r.water,0);
+  if(prevSX>0&&totalSX>0){
+    const diff=((totalSX-prevSX)/prevSX*100);
+    const dEl=document.getElementById('kpi-sx-d');
+    dEl.textContent=(diff>=0?'▲':'▼')+Math.abs(diff).toFixed(1)+'% so với tháng trước';
+    dEl.className='kpi-delta '+(diff>=0?'up':'down');
+  }else{document.getElementById('kpi-sx-d').textContent='';}
+
+  renderChartDaily(monthRows,stFlt);
+  renderChartStations(monthRows);
+  renderChartTrend(all,stFlt);
+  renderLossTable(monthRows,revMonth,stFlt);
+}
+
+// ════════════════════════════════════════════
+// ANALYTICS — CHARTS
+// ════════════════════════════════════════════
+function destroyChart(id){if(anCharts[id]){anCharts[id].destroy();delete anCharts[id];}}
+
+function renderChartDaily(rows,stFlt){
+  const days=daysInMonth(anYear,anMonth);
+  const labels=Array.from({length:days},(_,i)=>pad(i+1));
+  const data=Array(days).fill(0);
+  rows.forEach(r=>{const d=parseInt(r.date.split('-')[2]);if(d>=1&&d<=days)data[d-1]+=r.water;});
+  destroyChart('chart-daily');
+  const ctx=document.getElementById('chart-daily').getContext('2d');
+  anCharts['chart-daily']=new Chart(ctx,{
+    type:'line',
+    data:{labels,datasets:[{label:stFlt||'Toàn công ty',data,borderColor:'#0a6bff',backgroundColor:'#0a6bff18',fill:true,tension:.4,pointRadius:3,borderWidth:2.5}]},
+    options:{responsive:true,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmtNum(c.raw)+' m³'}}},
+      scales:{x:{grid:{color:'#d4ddf040'},ticks:{font:{family:'JetBrains Mono',size:10},maxTicksLimit:15}},
+        y:{grid:{color:'#d4ddf060'},ticks:{font:{family:'JetBrains Mono',size:10},callback:v=>fmtNum(v)},beginAtZero:true}}}
+  });
+  document.getElementById('chart1-sub').textContent=stFlt?'Sản lượng của '+stFlt+' — từng ngày trong tháng':'Tổng sản lượng toàn công ty — từng ngày trong tháng';
+}
+
+function renderChartStations(rows){
+  const totals=STATIONS.map((st,i)=>({st,val:rows.filter(r=>r.station===st).reduce((s,r)=>s+r.water,0),color:STATION_COLORS[i]})).sort((a,b)=>b.val-a.val);
+  destroyChart('chart-stations');
+  const ctx=document.getElementById('chart-stations').getContext('2d');
+  anCharts['chart-stations']=new Chart(ctx,{
+    type:'bar',
+    data:{labels:totals.map(t=>t.st.replace('Trạm ','')),datasets:[{label:'Nước SX (m³)',data:totals.map(t=>t.val),backgroundColor:totals.map(t=>t.color+'cc'),borderRadius:6,borderSkipped:false}]},
+    options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtNum(c.raw)+' m³'}}},
+      scales:{x:{grid:{color:'#d4ddf040'},ticks:{font:{family:'JetBrains Mono',size:10},callback:v=>fmtNum(v)}},y:{grid:{display:false},ticks:{font:{family:'Be Vietnam Pro',size:11}}}}}
+  });
+}
+
+function renderChartTrend(all,stFlt){
+  const months=[];
+  for(let i=5;i>=0;i--){let m=anMonth-i,y=anYear;if(m<=0){m+=12;y--;}months.push({y,m,mk:monthKey(y,m),lbl:'T'+pad(m)});}
+  const rev=getRevAll();
+  const sxData=months.map(({mk})=>all.filter(r=>r.date&&r.date.startsWith(mk)&&(stFlt?r.station===stFlt:true)).reduce((s,r)=>s+r.water,0));
+  const banData=months.map(({mk})=>{const rm=rev[mk]||{};return STATIONS.reduce((s,st)=>{if(stFlt&&st!==stFlt)return s;return s+(parseFloat((rm[st]||{}).ban)||0);},0);});
+  const ttData=months.map((_,i)=>{const sx=sxData[i],ban=banData[i];return sx>0&&ban>0?parseFloat(((sx-ban)/sx*100).toFixed(1)):null;});
+  destroyChart('chart-trend');
+  const ctx=document.getElementById('chart-trend').getContext('2d');
+  anCharts['chart-trend']=new Chart(ctx,{
+    type:'line',
+    data:{labels:months.map(m=>m.lbl),datasets:[
+      {label:'SX (m³)',data:sxData,borderColor:'#0a6bff',backgroundColor:'#0a6bff18',fill:true,tension:.4,yAxisID:'y1',pointRadius:4},
+      {label:'Bán (m³)',data:banData,borderColor:'#00c2a8',backgroundColor:'#00c2a818',fill:true,tension:.4,yAxisID:'y1',pointRadius:4},
+      {label:'Thất thoát %',data:ttData,borderColor:'#ff3b3b',borderDash:[5,3],tension:.4,yAxisID:'y2',pointRadius:4,fill:false}
+    ]},
+    options:{responsive:true,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top',labels:{font:{family:'Be Vietnam Pro',size:10},boxWidth:10}}},
+      scales:{y1:{position:'left',grid:{color:'#d4ddf040'},ticks:{font:{family:'JetBrains Mono',size:9},callback:v=>fmtNum(v)},beginAtZero:true},
+        y2:{position:'right',grid:{display:false},ticks:{font:{family:'JetBrains Mono',size:9},callback:v=>v+'%'},min:0,max:50}}}
+  });
+}
+
+// ════════════════════════════════════════════
+// ANALYTICS — LOSS TABLE
+// ════════════════════════════════════════════
+function renderLossTable(monthRows,revMonth,stFlt){
+  const wrap=document.getElementById('loss-wrap');
+  if(Object.keys(revMonth).length===0){wrap.innerHTML='<div class="no-data">Chưa có dữ liệu doanh thu tháng này. Bấm "💰 Nhập doanh thu tháng".</div>';return;}
+  const rows=STATIONS.filter(st=>!stFlt||st===stFlt).map(st=>{
+    const sx=monthRows.filter(r=>r.station===st).reduce((s,r)=>s+r.water,0);
+    const ban=parseFloat((revMonth[st]||{}).ban)||0;
+    const dt=parseFloat((revMonth[st]||{}).dt)||0;
+    const tt=sx>0&&ban>0?(sx-ban):null;
+    const ttPct=sx>0&&ban>0?((sx-ban)/sx*100):null;
+    return{st,sx,ban,dt,tt,ttPct};
+  }).sort((a,b)=>(b.ttPct||0)-(a.ttPct||0));
+  let html='<table class="loss-table"><thead><tr><th>Trạm</th><th>SX (m³)</th><th>Bán (m³)</th><th>Thất thoát</th><th>%</th><th>Doanh thu (tr.đ)</th></tr></thead><tbody>';
+  rows.forEach(r=>{
+    let pctCls='pct-ok',barCls='bar-ok',badge='';
+    if(r.ttPct!==null){
+      if(r.ttPct>30){pctCls='pct-bad';barCls='bar-bad';badge='<span class="badge badge-bad">Nghiêm trọng</span>';}
+      else if(r.ttPct>20){pctCls='pct-warn';barCls='bar-warn';badge='<span class="badge badge-warn">Cần xem</span>';}
+      else badge='<span class="badge badge-ok">Tốt</span>';
+    }
+    const barW=r.ttPct?Math.min(r.ttPct/50*100,100):0;
+    html+=`<tr><td><strong>${r.st.replace('Trạm ','')}</strong></td>
+      <td style="font-family:monospace">${r.sx>0?fmtNum(r.sx):'—'}</td>
+      <td style="font-family:monospace">${r.ban>0?fmtNum(r.ban):'—'}</td>
+      <td style="font-family:monospace">${r.tt!==null?fmtNum(r.tt)+' m³':'—'}</td>
+      <td><span class="loss-bar-wrap"><span class="loss-bar ${barCls}" style="width:${barW}%"></span></span>
+      <span class="loss-pct ${pctCls}">${r.ttPct!==null?r.ttPct.toFixed(1)+'%':'—'}</span>${badge}</td>
+      <td style="font-family:monospace">${r.dt>0?r.dt.toFixed(2):'—'}</td></tr>`;
+  });
+  const totSX=rows.reduce((s,r)=>s+r.sx,0),totBan=rows.reduce((s,r)=>s+r.ban,0);
+  const totTT=totSX-totBan,totPct=totSX>0&&totBan>0?(totTT/totSX*100):null;
+  const totDT=rows.reduce((s,r)=>s+r.dt,0);
+  const tCls=totPct>30?'pct-bad':totPct>20?'pct-warn':'pct-ok';
+  html+=`<tr style="font-weight:700;background:#f0f4fb"><td>TỔNG CỘNG</td>
+    <td style="font-family:monospace">${fmtNum(totSX)}</td>
+    <td style="font-family:monospace">${fmtNum(totBan)}</td>
+    <td style="font-family:monospace">${fmtNum(totTT)} m³</td>
+    <td><span class="loss-pct ${tCls}">${totPct!==null?totPct.toFixed(1)+'%':'—'}</span></td>
+    <td style="font-family:monospace">${totDT>0?totDT.toFixed(2):'—'}</td></tr>`;
+  wrap.innerHTML=html+'</tbody></table>';
+}
+
+// ════════════════════════════════════════════
+// ANALYTICS — MODAL DOANH THU
+// ════════════════════════════════════════════
+function openRevModal(){
+  const mk=monthKey(anYear,anMonth);const rev=getRevAll();const cur=rev[mk]||{};
+  document.getElementById('modal-sub').textContent='Tháng '+pad(anMonth)+'/'+anYear+' — nhập m³ bán được và doanh thu từng trạm';
+  document.getElementById('rev-tbody').innerHTML=STATIONS.map(st=>{
+    const d=cur[st]||{};
+    return`<tr><td>${st}</td>
+      <td><input class="rev-input" type="number" id="r-ban-${st}" placeholder="0" min="0" step="0.1" value="${d.ban||''}"></td>
+      <td><input class="rev-input" type="number" id="r-dt-${st}" placeholder="0.00" min="0" step="0.01" value="${d.dt||''}"></td></tr>`;
+  }).join('');
+  document.getElementById('rev-modal').classList.add('show');
+}
+function closeRevModal(e){
+  if(e&&e.target!==document.getElementById('rev-modal'))return;
+  document.getElementById('rev-modal').classList.remove('show');
+}
+function saveRevData(){
+  const mk=monthKey(anYear,anMonth);const rev=getRevAll();const cur={};
+  STATIONS.forEach(st=>{
+    const ban=parseFloat(document.getElementById('r-ban-'+st).value)||0;
+    const dt =parseFloat(document.getElementById('r-dt-'+st).value)||0;
+    if(ban>0||dt>0)cur[st]={ban,dt};
+  });
+  rev[mk]=cur;saveRevAll(rev);
+  document.getElementById('rev-modal').classList.remove('show');
+  renderAnalytics();
+}
+
+// ════════════════════════════════════════════
+// ANALYTICS — XUẤT EXCEL
+// ════════════════════════════════════════════
+function xuatExcelPhanTich(){
+  const mk=monthKey(anYear,anMonth);const all=getR();const rev=getRevAll();const revMonth=rev[mk]||{};
+  const monthRows=all.filter(r=>r.date&&r.date.startsWith(mk));
+  const cols=['Trạm','SX (m³)','Bán (m³)','Thất thoát (m³)','Thất thoát (%)','Doanh thu (triệu VNĐ)','Giá TB (VNĐ/m³)'];
+  const rows=STATIONS.map(st=>{
+    const sx=monthRows.filter(r=>r.station===st).reduce((s,r)=>s+r.water,0);
+    const ban=parseFloat((revMonth[st]||{}).ban)||0;const dt=parseFloat((revMonth[st]||{}).dt)||0;
+    return[st,sx,ban,sx>0&&ban>0?parseFloat((sx-ban).toFixed(1)):0,sx>0&&ban>0?parseFloat(((sx-ban)/sx*100).toFixed(2)):0,dt,ban>0?Math.round(dt*1e6/ban):0];
+  });
+  const ws=XLSX.utils.aoa_to_sheet([cols,...rows]);
+  ws['!cols']=[{wch:18},{wch:12},{wch:12},{wch:14},{wch:14},{wch:20},{wch:16}];
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Phân tích T'+pad(anMonth)+'_'+anYear);
+  XLSX.writeFile(wb,'PhanTich_T'+pad(anMonth)+'_'+anYear+'.xlsx');
+}
+</script>
+</body>
+</html>
