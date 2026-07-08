@@ -560,6 +560,7 @@ function fmtNum(n){if(!n&&n!==0)return'—';return Math.round(n).toLocaleString(
   document.getElementById('today-display').textContent=fmtDate(t);
   document.getElementById('f-date').addEventListener('change',function(){
     document.getElementById('today-display').textContent=fmtDate(this.value);
+    checkAdminBox();
     if(mode==='new') autoFill(); else loadOld();
   });
   document.getElementById('flt-specific').value=t;
@@ -581,6 +582,20 @@ function showView(v,btn){
 }
 
 // ════════════════════════════════════════════
+// FORM — ADMIN PIN BOX VISIBILITY
+// Hiện ô "PIN quản lý" bất cứ khi nào ngày báo cáo
+// đang chọn bị khóa (quá LOCK_DAYS hoặc là ngày tương lai),
+// dù đang ở chế độ gửi mới hay chỉnh sửa.
+// ════════════════════════════════════════════
+function checkAdminBox(){
+  const dt=document.getElementById('f-date').value;
+  if(!dt)return;
+  const err=dateLockErr(dt);
+  const ab=document.getElementById('admin-box');
+  if(err) ab.classList.add('show'); else ab.classList.remove('show');
+}
+
+// ════════════════════════════════════════════
 // FORM — MODE
 // ════════════════════════════════════════════
 function setMode(m){
@@ -596,6 +611,7 @@ function setMode(m){
   btn.textContent=e?'✔️ Xác nhận chỉnh sửa':'📤 Gửi báo cáo';
   document.getElementById('f-admin-pin').value='';
   document.getElementById('admin-pin-st').textContent='';
+  checkAdminBox();
   hideMsg();
   if(e) loadOld();
 }
@@ -644,8 +660,7 @@ function _fillEditForm(r){
   document.getElementById('f-meters-note').value=r.metersNote||'';
   document.getElementById('f-incident').value=r.incidentDetail||'';
   setInc(!!r.incident);calcWater();
-  const lockErr=dateLockErr(document.getElementById('f-date').value);
-  if(lockErr) document.getElementById('admin-box').classList.add('show');
+  checkAdminBox();
 }
 
 // ════════════════════════════════════════════
@@ -656,6 +671,7 @@ function onStationChange(){
   const pc=document.getElementById('pin-card');
   if(st){pc.classList.add('show');document.getElementById('f-pin').value='';document.getElementById('pin-st').textContent='';}
   else pc.classList.remove('show');
+  checkAdminBox();
   if(mode==='new') autoFill(); else loadOld();
 }
 
